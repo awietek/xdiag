@@ -37,7 +37,7 @@ double random_normal(std::mt19937 &gen, double mean, double variance) {
   return mean + variance * z;
 }
 
-template <class distro_f> int random_discard(distro_f distro) try {
+template <class distro_f> static int random_discard(distro_f distro) try {
   std::mt19937 gen(42);
   double r1 = distro(gen);
   double r2 = distro(gen);

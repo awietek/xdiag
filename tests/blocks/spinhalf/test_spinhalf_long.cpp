@@ -10,11 +10,10 @@
 // N=65 is the smallest chain that activates the BitsetDynamic bit type (>64
 // sites); with nup=2 the sector dimension is C(65,2)=2080.
 
-
 #include <cmath>
 
-#include <tests/catch.hpp>
 #include <tests/blocks/test_long_blocks.hpp>
+#include <tests/catch.hpp>
 
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
@@ -23,12 +22,13 @@
 #include <xdiag/symmetries/cyclic_group.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/timing.hpp>
 
 using namespace xdiag;
 
 TEST_CASE("spinhalf_long", "[long]") try {
   Log("Spinhalf long test");
-  
+
   int64_t N = 65;
   double J = 1.0;
   int64_t nup = 2;
@@ -45,13 +45,21 @@ TEST_CASE("spinhalf_long", "[long]") try {
   REQUIRE(std::isfinite(e0_obc));
 
   // --- Periodic boundary conditions with translational symmetry ---
-  OpSum ops_pbc = ops_obc;
-  ops_pbc += J * Op("SdotS", {N - 1, 0});
-
-  auto [e0_full, e0_sym] = testcases::translation_ground_states(
-      ops_pbc, Spinhalf(N, nup), N,
-      [&](Representation const &irrep) { return Spinhalf(N, nup, irrep); });
-  REQUIRE(std::abs(e0_full - e0_sym) < 1e-6);
+  std::vector<int64_t> Ns = {32, 64, 65};
+  for (int64_t N : Ns) {
+    Log("N={}", N);
+    tic();
+    OpSum ops_pbc;;
+    for (int64_t i = 0; i < N; ++i) {
+      ops_pbc += J * Op("SdotS", {i, (i + 1)%N});
+    }
+    
+    auto [e0_full, e0_sym] = testcases::translation_ground_states(
+        ops_pbc, Spinhalf(N, nup), N,
+        [&](Representation const &irrep) { return Spinhalf(N, nup, irrep); });
+    REQUIRE(std::abs(e0_full - e0_sym) < 1e-6);
+    toc();
+  }
 
 } catch (xdiag::Error const &e) {
   error_trace(e);

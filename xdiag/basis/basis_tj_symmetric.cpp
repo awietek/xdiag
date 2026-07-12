@@ -69,7 +69,7 @@ BasistJSymmetric<enumeration_t>::BasistJSymmetric(
   // otherwise so enum.k() / LinTable<BitsetDynamic> are never instantiated for
   // Subsets / BitsetDynamic.
   if constexpr (use_compressed_index_) {
-    sitesmask = (bit_t)((((bit_t)1) << nsites) - 1);
+    sitesmask = bits::bitmask<bit_t>(nsites);
     if constexpr (!combinatorics::is_subsets_v<enumeration_t>) {
       int64_t nup = enum_up.k();
       int64_t ndn = enum_dn.k();

@@ -25,6 +25,7 @@
 #include <xdiag/symmetries/cyclic_group.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/timing.hpp>
 
 using namespace xdiag;
 
@@ -52,15 +53,21 @@ TEST_CASE("electron_long", "[long]") try {
   REQUIRE(std::isfinite(e0_obc));
 
   // --- Periodic boundary conditions with translational symmetry ---
-  OpSum ops_pbc = ops_obc;
-  ops_pbc += t * Op("Hop", {N - 1, 0});
-
-  auto [e0_full, e0_sym] = testcases::translation_ground_states(
-      ops_pbc, Electron(N, nup, ndn), N, [&](Representation const &irrep) {
-        return Electron(N, nup, ndn, irrep);
-      });
-  REQUIRE(std::abs(e0_full - e0_sym) < 1e-6);
-
+  std::vector<int64_t> Ns = {32, 65};
+  for (int64_t N : Ns) {
+    Log("N={}", N);
+    tic();
+    OpSum ops_pbc;
+    for (int64_t i = 0; i < N; ++i) {
+      ops_pbc += t * Op("Hop", {i, (i + 1) % N});
+    }
+    auto [e0_full, e0_sym] = testcases::translation_ground_states(
+        ops_pbc, Electron(N, nup, ndn), N, [&](Representation const &irrep) {
+          return Electron(N, nup, ndn, irrep);
+        });
+    REQUIRE(std::abs(e0_full - e0_sym) < 1e-6);
+    toc();
+  }
 } catch (xdiag::Error const &e) {
   error_trace(e);
   throw;

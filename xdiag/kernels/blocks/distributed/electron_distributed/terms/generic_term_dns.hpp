@@ -25,7 +25,7 @@ void generic_term_dns(basis_t const &basis_in, basis_t const &basis_out,
 
   int64_t nsites = basis_in.nsites();
   assert(nsites == basis_out.nsites());
-  bit_t sitesmask = ((bit_t)1 << nsites) - 1;
+  bit_t sitesmask = bits::bitmask<bit_t>(nsites);
 
   int64_t nup_in = basis_in.nup();
   int64_t ndn_in = basis_in.ndn();

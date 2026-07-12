@@ -9,7 +9,9 @@
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/enumerate_combinations.hpp>
+#include <xdiag/math/binomial.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/timing.hpp>
 
 template <typename bit_t> void test_combinations() {
   using namespace xdiag;
@@ -366,4 +368,28 @@ TEST_CASE("Combinations", "[combinatorics]") {
     xdiag::Log("Testing Bitset<uint64_t, 8> large n");
     test_combinations_bitset_large<uint64_t, 8>();
   }
+}
+
+TEST_CASE("combinationslong32", "[combinatorics]") {
+
+  xdiag::Log("Testing Combinations - uint32_t maxing");
+
+  xdiag::tic();
+  for (int k = 3; k < 10; ++k) {
+    xdiag::combinatorics::Combinations<uint32_t> cs(32, k);
+
+    int64_t expected_size = xdiag::math::binomial(32, k);
+    uint32_t prev = 0;
+    int64_t ctr = 0;
+    for (uint32_t bits : cs) {
+      // if (ctr > 0) {
+      //   REQUIRE(bits > prev);
+      //   prev = bits;
+      // }
+      ++ctr;
+    }
+    REQUIRE(ctr == expected_size);
+    REQUIRE(cs.size() == expected_size);
+  }
+  xdiag::toc();
 }

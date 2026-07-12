@@ -25,6 +25,7 @@
 #include <xdiag/symmetries/cyclic_group.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/timing.hpp>
 
 using namespace xdiag;
 
@@ -46,21 +47,29 @@ TEST_CASE("tj_long", "[long]") try {
   double e0_obc = eigval0(ops_obc, tJ(N, nup, ndn));
 
   Log("e0: {:.6f} (ED)", e0_obc);
-  
+
   // No converged DMRG reference yet; enable once available:
   // double e0_dmrg = /* from dmrg_tj.jl */;
   // REQUIRE(std::abs(e0_obc - e0_dmrg) < 1e-6);
   REQUIRE(std::isfinite(e0_obc));
 
   // --- Periodic boundary conditions with translational symmetry ---
-  OpSum ops_pbc = ops_obc;
-  ops_pbc += t * Op("Hop", {N - 1, 0});
-  ops_pbc += J * Op("tJSdotS", {N - 1, 0});
+  std::vector<int64_t> Ns = {32, 65};
+  for (int64_t N : Ns) {
+    Log("N={}", N);
+    tic();
+    OpSum ops_pbc;
+    for (int64_t i = 0; i < N; ++i) {
+      ops_pbc += t * Op("Hop", {i, (i + 1) % N});
+      ops_pbc += J * Op("tJSdotS", {i, (i + 1) % N});
+    }
 
-  auto [e0_full, e0_sym] = testcases::translation_ground_states(
-      ops_pbc, tJ(N, nup, ndn), N,
-      [&](Representation const &irrep) { return tJ(N, nup, ndn, irrep); });
-  REQUIRE(std::abs(e0_full - e0_sym) < 1e-6);
+    auto [e0_full, e0_sym] = testcases::translation_ground_states(
+        ops_pbc, tJ(N, nup, ndn), N,
+        [&](Representation const &irrep) { return tJ(N, nup, ndn, irrep); });
+    REQUIRE(std::abs(e0_full - e0_sym) < 1e-6);
+    toc();
+  }
 
 } catch (xdiag::Error const &e) {
   error_trace(e);

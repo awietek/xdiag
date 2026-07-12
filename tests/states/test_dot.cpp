@@ -16,6 +16,28 @@ TEST_CASE("dot", "[states]") try {
 
   auto block = Spinhalf(4, 2); // dim 6
 
+  {
+    arma::vec ar = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    arma::vec br = {6.0, 5.0, 4.0, 3.0, 2.0, 1.0};
+    arma::cx_vec ac(arma::vec{1., 0., 0., 0., 0., 0.},
+                    arma::vec{0., 1., 0., 0., 0., 0.});
+    arma::cx_vec bc(arma::vec{0., 1., 0., 0., 0., 0.},
+                    arma::vec{1., 0., 0., 0., 0., 0.});
+    auto vr = State(block, ar);
+    auto wr = State(block, br);
+    auto vc = State(block, ac);
+    auto wc = State(block, bc);
+    dot(vr, wr);
+    REQUIRE_THROWS(dot(vr, wc));
+    REQUIRE_THROWS(dot(vc, wr));
+    REQUIRE_THROWS(dot(vc, wc));
+
+    dotC(vr, wr);
+    dotC(vr, wc);
+    dotC(vc, wr);
+    dotC(vc, wc);  
+  }
+
   // --- real dot of single-column states ---
   {
     arma::vec a = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};

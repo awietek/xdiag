@@ -8,32 +8,30 @@
 #include <vector>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/timing.hpp>
 
-template <class bit_t>
-void test_subsets(){
+template <class bit_t> void test_subsets() {
   using namespace xdiag;
   using namespace xdiag::combinatorics;
 
-  for (int n=0; n<8; ++n)
-      {
-	Subsets<bit_t> subs(n);
-	REQUIRE(n == subs.n());
+  for (int n = 0; n < 8; ++n) {
+    Subsets<bit_t> subs(n);
+    REQUIRE(n == subs.n());
 
-        int64_t ctr=0;
-	bit_t current=0;
-	for (auto sub : subs)
-	  {
-	    if (ctr != 0) REQUIRE(sub > current);
-	    current = sub;
-	    ++ctr;
-	    REQUIRE(sub < ((bit_t)1 << n));
-	  }
-	REQUIRE(ctr == subs.size());
-      }
+    int64_t ctr = 0;
+    bit_t current = 0;
+    for (auto sub : subs) {
+      if (ctr != 0)
+        REQUIRE(sub > current);
+      current = sub;
+      ++ctr;
+      REQUIRE(sub < ((bit_t)1 << n));
+    }
+    REQUIRE(ctr == subs.size());
+  }
 }
 
-template <class bit_t>
-void test_subsets_random_access() {
+template <class bit_t> void test_subsets_random_access() {
   using namespace xdiag;
   using namespace xdiag::combinatorics;
 
@@ -50,8 +48,7 @@ void test_subsets_random_access() {
   }
 }
 
-template <class bit_t>
-void test_subsets_iterator_advance() {
+template <class bit_t> void test_subsets_iterator_advance() {
   using namespace xdiag;
   using namespace xdiag::combinatorics;
 
@@ -83,7 +80,7 @@ void test_subsets_iterator_advance() {
   }
 }
 
-TEST_CASE( "subsets", "[combinatorics]" ) {
+TEST_CASE("subsets", "[combinatorics]") {
 
   SECTION("iteration") {
     xdiag::Log("Testing Subsets - iteration");
@@ -102,4 +99,25 @@ TEST_CASE( "subsets", "[combinatorics]" ) {
     test_subsets_iterator_advance<uint32_t>();
     test_subsets_iterator_advance<uint64_t>();
   }
+}
+
+TEST_CASE("subsetslong32", "[combinatorics]") {
+
+  xdiag::Log("Testing Subsets - uint32_t maxing");
+  xdiag::combinatorics::Subsets<uint32_t> subs(32);
+
+  int64_t expected_size = (int64_t)1 << 32;
+  uint32_t prev = 0;
+  int64_t ctr = 0;
+  xdiag::tic();
+  for (uint32_t bits : subs) {
+    // if (ctr > 0) {
+    //   REQUIRE(bits > prev);
+    //   prev = bits;
+    // }
+    ++ctr;
+  }
+  xdiag::toc();
+  REQUIRE(ctr == expected_size);
+  REQUIRE(subs.size() == expected_size);
 }

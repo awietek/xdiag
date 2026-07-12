@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: Apache-2.0
 //
 // "Long" Hilbert space test for the Fermion block (N=65 -> BitsetDynamic).
-// Spinless fermions, nearest-neighbour hopping + interaction, low fixed filling.
+// Spinless fermions, nearest-neighbour hopping + interaction, low fixed
+// filling.
 //
 //   H = -t sum_i (c^dag_i c_{i+1} + h.c.) + V sum_i n_i n_{i+1}
 //
@@ -13,8 +14,8 @@
 
 #include <cmath>
 
-#include <tests/catch.hpp>
 #include <tests/blocks/test_long_blocks.hpp>
+#include <tests/catch.hpp>
 
 #include <xdiag/blocks/fermion.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
@@ -23,6 +24,7 @@
 #include <xdiag/symmetries/cyclic_group.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/timing.hpp>
 
 using namespace xdiag;
 
@@ -47,14 +49,22 @@ TEST_CASE("fermion_long", "[long]") try {
   REQUIRE(std::isfinite(e0_obc));
 
   // --- Periodic boundary conditions with translational symmetry ---
-  OpSum ops_pbc = ops_obc;
-  ops_pbc += t * Op("Hop", {N - 1, 0}); // wrap-around bond
-  ops_pbc += V * Op("NN", {N - 1, 0});
+  std::vector<int64_t> Ns = {32, 64, 65};
+  for (int64_t N : Ns) {
+    Log("N={}", N);
+    tic();
+    OpSum ops_pbc;
+    for (int64_t i = 0; i < N; ++i) {
+      ops_pbc += t * Op("Hop", {i, (i + 1) % N}); // Hop = -(c^dag c + h.c.)
+      ops_pbc += V * Op("NN", {i, (i + 1) % N});  // NN  = n_i n_j
+    }
 
-  auto [e0_full, e0_sym] = testcases::translation_ground_states(
-      ops_pbc, Fermion(N, Nf), N,
-      [&](Representation const &irrep) { return Fermion(N, Nf, irrep); });
-  REQUIRE(std::abs(e0_full - e0_sym) < 1e-6);
+    auto [e0_full, e0_sym] = testcases::translation_ground_states(
+        ops_pbc, Fermion(N, Nf), N,
+        [&](Representation const &irrep) { return Fermion(N, Nf, irrep); });
+    REQUIRE(std::abs(e0_full - e0_sym) < 1e-6);
+    toc();
+  }
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
