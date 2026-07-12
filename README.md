@@ -9,6 +9,7 @@ SPDX-License-Identifier: Apache-2.0
 [![Mac OSX CI](https://github.com/awietek/xdiag/actions/workflows/osx.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/osx.yml)
 [![Intel MPI CI](https://github.com/awietek/xdiag/actions/workflows/intelmpi.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/intelmpi.yml)
 [![Examples CI](https://github.com/awietek/xdiag/actions/workflows/examples.yml/badge.svg?style=for-the-badge)](https://github.com/awietek/xdiag/actions/workflows/examples.yml)
+[![SciPost](https://img.shields.io/badge/SciPost-10.21468%2FSciPostPhysCodeb.70-yellow)](https://scipost.org/10.21468/SciPostPhysCodeb.70)
 [![codecov](https://codecov.io/gh/awietek/xdiag/graph/badge.svg)](https://codecov.io/gh/awietek/xdiag)
 
 # XDiag
@@ -16,15 +17,16 @@ SPDX-License-Identifier: Apache-2.0
 A C++ library to perform efficient Exact Diagonalizations of quantum many body systems. 
 
 
-| **Documentation**                                                                          | **Citation**                                                                                           | **License**                                                        |
-|:------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------:|--------------------------------------------------------------------|
-| [![docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://awietek.github.io/xdiag) | [![arXiv](https://img.shields.io/badge/arXiv-2505.02901-b31b1b.svg)](https://arxiv.org/abs/2505.02901) | ![license](https://img.shields.io/badge/license-Apache%202.0-blue) |
+| **Documentation**                                                                             | **Citation**                                                                                                                               | **License** |
+|:---------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------:|-------------|
+| [![docs](https://img.shields.io/badge/docs-stable-blue.svg)](https://awietek.github.io/xdiag) | [![SciPost](https://img.shields.io/badge/SciPost-10.21468%2FSciPostPhysCodeb.70-yellow)](https://scipost.org/10.21468/SciPostPhysCodeb.70) |             |
+| ![license](https://img.shields.io/badge/license-Apache%202.0-blue)                            |                                                                                                                                            |             |
 
 
 ### Features:
 - Basic algebra of operators in quantum many-body systems
 - Iterative linear algebra for computing eigendecompositions and time-evolutions (e.g. Lanczos algorithm)
-- Local spin, t-J, or fermionic models
+- Local spin, t-J, fermionic, and bosonic models
 - Full support of generic space group symmetries
 - parallelization both with OpenMP and MPI
 - modern C++17 impementation simplifying usage
