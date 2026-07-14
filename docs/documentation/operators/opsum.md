@@ -6,10 +6,7 @@ Object representing a generic many-body operator by a sum of operators of the fo
 
 $$ \mathcal{O} = \sum_i c_i \mathcal{O}_i. $$
 
-**Sources**<br>
-[opsum.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp)<br>
-[opsum.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp)<br>
-[opsum.jl](https://github.com/awietek/XDiag.jl/blob/main/src/operators/opsum.jl)
+**Sources:** [opsum.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp) · [opsum.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp)
 
 --- 
 
@@ -23,7 +20,7 @@ Generically, an OpSum can thus have coupling constants defined by either strings
 
 Thus, OpSums can be defined independently of the numerical values of the coupling constants, e.g. in an input file. Upon execution of the code, these constants can then be set. Most operations in XDiag require the OpSum to be convertible to a plain OpSum.
 
-OpSums can be added and subtracted, as well as multiplied with and divided by a scalar value, i.e. a real or complex number. Hence, OpSums carry the mathematical structure of a vector space.
+OpSums can be added and subtracted, as well as multiplied with and divided by a scalar value, i.e. a real or complex number. In addition, two OpSums can be **multiplied** with one another, forming the (generally non-commutative) product of the two operators. Together, these operations turn the set of OpSums into an **algebra**. Complemented by the hermitian conjugation [hc](hc.md), which is an involution satisfying $(\mathcal{A}\mathcal{B})^\dagger = \mathcal{B}^\dagger\mathcal{A}^\dagger$, the OpSums form an **involutive algebra** ($*$-algebra), precisely the mathematical structure carried by operators in quantum mechanics.
 
 ---
 
@@ -73,25 +70,16 @@ Alternatively, an OpSum can also be constructed via the `* operator`, for exampl
 
 ## Complex couplings
 
-XDiag allows all couplings to be complex. Depending on the [operator type](operator_types.md) 
-a complex coupling can have two meanings:
+XDiag allows all couplings to be complex. A complex coupling always acts as a plain prefactor $c$ multiplying the operator. Under hermitian conjugation with [hc](hc.md), the coupling is complex-conjugated to $c^\star$ (while the operator type is mapped to its hermitian-conjugate partner, e.g. $\mathrm{hc}(S^+) = S^-$),
 
-1. A complex prefactor $c$ which upon hermitian conjugation with [hc](hc.md) gets 
-   conjugated to $c^\star$. This is the case for the following interaction types:   
-   `HubbardU`, `Cdagup`, `Cdagdn`, `Cup`, `Cdn`, `Nup`, `Ndn`, `Ntot`, `NtotNtot`, 
-   `SdotS`, `SzSz`, `Sz`, `S+`, `S-`, `ScalarChirality`, `tJSzSz`, `tJSdotS`, 
-   `Matrix`  
-   Thus, a complex coupling can turn a Hermitian operator to a non-Hermitian operator.
+$$ \mathrm{hc}(c\,\mathcal{O}) = c^\star\, \mathrm{hc}(\mathcal{O}). $$
 
-2. The coupling is part of the definition of the operator. For, example a hopping 
-   operator of the form   
-   $$ ( t c^\dagger_{i\sigma}c_{j\sigma} + \textrm{h.c.})  = ( t c^\dagger_{i\sigma}c_{j\sigma} + t^\star c^\dagger_{j\sigma}c_{i\sigma}) $$  
-   A complex coupling $t$ gives the hopping a phase, but the overall operator remains
-   Hermitian and, thus, invariant under [hc](hc.md). This holds for the types 
-   `Hop`, `Hopup`, `Hopdn`, `Exchange`. In the latter case, complex spin exchange 
-   `Exchange` is defined as,
-   $$ \frac{1}{2}( J S^+_i S^-_j + J^\star S^-_iS^+_j)$$
-	
+Consequently, a complex coupling generally turns a hermitian operator into a non-hermitian one. This holds for **all** operator types, including hopping (`Hop`, `Hopup`, `Hopdn`) and exchange (`Exchange`) terms: a complex coupling on such a term is *not* invariant under [hc](hc.md). To build a hermitian operator from a complex coupling, add the hermitian conjugate explicitly, e.g. `ops + hc(ops)`.
+
+!!! warning "Changed in version 0.5"
+
+	Prior to version 0.5, the hopping (`Hop`, `Hopup`, `Hopdn`) and exchange (`Exchange`) operators were defined to be hermitian even in the presence of a complex coupling, i.e. the coupling entered as $t\,c^\dagger_i c_j + t^\star c^\dagger_j c_i$. This convention was changed, because with it the [OpSum](opsum.md) objects would not form an [algebra](#operator-algebra-product). Since then, a complex coupling is a plain prefactor as described above. To obtain the antisymmetric (non-hermitian) hopping and exchange terms, the dedicated operator types [`HopAsym`](operator_types.md) and [`ExchangeAsym`](operator_types.md) (as well as the spin-resolved `HopupAsym` and `HopdnAsym`) were introduced.
+
 ---
 
 ## Methods
@@ -205,6 +193,27 @@ $$\mathcal{B} = b \sum_i a_i \mathcal{A}_i$$
 
 ---
 
+#### operator* (algebra product)
+
+Multiplies two OpSum objects $\mathcal{A} = \sum_i a_i \mathcal{A}_i$ and $\mathcal{B} = \sum_j b_j \mathcal{B}_j$ to form their operator product, distributing over the sums,
+
+$$ \mathcal{A}\,\mathcal{B} = \sum_{i,j} (a_i b_j)\, \mathcal{A}_i \mathcal{B}_j. $$
+
+The product is generally **non-commutative**, reflecting that quantum mechanical operators need not commute. It can be used to build composite operators, e.g. correlation functions or powers of a Hamiltonian, from elementary building blocks.
+
+=== "C++"
+	```c++
+	OpSum &operator*=(OpSum const &ops);
+	OpSum operator*(OpSum const &ops) const;
+	```
+
+=== "Julia"
+	```julia
+	Base.:*(ops1::OpSum, ops2::OpSum)::OpSum
+	```
+
+---
+
 #### operator[]
 
 Sets a coupling constant defined as a string to a numerical value.
@@ -230,7 +239,7 @@ Returns a vector of strings with the coupling constants defined, i.e. the string
 	std::vector<std::string> constants(OpSum const &ops) const;
 	```
 === "Julia"
-	```c++
+	```julia
 	constants(ops::OpSum)::Vector{String}
 	```
 	
@@ -291,6 +300,6 @@ Converts the OpSum to a readable string representation.
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.cpp:opsum"
 	```

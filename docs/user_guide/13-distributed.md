@@ -1,4 +1,8 @@
-### Distributed computing
+---
+title: Distributed computing
+---
+
+# Distributed computing
 
 The standard XDiag library features shared memory parallelization using [OpenMP](https://www.openmp.org/) for both the C++ and Julia version. However, we also provide distributed memory parallelization in a separate C++-only library that needs to be compiled independently. To do so, we have to use the flag `XDIAG_DISTRIBUTED` when setting up the compilation using [CMake](https://cmake.org/).
 
@@ -18,17 +22,17 @@ add_executable(main main.cpp)
 target_link_libraries(main PRIVATE xdiag::xdiag_distributed)  
 ```
 
-Notice that this only differs from the original `CMakeLists.txt` file shown in the section [Application compilation](#application-compilation) in two places, where we specify that the `xdiag_distributed` library instead of the standard `xdiag` library is used. The distributed memory library is built on top of the message passing interface (MPI). Every MPI application needs to initialize and finalize the MPI environment explicitly. Hence, a typical main routine for using the distributed XDiag library with MPI should look similar to the following listing.
+Notice that this only differs from the original `CMakeLists.txt` file shown in the [Writing code](02-application.md#application-compilation) section in two places, where we specify that the `xdiag_distributed` library instead of the standard `xdiag` library is used. The distributed memory library is built on top of the message passing interface (MPI). Every MPI application needs to initialize and finalize the MPI environment explicitly. Hence, a typical main routine for using the distributed XDiag library with MPI should look similar to the following listing.
 
 === "C++"
-	```c++ 
+	```c++
 	--8<-- "examples/user_guide/main.cpp:usage_guide_dist1"
 	```
 
-The functionality described in the previous sections is also available to some degree for the distributed library. Importantly, to use the distributed capabilities we have to change the types of blocks from the standard [Spinhalf](documentation/blocks/spinhalf.md), [tJ](documentation/blocks/tJ.md), and [Electron](documentation/blocks/electron.md) blocks to the [SpinhalfDistributed](documentation/blocks/spinhalf_distributed.md), [tJDistributed](documentation/blocks/tJ_distributed.md), and [ElectronDistributed](documentation/blocks/electron_distributed.md) blocks. An example to compute the ground state of a Heisenberg chain using the distributed capabilities is given by,
+The functionality described in the previous sections is also available to some degree for the distributed library. Importantly, to use the distributed capabilities we have to change the types of blocks from the standard [Spinhalf](../documentation/blocks/spinhalf.md), [tJ](../documentation/blocks/tJ.md), and [Electron](../documentation/blocks/electron.md) blocks to the [SpinhalfDistributed](../documentation/blocks/spinhalf_distributed.md), [tJDistributed](../documentation/blocks/tJ_distributed.md), and [ElectronDistributed](../documentation/blocks/electron_distributed.md) blocks. An example to compute the ground state of a Heisenberg chain using the distributed capabilities is given by,
 
 === "C++"
-	```c++ 
+	```c++
 	--8<-- "examples/user_guide/main.cpp:usage_guide_dist2"
 	```
 

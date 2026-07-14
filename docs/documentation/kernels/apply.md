@@ -4,10 +4,7 @@ title: apply
 
 Applies an operator given as an [Op](../operators/op.md) or [OpSum](../operators/opsum.md) to a [State](../states/state.md) $\vert w \rangle = \mathcal{O} \vert v\rangle$.
 
-**Sources**<br>
-[apply.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/apply.hpp)<br> 
-[apply.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/apply.hpp)<br>
-[apply.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algebra/apply.jl)
+**Sources:** [apply.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/apply.hpp) · [apply.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/apply.hpp)
 
 ---
 
@@ -94,7 +91,7 @@ An operator $\mathcal{O}$ can be applied to a state $\vert v\rangle$ in two ways
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:apply"
 	```
 

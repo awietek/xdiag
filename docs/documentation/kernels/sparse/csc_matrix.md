@@ -8,10 +8,7 @@ By default the numbers describing the column and row indices are 64-bit signed i
 
 For a description of the CSC sparse matrix format, see [Sparse matrix types](sparse_matrix_types.md).
 
-**Sources**<br>
-[csc_matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/sparse/csc_matrix.hpp)<br>
-[csc_matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/sparse/csc_matrix.cpp)<br>
-[csc_matrix.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algebra/sparse/csc_matrix.jl)
+**Sources:** [csc_matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/sparse/csc_matrix.hpp) · [csc_matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/sparse/csc_matrix.cpp)
 
 ---
 
@@ -72,6 +69,6 @@ The sparse matrix can be created in two ways:
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:csc_matrix"
 	```

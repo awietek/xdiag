@@ -8,10 +8,7 @@ By default the numbers describing the column and row indices are 64-bit signed i
 
 For a description of the COO sparse matrix format, see [Sparse matrix types](sparse_matrix_types.md).
 
-**Sources**<br>
-[coo_matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/sparse/coo_matrix.hpp)<br>
-[coo_matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/sparse/coo_matrix.cpp)<br>
-[coo_matrix.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algebra/sparse/coo_matrix.jl)
+**Sources:** [coo_matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/sparse/coo_matrix.hpp) · [coo_matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/sparse/coo_matrix.cpp)
 
 ---
 
@@ -72,6 +69,6 @@ The sparse matrix can be created in two ways:
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:coo_matrix"
 	```

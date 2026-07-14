@@ -13,12 +13,9 @@ Here, $\delta$ denotes a real number shifting the spectrum of $H$. The algorithm
 > SIAM Journal on Numerical Analysis, Vol. 34, Iss. 5 (1997)<br>
 > DOI: [10.1137/S0036142995280572](https://doi.org/10.1137/S0036142995280572)
 
-The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../algebra/sparse/sparse_matrix_types.md)).
+The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../kernels/sparse/sparse_matrix_types.md)).
 
-**Sources**<br>
-[evolve_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/evolve_lanczos.hpp)<br>
-[evolve_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/evolve_lanczos.cpp)<br>
-[evolve_lanczos.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/evolve_lanczos.jl)
+**Sources:** [evolve_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/evolve_lanczos.hpp) · [evolve_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/evolve_lanczos.cpp)
 
 ---
 
@@ -156,7 +153,7 @@ The method is provided in two variants:
 
 | Name           | Description                                                                                                                                    | Default |
 |:---------------|:-----------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| H              | [OpSum](../operators/opsum.md) or [CSRMatrix](../algebra/sparse/sparse_matrix_types.md) defining the hermitian operator $H$ for time evolution |         |
+| H              | [OpSum](../operators/opsum.md) or [CSRMatrix](../kernels/sparse/sparse_matrix_types.md) defining the hermitian operator $H$ for time evolution |         |
 | psi0           | initial [State](../states/state.md) $\vert \psi_0 \rangle$ of the time evolution                                                               |         |
 | time           | time $\tau$ until which the state is evolved                                                                                                   |         |
 | precision      | accuracy of the computed time evolved state $\vert \psi(t) \rangle$                                                                            | 1e-12   |

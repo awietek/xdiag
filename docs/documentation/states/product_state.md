@@ -4,10 +4,7 @@ title: ProductState
 
 A product state of local configurations.
 
-**Sources**<br>
-[product_state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.hpp)<br>
-[product_state.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.cpp)<br>
-[product_state.jl](https://github.com/awietek/XDiag.jl/blob/main/src/states/product_state.jl)
+**Sources:** [product_state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.hpp) · [product_state.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/product_state.cpp)
 
 --- 
 

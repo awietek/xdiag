@@ -2,7 +2,7 @@
 
 **Author** Martin Ulaga
 
-Uses the [Lanczos algorithm](../documentation/algorithms/eigvals_lanczos.md) [[1]](#1) to calculate the dynamical spin spectral function of the spin-1/2 Heisenberg chain. The structure factor is defined as
+Uses the [Lanczos algorithm](../documentation/linalg/eigvals_lanczos.md) [[1]](#1) to calculate the dynamical spin spectral function of the spin-1/2 Heisenberg chain. The structure factor is defined as
 
 $$
     S^{zz}({\bf k},\omega) = \int dt e^{-i\omega t}\langle S^z_{\bf k}(t)S^z_{\bf -k}\rangle,

@@ -4,10 +4,7 @@ title: Representation
 
 A (1D) irreducible representation of a finite group. Upon creation, the group homomorphism properties are verified.
 
-**Sources**<br>
-[representation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/representation.hpp)<br>
-[representation.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/representation.cpp)<br>
-[representation.jl](https://github.com/awietek/XDiag.jl/blob/main/src/symmetries/representation.jl)
+**Sources:** [representation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/representation.hpp) · [representation.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/representation.cpp)
 
 
 ## Constructors
@@ -126,6 +123,6 @@ Converts the Representation to a readable string representation.
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:Representation"
 	```

@@ -4,10 +4,7 @@ title: Op
 
 Object describing a single linear operator acting on a Hilbert space.
 
-**Sources**<br>
-[op.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.hpp)<br>
-[op.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.cpp)<br>
-[op.jl](https://github.com/awietek/XDiag.jl/blob/main/src/operators/op.jl)
+**Sources:** [op.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.hpp) · [op.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.cpp)
 
 ---
 
@@ -112,6 +109,6 @@ Converts the Op to a readable string representation.
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:Op"
 	```

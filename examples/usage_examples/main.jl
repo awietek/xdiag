@@ -673,3 +673,40 @@ k_pi2_half = read_representation(fl, "k_pi2_half")
 @show isreal(k_pi2_half)
 # --8<-- [end:read_representation]
 
+
+# --8<-- [start:Fermion]
+N = 8
+nfermions = 4
+
+# Spinless fermion chain with hopping and nearest-neighbor repulsion
+block = Fermion(N, nfermions)
+ops = OpSum()
+for i in 1:N
+    ops += "t" * Op("Hop", [i, mod1(i + 1, N)])
+    ops += "V" * Op("NN", [i, mod1(i + 1, N)])
+end
+ops["t"] = 1.0
+ops["V"] = 2.0
+
+e0 = eigval0(ops, block)
+@show e0
+# --8<-- [end:Fermion]
+
+# --8<-- [start:Boson]
+N = 6
+d = 4         # local dimension: up to d-1 = 3 bosons per site
+nbosons = 6
+
+# Bose-Hubbard chain: hopping + on-site interaction
+block = Boson(N, d, nbosons)
+ops = OpSum()
+for i in 1:N
+    ops += "t" * Op("Hop", [i, mod1(i + 1, N)])
+end
+ops += "U" * Op("HubbardU")
+ops["t"] = 1.0
+ops["U"] = 4.0
+
+e0 = eigval0(ops, block)
+@show e0
+# --8<-- [end:Boson]

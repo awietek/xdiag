@@ -4,10 +4,7 @@ title: Algebra routines
 
 Several basic algebraic operations for states and operators.
 
-**Sources**<br>
-[algebra.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/algebra.hpp)<br>
-[algebra.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/algebra.cpp)<br>
-[algebra.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algebra/algebra.jl)
+**Sources:** [dot.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/dot.hpp) · [inner.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/inner.hpp) · [norm.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/norm.hpp)
 
 ---
 
@@ -118,7 +115,7 @@ where $\{ |n\rangle \}$ denotes an orthonormal basis of the block.
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:algebra"
 	```
 	

@@ -8,12 +8,9 @@ $$\vert \psi(t) \rangle = e^{-iHt} \vert \psi_0\rangle,$$
 
 of a [State](../states/state.md) $\vert \psi_0 \rangle$ and a Hermitian operator $H$ using an iterative algorithm. 
 
-The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../algebra/sparse/sparse_matrix_types.md)).
+The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../kernels/sparse/sparse_matrix_types.md)).
 
-**Sources**<br> 
-[time_evolve.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolution/time_evolve.hpp)<br>
-[time_evolve.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolution/time_evolve.cpp)<br>
-[time_evolve.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/time_evolution/time_evolve.jl)
+**Sources:** [time_evolve.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/time_evolve.hpp) · [time_evolve.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/time_evolve.cpp)
 
 ---
 
@@ -98,7 +95,7 @@ The method is provided in two variants:
 
 | Name      | Description                                                                                                                                    | Default   |
 |:----------|:-----------------------------------------------------------------------------------------------------------------------------------------------|-----------|
-| H         | [OpSum](../operators/opsum.md) or [CSRMatrix](../algebra/sparse/sparse_matrix_types.md) defining the hermitian operator $H$ for time evolution |           |
+| H         | [OpSum](../operators/opsum.md) or [CSRMatrix](../kernels/sparse/sparse_matrix_types.md) defining the hermitian operator $H$ for time evolution |           |
 | psi0      | initial [State](../states/state.md) $\vert \psi_0 \rangle$ of the time evolution                                                               |           |
 | time      | time $t$ until which the state is evolved                                                                                                      |           |
 | precision | accuracy of the computed time evolved state $\vert \psi(t) \rangle$                                                                            | 1e-12     |

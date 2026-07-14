@@ -8,10 +8,7 @@ By default the numbers describing the column and row indices are 64-bit signed i
 
 For a description of the CSR sparse matrix format, see [Sparse matrix types](sparse_matrix_types.md).
 
-**Sources**<br>
-[csr_matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/sparse/csr_matrix.hpp)<br>
-[csr_matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/sparse/csr_matrix.cpp)<br>
-[csr_matrix.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algebra/sparse/csr_matrix.jl)
+**Sources:** [csr_matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/sparse/csr_matrix.hpp) · [csr_matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/sparse/csr_matrix.cpp)
 
 ---
 
@@ -72,6 +69,6 @@ The sparse matrix can be created in two ways:
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:csr_matrix"
 	```

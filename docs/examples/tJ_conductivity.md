@@ -2,7 +2,7 @@
 
 **Author** Martin Ulaga
 
-Uses the [Lanczos algorithm](../documentation/algorithms/eigvals_lanczos.md)[[1]](#1) to calculate the conductivity of the planar $t$-$J$ model with one hole. See also the documentation page for the [spin structure factor](spinhalf_chain_structure_factor.md). The ground state conductivity is geven by the current autocorrelator
+Uses the [Lanczos algorithm](../documentation/linalg/eigvals_lanczos.md)[[1]](#1) to calculate the conductivity of the planar $t$-$J$ model with one hole. See also the documentation page for the [spin structure factor](spinhalf_chain_structure_factor.md). The ground state conductivity is geven by the current autocorrelator
 
 $$
     T\sigma(\omega)=-i\int dt e^{-i\omega t}\langle  J(t)J\rangle.

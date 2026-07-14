@@ -15,12 +15,9 @@ of a [State](../states/state.md) $\vert \psi_0 \rangle$ and a Hermitian operator
 
 The algorithm features automatic stepsize control and computes approximate solutions with high precision according to our tests. Yet, the [evolve_lanczos](evolve_lanczos.md) implementation is currently faster and more memory efficient. 
 
-The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../algebra/sparse/sparse_matrix_types.md)).
+The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../kernels/sparse/sparse_matrix_types.md)).
 
-**Sources**<br> 
-[time_evolve_expokit.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolution/time_evolve_expokit.hpp)<br>
-[time_evolve_expokit.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/time_evolution/time_evolve_expokit.cpp)<br>
-[time_evolve_expokit.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/time_evolution/time_evolve_expokit.jl)
+**Sources:** [time_evolve_expokit.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/time_evolve_expokit.hpp) · [time_evolve_expokit.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/time_evolve_expokit.cpp)
 
 ---
 
@@ -106,7 +103,7 @@ The method is provided in two variants:
 
 | Name      | Description                                                                                                                                    | Default |
 |:----------|:-----------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| H         | [OpSum](../operators/opsum.md) or [CSRMatrix](../algebra/sparse/sparse_matrix_types.md) defining the hermitian operator $H$ for time evolution |         |
+| H         | [OpSum](../operators/opsum.md) or [CSRMatrix](../kernels/sparse/sparse_matrix_types.md) defining the hermitian operator $H$ for time evolution |         |
 | psi0      | initial [State](../states/state.md) $\vert \psi_0 \rangle$ of the time evolution                                                               |         |
 | time      | time $t$ until which the state is evolved                                                                                                      |         |
 | precision | accuracy of the computed time evolved state                                                                                                    | 1e-12   |

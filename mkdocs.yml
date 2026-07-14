@@ -7,7 +7,7 @@ theme:
   name: material
   palette:
     scheme: default
-    primary: blue grey
+    primary: black
     accent: indigo
   features:
     - content.code.copy
@@ -50,7 +50,7 @@ nav:
     - Operators: user_guide/04-operators.md
     - States: user_guide/05-states.md
     - Dense matrices: user_guide/06-dense.md
-    - Iterative diagonalization: user_guide/07-iterative-diagonalization.md
+    - Diagonalization: user_guide/07-diagonalization.md
     - Time evolution: user_guide/08-time-evolution.md
     - Measurements: user_guide/09-measurements.md
     - Input/Output: user_guide/10-io.md
@@ -60,9 +60,13 @@ nav:
   - Examples: examples.md
   - Documentation: documentation/index.md
   - Benchmarks: benchmarks.md
+  - Publications: publications.md
   - Contributing: contributing.md
   - Releases: releases.md
   - About: about.md
+
+hooks:
+  - hooks/bibliography.py
 
 plugins:
   - search

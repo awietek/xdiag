@@ -4,10 +4,7 @@ title: State
 
 A generic state describing a quantum wave function $|\psi \rangle$.
 
-**Sources**<br>
-[state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/state.hpp)<br> 
-[state.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/state.cpp)<br>
-[state.jl](https://github.com/awietek/XDiag.jl/blob/main/src/states/state.jl)
+**Sources:** [state.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/state.hpp) · [state.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/state.cpp)
 
 ---
 

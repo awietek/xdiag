@@ -4,12 +4,9 @@ title: eig0
 
 Computes the groud state energy and the ground state of a Hermitian operator on a block by using an iterative Lanczos algorithm. This function is a shortcut for the [eigs_lanczos](eigs_lanczos.md) function. We refer to [eigs_lanczos](eigs_lanczos.md) for further details on the algorithm and the convergence criterion.
 
-The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../algebra/sparse/sparse_matrix_types.md)).
+The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../kernels/sparse/sparse_matrix_types.md)).
 
-**Sources**<br>
-[sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.hpp)<br>
-[sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/sparse_diag.cpp)<br>
-[sparse_diag.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/sparse_diag.jl)
+**Sources:** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/sparse_diag.hpp) · [sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/sparse_diag.cpp)
 
 ---
 
@@ -58,7 +55,7 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 
 | Name           | Description                                                                                                    | Default |
 |:---------------|:---------------------------------------------------------------------------------------------------------------|---------|
-| ops            | [OpSum](../operators/opsum.md) or [CSRMatrix](../algebra/sparse/sparse_matrix_types.md) defining a Hermitian operator |         |
+| ops            | [OpSum](../operators/opsum.md) or [CSRMatrix](../kernels/sparse/sparse_matrix_types.md) defining a Hermitian operator |         |
 | block          | block on which the operator is defined                                                                         |         |
 | precision      | accuracy of the computed ground state                                                                          | 1e-12   |
 | max_iterations | maximum number of iterations                                                                                   | 1000    |
@@ -83,7 +80,7 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 	```
 	
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:eig0"
 	```
 

@@ -793,7 +793,48 @@ auto mat = arma::cx_mat(3, 5, arma::fill::randn);
 fl["a/b/c/mat"] = mat;
 // --8<-- [end:FileH5]
 }
- 
+
+{
+// --8<-- [start:Fermion]
+int N = 8;
+int nfermions = 4;
+
+// Spinless fermion chain with hopping and nearest-neighbor repulsion
+auto block = Fermion(N, nfermions);
+auto ops = OpSum();
+for (int i = 0; i < N; ++i) {
+  ops += "t" * Op("Hop", {i, (i + 1) % N});
+  ops += "V" * Op("NN", {i, (i + 1) % N});
+}
+ops["t"] = 1.0;
+ops["V"] = 2.0;
+
+double e0 = eigval0(ops, block);
+XDIAG_SHOW(e0);
+// --8<-- [end:Fermion]
+}
+
+{
+// --8<-- [start:Boson]
+int N = 6;
+int d = 4;         // local dimension: up to d-1 = 3 bosons per site
+int nbosons = 6;
+
+// Bose-Hubbard chain: hopping + on-site interaction
+auto block = Boson(N, d, nbosons);
+auto ops = OpSum();
+for (int i = 0; i < N; ++i) {
+  ops += "t" * Op("Hop", {i, (i + 1) % N});
+}
+ops += "U" * Op("HubbardU");
+ops["t"] = 1.0;
+ops["U"] = 4.0;
+
+double e0 = eigval0(ops, block);
+XDIAG_SHOW(e0);
+// --8<-- [end:Boson]
+}
+
 // }
   // clang-format on
 } catch (Error e) {

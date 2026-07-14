@@ -3,10 +3,7 @@ title: symmetrize
 ---
 Symmetrizes an operator with respect to a [PermutationGroup](../symmetries/permutation_group.md) or a [Representation](../symmetries/representation.md).
 
-**Sources**<br>
-[symmetrize.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/symmetrize.hpp)<br>
-[symmetrize.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/symmetrize.cpp)<br>
-[symmetrize.jl](https://github.com/awietek/XDiag.jl/blob/main/src/operators/symmetrize.jl)
+**Sources:** [symmetrize.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/symmetrize.hpp) · [symmetrize.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/symmetrize.cpp)
 
 ---
 
@@ -66,7 +63,7 @@ where $\chi_\rho(\pi)$ denotes the characters of the representation $\rho$. This
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:symmetrize"
 	```
 

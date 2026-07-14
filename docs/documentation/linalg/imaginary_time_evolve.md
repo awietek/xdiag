@@ -8,12 +8,9 @@ $$\vert \psi(\tau) \rangle = e^{-(H - \delta) \tau} \vert \psi_0\rangle,$$
 
 of a [State](../states/state.md) $\vert \psi_0 \rangle$ and a Hermitian operator $H$ using an iterative algorithm. $\delta$ here denotes a real number which can be chosen as the ground state energy $\delta=E_0$ of $H$.
 
-The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../algebra/sparse/sparse_matrix_types.md)).
+The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../kernels/sparse/sparse_matrix_types.md)).
 
-**Sources** <br>
-[imaginary_time_evolve.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/imaginary_time_evolve.hpp)<br>
-[imaginary_time_evolve.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/imaginary_time_evolve.cpp)<br>
-[imaginary_time_evolve.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/imaginary_time_evolve.jl)
+**Sources:** [imaginary_time_evolve.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/imaginary_time_evolve.hpp) · [imaginary_time_evolve.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/imaginary_time_evolve.cpp)
 ---
 
 ## Definition
@@ -87,7 +84,7 @@ The method is provided in two variants:
 
 | Name      | Description                                                                                                                                    | Default |
 |:----------|:-----------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| H         | [OpSum](../operators/opsum.md) or [CSRMatrix](../algebra/sparse/sparse_matrix_types.md) defining the hermitian operator $H$ for time evolution |         |
+| H         | [OpSum](../operators/opsum.md) or [CSRMatrix](../kernels/sparse/sparse_matrix_types.md) defining the hermitian operator $H$ for time evolution |         |
 | psi0      | initial [State](../states/state.md) $\vert \psi_0 \rangle$ of the time evolution                                                               |         |
 | time      | time $\tau$ until which the state is evolved                                                                                                   |         |
 | precision | accuracy of the computed time evolved state $\vert \psi(\tau) \rangle$                                                                         | 1e-12   |

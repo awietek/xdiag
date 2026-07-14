@@ -4,10 +4,7 @@ title: fill
 
 Fills a [State](state.md) with a given model state, e.g. a [ProductState](product_state.md) or a [RandomState](random_state.md).
 
-**Sources**<br>
-[fill.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.hpp)<br>
-[fill.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.cpp)<br>
-[fill.jl](https://github.com/awietek/XDiag.jl/blob/main/src/states/fill.jl)
+**Sources:** [fill.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.hpp) · [fill.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/states/fill.cpp)
 
 ---
 

@@ -4,10 +4,7 @@ title: Permutation
 
 Permutations of indices or lattice sites. Basic building block of a [PermutationGroup](permutation_group.md). Permutations can be multiplied, inverted and raised to a power.
 
-**Sources**<br>
-[permutation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp)<br>
-[permutation.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.cpp)<br>
-[permutation.jl](https://github.com/awietek/XDiag.jl/blob/main/src/symmetries/permutation.jl)
+**Sources:** [permutation.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.hpp) · [permutation.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation.cpp)
 
 ---
 
@@ -148,6 +145,6 @@ Converts the Permutation to a readable string representation.
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:Permutation"
 	```

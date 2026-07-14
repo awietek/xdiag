@@ -6,10 +6,7 @@ Implements matrix multiplication of a sparse matrix $A$ in compressed-sparse-row
 
 $$ y = Ax, \quad Y = AX. $$
 
-**Sources**<br>
-[apply.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/sparse/apply.hpp)<br>
-[apply.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/sparse/apply.cpp)<br>
-[apply.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algebra/sparse/apply.jl)
+**Sources:** [apply.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/sparse/apply.hpp) · [apply.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/sparse/apply.cpp)
 
 --- 
 
@@ -66,6 +63,6 @@ There are two interfaces to perform this operation.
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:sparse_apply"
 	```

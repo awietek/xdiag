@@ -4,10 +4,7 @@ title: matrix
 
 Creates a numerical matrix with real (`matrix`) or complex (`matrixC`) coefficients given an [Op](../operators/op.md) or [OpSum](../operators/opsum.md) on a certain block. 
 
-**Sources**<br>
-[matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/matrix.hpp)<br>
-[matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algebra/matrix.cpp)<br>
-[matrix.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algebra/matrix.jl)
+**Sources:** [matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/matrix.hpp) · [matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/matrix.cpp)
 
 ---
 
@@ -52,6 +49,6 @@ A matrix can be created in two ways:
 	```
 
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:matrix"
 	```

@@ -4,12 +4,9 @@ title: eigvals_lanczos
 
 Performs an iterative eigenvalue calculation using the Lanczos algorithm. Returns the tridiagonal matrix, eigenvalues, number of iterations and the stopping criterion.
 
-The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../algebra/sparse/sparse_matrix_types.md)).
+The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../kernels/sparse/sparse_matrix_types.md)).
 
-**Sources**<br>
-[eigvals_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigvals_lanczos.hpp)<br>
-[eigvals_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/algorithms/lanczos/eigvals_lanczos.cpp)<br>
-[eigvals_lanczos.jl](https://github.com/awietek/XDiag.jl/blob/main/src/algorithms/lanczos/eigvals_lanczos.jl)
+**Sources:** [eigvals_lanczos.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/lanczos/eigvals_lanczos.hpp) · [eigvals_lanczos.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/lanczos/eigvals_lanczos.cpp)
 
 ---
 
@@ -142,7 +139,7 @@ The Lanczos algorithm can be run in thre distinct ways:
 
 | Name           | Description                                                                                                                | Default |
 |:---------------|:---------------------------------------------------------------------------------------------------------------------------|---------|
-| ops            | [OpSum](../operators/opsum.md) or [CSRMatrix](../algebra/sparse/sparse_matrix_types.md) defining the bonds of the operator |         |
+| ops            | [OpSum](../operators/opsum.md) or [CSRMatrix](../kernels/sparse/sparse_matrix_types.md) defining the bonds of the operator |         |
 | block          | block on which the operator is defined                                                                                     |         |
 | psi0           | Initial [State](../states/state.md) from which the Lanczos algorithm is started                                            |         |
 | neigvals       | number $k$ of eigenvalue to converge                                                                                       | 1       |
