@@ -63,6 +63,7 @@ nav:
   - Publications: publications.md
   - Contributing: contributing.md
   - Releases: releases.md
+  - Citation: citation.md
   - About: about.md
 
 hooks:

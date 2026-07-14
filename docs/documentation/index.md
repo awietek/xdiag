@@ -26,7 +26,6 @@ The documentation is organized following the source tree of XDiag: every subdire
 | [tJDistributed](blocks/tJ_distributed.md)             | Block of a $t-J$ type Hilbert space  (distributed computing)       | :simple-cplusplus: |
 | [ElectronDistributed](blocks/electron_distributed.md) | Block of an Electron type Hilbert space  (distributed computing)   | :simple-cplusplus: |
 
----
 
 ## Operators
 
@@ -36,8 +35,6 @@ The documentation is organized following the source tree of XDiag: every subdire
 | [OpSum](operators/opsum.md)                   | Sums and products of couplings times operators       | :simple-cplusplus:  :simple-julia: |
 | [hc](operators/hc.md)                         | Returns the hermitian conjugate of an Op or OpSum    | :simple-cplusplus:  :simple-julia: |
 | [Operator types](operators/operator_types.md) | A summary of all the operator types defined in XDiag |                                    |
-
----
 
 ## States
 
@@ -56,15 +53,11 @@ The documentation is organized following the source tree of XDiag: every subdire
 | [expect](states/expect.md)                            | Expectation value of a single-site operator on every site         | :simple-cplusplus: :simple-julia: |
 | [correlation_matrix](states/correlation_matrix.md)    | Two-point correlations between all pairs of sites                 | :simple-cplusplus: :simple-julia: |
 
----
-
 ## Algebra
 
 | Name                                  | Description                                                                                                                          |                          Language |
 |:--------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|----------------------------------:|
 | [symmetrize](algebra/symmetrize.md)   | Symmetrizes an operator with a [PermutationGroup](symmetries/permutation_group.md) or [Representation](symmetries/representation.md) | :simple-cplusplus: :simple-julia: |
-
----
 
 ## Kernels
 
@@ -82,8 +75,6 @@ The documentation is organized following the source tree of XDiag: every subdire
 | [csr_matrix](kernels/sparse/csr_matrix.md)                   | Creates the sparse matrix of an operator in the compressed-sparse-row (CSR) format     | :simple-cplusplus: :simple-julia: |
 | [csc_matrix](kernels/sparse/csc_matrix.md)                   | Creates the sparse matrix of an operator in the compressed-sparse-column (CSC) format  | :simple-cplusplus: :simple-julia: |
 | [apply](kernels/sparse/apply.md)                             | Sparse matrix-vector (and sparse matrix-matrix) multiplication with CSR matrices       | :simple-cplusplus: :simple-julia: |
-
----
 
 ## Linear Algebra
 
@@ -108,8 +99,6 @@ The documentation is organized following the source tree of XDiag: every subdire
 | [evolve_lanczos](linalg/evolve_lanczos.md)               | Computes the exponential $e^{z H}\vert\psi\rangle $ of a Hermitian operator times a State for a real or complex $z$ using the Lanczos algorithm | :simple-cplusplus: :simple-julia: |
 | [time_evolve_expokit](linalg/time_evolve_expokit.md)     | Performs a real-time evolution $e^{ -iHt} \vert \psi \rangle$ using a highly accurate Lanczos algorithm                                     | :simple-cplusplus: :simple-julia: |
 
----
-
 ## Input / Output
 
 #### TOML
@@ -127,8 +116,6 @@ The documentation is organized following the source tree of XDiag: every subdire
 |:------------------------|:--------------------------------------------------------------------------|-------------------:|
 | [FileH5](io/file_h5.md) | A file handler for [hdf5](https://www.hdfgroup.org/solutions/hdf5/) files | :simple-cplusplus: |
 
----
-
 ## Symmetries
 
 | Name                                                | Description                                         |                          Language |
@@ -136,8 +123,6 @@ The documentation is organized following the source tree of XDiag: every subdire
 | [Permutation](symmetries/permutation.md)            | Permutations of indices or lattice sites            | :simple-cplusplus: :simple-julia: |
 | [PermutationGroup](symmetries/permutation_group.md) | A group of permutations                             | :simple-cplusplus: :simple-julia: |
 | [Representation](symmetries/representation.md)      | A (1D) irreducible representation of a finite group | :simple-cplusplus: :simple-julia: |
-
----
 
 ## Utilities
 
@@ -149,8 +134,6 @@ The documentation is organized following the source tree of XDiag: every subdire
 | [Logging](utilities/logging.md)                   | Controling what is written to standard output            | :simple-cplusplus: :simple-julia: |
 | [Timing](utilities/timing.md)                     | Measuring wall time straightforwardly                    |                :simple-cplusplus: |
 | [XDIAG_SHOW](utilities/xdiag_show.md)             | Macro for printing debugging information                 |                :simple-cplusplus: |
-
----
 
 ## Building
 
