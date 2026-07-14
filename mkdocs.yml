@@ -42,10 +42,28 @@ extra_css:
 nav:
   - Home: index.md
   - Quick Start: quick_start.md
-  - User Guide: user_guide.md
+  - User Guide:
+    - user_guide/index.md
+    - Installation: user_guide/01-installation.md
+    - Writing code: user_guide/02-application.md
+    - Hilbert spaces: user_guide/03-hilbert-spaces.md
+    - Operators: user_guide/04-operators.md
+    - States: user_guide/05-states.md
+    - Dense matrices: user_guide/06-dense.md
+    - Iterative diagonalization: user_guide/07-iterative-diagonalization.md
+    - Time evolution: user_guide/08-time-evolution.md
+    - Measurements: user_guide/09-measurements.md
+    - Input/Output: user_guide/10-io.md
+    - Symmetries: user_guide/11-symmetries.md
+    - Sparse matrices: user_guide/12-sparse.md
+    - Distributed computing: user_guide/13-distributed.md
   - Examples: examples.md
   - Documentation: documentation/index.md
   - Benchmarks: benchmarks.md
   - Contributing: contributing.md
   - Releases: releases.md
   - About: about.md
+
+plugins:
+  - search
+  - section-index
