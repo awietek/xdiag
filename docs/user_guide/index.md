@@ -19,7 +19,7 @@ For a complete reference of every function and object, see the [Documentation](.
 
     Installation and compilation of the XDiag core library
 
-    [:octicons-arrow-right-24: Get started](01-installation.md)
+    [:octicons-arrow-right-24: Read more](01-installation.md)
 
 -   :material-cog: **Application code**
 
@@ -27,7 +27,7 @@ For a complete reference of every function and object, see the [Documentation](.
 
     How to set up your application code using Julia or C++
 
-    [:octicons-arrow-right-24: Configure](02-application.md)
+    [:octicons-arrow-right-24: Read more](02-application.md)
 
 </div>
 
@@ -36,29 +36,29 @@ For a complete reference of every function and object, see the [Documentation](.
 
 <div class="grid cards" markdown>
 
--   :material-download: **Hilbert spaces**
+-   :material-react: **Hilbert spaces**
 
     ---
 
     How to define a Hilbert space of fermions, bosons, or spins. 
 
-    [:octicons-arrow-right-24: Get started](03-hilbert-spaces.md)
+    [:octicons-arrow-right-24: Read more](03-hilbert-spaces.md)
 
--   :material-cog: **Operators**
+-   :material-react: **Operators**
 
     ---
 
     How to define operators and perform algebraic operations with them.
 
-    [:octicons-arrow-right-24: Configure](04-operators.md)
+    [:octicons-arrow-right-24: Read more](04-operators.md)
 	
--   :material-cog: **States**
+-   :material-react: **States**
 
     ---
 
     How to define a quantum state and act on it with operators
 
-    [:octicons-arrow-right-24: Configure](05-states.md)
+    [:octicons-arrow-right-24: Read more](05-states.md)
 		
 </div>
 
@@ -66,38 +66,38 @@ For a complete reference of every function and object, see the [Documentation](.
 
 <div class="grid cards" markdown>
 
--   :material-download: **Dense matrices**
+-   :material-matrix: **Dense matrices**
 
     ---
 
     How to compute a dense matrix representation of an operator and perform a full diagonalization 
 
-    [:octicons-arrow-right-24: Get started](06-dense.md)
+    [:octicons-arrow-right-24: Read more](06-dense.md)
 
--   :material-cog: **Diagonalization**
+-   :material-matrix: **Diagonalization**
 
     ---
 
     How to perform a diagonalization using iterative numerical algorithms
 
-    [:octicons-arrow-right-24: Configure](07-diagonalization.md)
+    [:octicons-arrow-right-24: Read more](07-diagonalization.md)
 	
--   :material-cog: **Time evolution**
+-   :material-matrix: **Time evolution**
 
     ---
 
     How to evolve a state in real or imaginary time
 
-    [:octicons-arrow-right-24: Configure](08-time-evolution.md)
+    [:octicons-arrow-right-24: Read more](08-time-evolution.md)
 	
 	
--   :material-cog: **Measurements**
+-   :material-matrix: **Measurements**
 
     ---
 
     How to compute expectation values of observables 
 
-    [:octicons-arrow-right-24: Configure](09-measurements.md)
+    [:octicons-arrow-right-24: Read more](09-measurements.md)
 	
 </div>
 
@@ -106,13 +106,13 @@ For a complete reference of every function and object, see the [Documentation](.
 
 <div class="grid cards" markdown>
 
--   :material-download: **Input / Output**
+-   :material-file: **Input / Output**
 
     ---
 
     Reading and writing to TOML and hdf5 files. 
 
-    [:octicons-arrow-right-24: Get started](10-io.md)
+    [:octicons-arrow-right-24: Read more](10-io.md)
 
 
 </div>
@@ -121,13 +121,13 @@ For a complete reference of every function and object, see the [Documentation](.
 
 <div class="grid cards" markdown>
 
--   :material-cog: **Symmetries**
+-   :material-octahedron: **Symmetries**
 
     ---
 
     How to work with symmetries and symmetry-adapted bases
 
-    [:octicons-arrow-right-24: Configure](11-symmetries.md)
+    [:octicons-arrow-right-24: Read more](11-symmetries.md)
 
 
 </div>
@@ -136,22 +136,22 @@ For a complete reference of every function and object, see the [Documentation](.
 
 <div class="grid cards" markdown>
 
--   :material-cog: **Sparse matrices**
+-   :material-star: **Sparse matrices**
 
     ---
 
     How to create sparse matrices and use them in iterative algorithms
 
-    [:octicons-arrow-right-24: Configure](12-sparse.md)
+    [:octicons-arrow-right-24: Read more](12-sparse.md)
 	
 	
--   :material-cog: **Distributed computing**
+-   :material-star: **Distributed computing**
 
     ---
 
     How to use the distributed XDiag library for distributed memory computing 
 
-    [:octicons-arrow-right-24: Configure](13-distributed.md)
+    [:octicons-arrow-right-24: Read more](13-distributed.md)
 	
 </div>
 

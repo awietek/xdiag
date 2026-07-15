@@ -5,9 +5,7 @@ title: Time evolution
 # Time evolution
 
 Besides diagonalization, XDiag also offers iterative algorithms to perform real- and imaginary-time evolutions of the form,
-
 $$ |\phi(t)\rangle = e^{-iHt} |\psi_0\rangle \quad \text{or} \quad |\eta(\tau)\rangle = e^{-\tau H} |\psi_0\rangle. $$
-
 Like the iterative diagonalization routines, these algorithms are *matrix-free*: they take the Hamiltonian as an [OpSum](../documentation/operators/opsum.md) and act on a [State](../documentation/states/state.md), without ever building a dense matrix.
 
 ## Real-time evolution

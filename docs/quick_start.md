@@ -5,9 +5,7 @@ title: Quick start
 # Quick start
 
 Welcome to XDiag! This quick start walks you through your very first exact diagonalization: computing the ground-state energy of the spin $S=1/2$ Heisenberg chain,
-
 $$ H = J\sum_{\langle i,j \rangle} \mathbf{S}_i \cdot \mathbf{S}_j, $$
-
 on a periodic one-dimensional lattice. Here $\mathbf{S}_i = (S_i^x, S_i^y, S_i^z)$ are the spin $S=1/2$ operators and $\langle i,j \rangle$ denotes summation over nearest-neighbor sites $i$ and $j$.
 
 XDiag comes in two flavors that share the same API — a [Julia](#installation) package for interactive use and a [C++](#installation) library for maximum performance. Pick whichever you prefer below. For a thorough, step-by-step introduction, see the [User Guide](user_guide/index.md).

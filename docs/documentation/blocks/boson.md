@@ -10,13 +10,6 @@ Since a $d$-level local degree of freedom equally describes a spin $S = (d-1)/2$
 
 ## Constructors
 
-=== "C++"
-	```c++
-	Boson(int64_t nsites, int64_t d);
-	Boson(int64_t nsites, int64_t d, int64_t number);
-	Boson(int64_t nsites, int64_t d, Representation const &irrep);
-	Boson(int64_t nsites, int64_t d, int64_t number, Representation const &irrep);
-	```
 === "Julia"
 	```julia
 	Boson(nsites::Int64, d::Int64)
@@ -24,6 +17,14 @@ Since a $d$-level local degree of freedom equally describes a spin $S = (d-1)/2$
 	Boson(nsites::Int64, d::Int64, irrep::Representation)
 	Boson(nsites::Int64, d::Int64, number::Int64, irrep::Representation)
 	```
+=== "C++"
+	```c++
+	Boson(int64_t nsites, int64_t d);
+	Boson(int64_t nsites, int64_t d, int64_t number);
+	Boson(int64_t nsites, int64_t d, Representation const &irrep);
+	Boson(int64_t nsites, int64_t d, int64_t number, Representation const &irrep);
+	```
+
 
 | Name    | Description                                                                          | Default |
 |:--------|:-------------------------------------------------------------------------------------|---------|
@@ -75,13 +76,6 @@ For a full description of all operator types, see the [operator types](../operat
 
 A Boson block can be iterated over, where at each iteration a [ProductState](../states/product_state.md) representing the corresponding basis state is returned.
 
-=== "C++"
-	```c++
-	auto block = Boson(4, 3, 2);   // 4 sites, local dimension 3, 2 bosons
-	for (auto pstate : block) {
-	  Log("{} {}", to_string(pstate, block), block.index(pstate));
-	}
-	```
 === "Julia"
 	```julia
 	block = Boson(4, 3, 2)   # 4 sites, local dimension 3, 2 bosons
@@ -89,19 +83,26 @@ A Boson block can be iterated over, where at each iteration a [ProductState](../
 	    @show to_string(pstate, block), index(block, pstate)
 	end
 	```
+=== "C++"
+	```c++
+	auto block = Boson(4, 3, 2);   // 4 sites, local dimension 3, 2 bosons
+	for (auto pstate : block) {
+	  Log("{} {}", to_string(pstate, block), block.index(pstate));
+	}
+	```
 
 ## Methods
 
 #### index
 Returns the index of a given [ProductState](../states/product_state.md) in the basis of the Boson block.
 
-=== "C++"
-	```c++
-	int64_t index(Boson const &block, ProductState const &pstate);
-	```
 === "Julia"
 	```julia
 	index(block::Boson, pstate::ProductState)::Int64
+	```
+=== "C++"
+	```c++
+	int64_t Boson::index(ProductState const &pstate);
 	```
 
 !!! warning "1-indexing"
@@ -110,61 +111,62 @@ Returns the index of a given [ProductState](../states/product_state.md) in the b
 #### nsites
 Returns the number of sites of the block.
 
-=== "C++"
-	```c++
-	int64_t nsites(Boson const &block);
-	```
 === "Julia"
 	```julia
 	nsites(block::Boson)::Int64
+	```
+=== "C++"
+	```c++
+	int64_t nsites(Boson const &block);
 	```
 
 #### d
 Returns the local dimension of the block.
 
-=== "C++"
-	```c++
-	int64_t d(Boson const &block);
-	```
 === "Julia"
 	```julia
 	d(block::Boson)::Int64
+	```
+=== "C++"
+	```c++
+	int64_t d(Boson const &block);
 	```
 
 #### size
 Returns the size of the block, i.e. its dimension.
 
-=== "C++"
-	```c++
-	int64_t size(Boson const &block);
-	```
 === "Julia"
 	```julia
 	size(block::Boson)::Int64
+	```
+=== "C++"
+	```c++
+	int64_t size(Boson const &block);
 	```
 
 #### dim
 Returns the dimension of the block, same as "size" for non-distributed blocks.
 
-=== "C++"
-	```c++
-	int64_t dim(Boson const &block);
-	```
 === "Julia"
 	```julia
 	dim(block::Boson)::Int64
 	```
+=== "C++"
+	```c++
+	int64_t dim(Boson const &block);
+	```
+
 
 #### isreal
 Returns whether the block can be used with real arithmetic. Complex arithmetic is needed when a [Representation](../symmetries/representation.md) is genuinely complex.
 
-=== "C++"
-	```c++
-	bool isreal(Boson const &block);
-	```
 === "Julia"
 	```julia
 	isreal(block::Boson)::Bool
+	```
+=== "C++"
+	```c++
+	bool isreal(Boson const &block);
 	```
 
 ## Usage Example
@@ -179,3 +181,4 @@ A Bose-Hubbard chain with nearest-neighbor hopping and on-site interaction.
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:Boson"
 	```
+

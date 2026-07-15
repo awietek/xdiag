@@ -8,13 +8,6 @@ A block in a Hilbert space of spinless fermions.
 
 ## Constructors
 
-=== "C++"
-	```c++
-	Fermion(int64_t nsites);
-	Fermion(int64_t nsites, int64_t number);
-	Fermion(int64_t nsites, Representation const &irrep);
-	Fermion(int64_t nsites, int64_t number, Representation const &irrep);
-	```
 === "Julia"
 	```julia
 	Fermion(nsites::Int64)
@@ -22,6 +15,14 @@ A block in a Hilbert space of spinless fermions.
 	Fermion(nsites::Int64, irrep::Representation)
 	Fermion(nsites::Int64, number::Int64, irrep::Representation)
 	```
+=== "C++"
+	```c++
+	Fermion(int64_t nsites);
+	Fermion(int64_t nsites, int64_t number);
+	Fermion(int64_t nsites, Representation const &irrep);
+	Fermion(int64_t nsites, int64_t number, Representation const &irrep);
+	```
+
 
 | Name    | Description                                                                          | Default |
 |:--------|:-------------------------------------------------------------------------------------|---------|
@@ -44,16 +45,16 @@ Each site of a Fermion block carries a local dimension $d=2$. In a [ProductState
 
 The following operator types can be used on a Fermion block. Here $c^\dagger_i$ and $c_i$ denote the fermionic creation and annihilation operators on site $i$, and $n_i = c^\dagger_i c_i$ is the number operator.
 
-| Type      | Description                        | Formula                                            | No. of sites |
-|:----------|:-----------------------------------|:---------------------------------------------------|:------------:|
-| `Cdag`    | creation operator                  | $c^\dagger_i$                                      | 1            |
-| `C`       | annihilation operator              | $c_i$                                              | 1            |
-| `N`       | number operator                    | $n_i = c^\dagger_i c_i$                            | 1            |
-| `NN`      | density-density interaction        | $n_i n_j$                                          | 2            |
-| `Hop`     | hopping term                       | $-(c^\dagger_i c_j + c^\dagger_j c_i)$             | 2            |
-| `HopAsym` | antisymmetric hopping term         | $-(c^\dagger_i c_j - c^\dagger_j c_i)$             | 2            |
-| `TotalN`  | total number of fermions           | $\sum_i n_i$                                        | 0            |
-| `Id`      | identity                           | $\mathbb{1}$                                        | 0            |
+| Type      | Description                 | Formula                                | No. of sites |
+|:----------|:----------------------------|:---------------------------------------|:------------:|
+| `Cdag`    | creation operator           | $c^\dagger_i$                          | 1            |
+| `C`       | annihilation operator       | $c_i$                                  | 1            |
+| `N`       | number operator             | $n_i = c^\dagger_i c_i$                | 1            |
+| `NN`      | density-density interaction | $n_i n_j$                              | 2            |
+| `Hop`     | hopping term                | $-(c^\dagger_i c_j + c^\dagger_j c_i)$ | 2            |
+| `HopAsym` | antisymmetric hopping term  | $-(c^\dagger_i c_j - c^\dagger_j c_i)$ | 2            |
+| `TotalN`  | total number of fermions    | $\sum_i n_i$                           | 0            |
+| `Id`      | identity                    | $\mathbb{1}$                           | 0            |
 
 For a full description of all operator types, see the [operator types](../operators/operator_types.md) page. The Jordan-Wigner sign convention used for the fermionic operators is described in the [Hilbert spaces](../../user_guide/03-hilbert-spaces.md#normal-ordering-of-fermionic-blocks) section of the user guide.
 
@@ -61,13 +62,6 @@ For a full description of all operator types, see the [operator types](../operat
 
 A Fermion block can be iterated over, where at each iteration a [ProductState](../states/product_state.md) representing the corresponding basis state is returned.
 
-=== "C++"
-	```c++
-	auto block = Fermion(4, 2);
-	for (auto pstate : block) {
-	  Log("{} {}", to_string(pstate, block), block.index(pstate));
-	}
-	```
 === "Julia"
 	```julia
 	block = Fermion(4, 2)
@@ -75,19 +69,26 @@ A Fermion block can be iterated over, where at each iteration a [ProductState](.
 	    @show to_string(pstate, block), index(block, pstate)
 	end
 	```
+=== "C++"
+	```c++
+	auto block = Fermion(4, 2);
+	for (auto pstate : block) {
+	  Log("{} {}", to_string(pstate, block), block.index(pstate));
+	}
+	```
 
 ## Methods
 
 #### index
 Returns the index of a given [ProductState](../states/product_state.md) in the basis of the Fermion block.
 
-=== "C++"
-	```c++
-	int64_t index(Fermion const &block, ProductState const &pstate);
-	```
 === "Julia"
 	```julia
 	index(block::Fermion, pstate::ProductState)::Int64
+	```
+=== "C++"
+	```c++
+	int64_t Fermion::index(ProductState const &pstate);
 	```
 
 !!! warning "1-indexing"
@@ -96,49 +97,49 @@ Returns the index of a given [ProductState](../states/product_state.md) in the b
 #### nsites
 Returns the number of sites of the block.
 
-=== "C++"
-	```c++
-	int64_t nsites(Fermion const &block);
-	```
 === "Julia"
 	```julia
 	nsites(block::Fermion)::Int64
+	```
+=== "C++"
+	```c++
+	int64_t nsites(Fermion const &block);
 	```
 
 #### size
 Returns the size of the block, i.e. its dimension.
 
-=== "C++"
-	```c++
-	int64_t size(Fermion const &block);
-	```
 === "Julia"
 	```julia
 	size(block::Fermion)::Int64
+	```
+=== "C++"
+	```c++
+	int64_t size(Fermion const &block);
 	```
 
 #### dim
 Returns the dimension of the block, same as "size" for non-distributed blocks.
 
-=== "C++"
-	```c++
-	int64_t dim(Fermion const &block);
-	```
 === "Julia"
 	```julia
 	dim(block::Fermion)::Int64
+	```
+=== "C++"
+	```c++
+	int64_t dim(Fermion const &block);
 	```
 
 #### isreal
 Returns whether the block can be used with real arithmetic. Complex arithmetic is needed when a [Representation](../symmetries/representation.md) is genuinely complex.
 
-=== "C++"
-	```c++
-	bool isreal(Fermion const &block);
-	```
 === "Julia"
 	```julia
 	isreal(block::Fermion)::Bool
+	```
+=== "C++"
+	```c++
+	bool isreal(Fermion const &block);
 	```
 
 ## Usage Example
@@ -153,3 +154,4 @@ A spinless fermion chain with nearest-neighbor hopping and density-density repul
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:Fermion"
 	```
+

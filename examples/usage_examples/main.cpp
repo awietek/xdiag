@@ -73,7 +73,7 @@ XDIAG_SHOW(block_sym_sz.size());
 
 // Iteration
 for (auto pstate : block_sym_sz) {
-  Log("{} {}", to_string(pstate), index(block_sym_sz, pstate));
+  Log("{} {}", to_string(pstate), block_sym_sz.index(pstate));
 }
 // --8<-- [end:Spinhalf]
 }
@@ -102,7 +102,7 @@ XDIAG_SHOW(block_sym.size());
 
 // Iteration
 for (auto pstate : block_sym) {
-  Log("{} {}", to_string(pstate), index(block_sym, pstate));
+  Log("{} {}", to_string(pstate), block_sym.index(pstate));
 }
 // --8<-- [end:tJ]
 }
@@ -139,7 +139,7 @@ XDIAG_SHOW(block_sym_np.size());
 
 // Iteration
 for (auto pstate : block_sym_np) {
-  Log("{} {}", to_string(pstate), index(block_sym_np, pstate));
+  Log("{} {}", to_string(pstate), block_sym_np.index(pstate));
 }
 // --8<-- [end:Electron]
 }
@@ -834,7 +834,32 @@ double e0 = eigval0(ops, block);
 XDIAG_SHOW(e0);
 // --8<-- [end:Boson]
 }
+{
+// --8<-- [start:expect]
+auto block = Spinhalf(8);
+auto ops = OpSum();
+for (int i = 0; i < 8; ++i) {
+  ops += "J" * Op("SdotS", {i, (i + 1) % 8});
+}
+ops["J"] = 1.0;
+auto [e0, psi0] = eig0(ops, block);
+arma::vec sz = expect(psi0, "Sz");
+// --8<-- [end:expect]
+}
 
+{
+// --8<-- [start:correlation_matrix]
+auto block = Spinhalf(8);
+auto ops = OpSum();
+for (int i = 0; i < 8; ++i) {
+  ops += "J" * Op("SdotS", {i, (i + 1) % 8});
+}
+ops["J"] = 1.0;
+auto [e0, psi0] = eig0(ops, block);
+arma::mat szsz = correlation_matrix(psi0, "Sz", "Sz");
+// --8<-- [end:correlation_matrix]
+}
+ 
 // }
   // clang-format on
 } catch (Error e) {

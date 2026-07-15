@@ -1,5 +1,6 @@
 using XDiag
 
+
 # --8<-- [start:Permutation]
 p1 = Permutation([1, 3, 2, 4])
 p2 = Permutation([3, 1, 2, 4])
@@ -675,38 +676,68 @@ k_pi2_half = read_representation(fl, "k_pi2_half")
 
 
 # --8<-- [start:Fermion]
-N = 8
-nfermions = 4
+let
+    N = 8
+    nfermions = 4
 
-# Spinless fermion chain with hopping and nearest-neighbor repulsion
-block = Fermion(N, nfermions)
-ops = OpSum()
-for i in 1:N
-    ops += "t" * Op("Hop", [i, mod1(i + 1, N)])
-    ops += "V" * Op("NN", [i, mod1(i + 1, N)])
+    # Spinless fermion chain with hopping and nearest-neighbor repulsion
+    block = Fermion(N, nfermions)
+    ops = OpSum()
+    for i in 1:N
+        ops += "t" * Op("Hop", [i, mod1(i + 1, N)])
+        ops += "V" * Op("NN", [i, mod1(i + 1, N)])
+    end
+    ops["t"] = 1.0
+    ops["V"] = 2.0
+
+    e0 = eigval0(ops, block)
+    @show e0
 end
-ops["t"] = 1.0
-ops["V"] = 2.0
-
-e0 = eigval0(ops, block)
-@show e0
 # --8<-- [end:Fermion]
 
 # --8<-- [start:Boson]
-N = 6
-d = 4         # local dimension: up to d-1 = 3 bosons per site
-nbosons = 6
+let
+    N = 6
+    d = 4         # local dimension: up to d-1 = 3 bosons per site
+    nbosons = 6
 
-# Bose-Hubbard chain: hopping + on-site interaction
-block = Boson(N, d, nbosons)
-ops = OpSum()
-for i in 1:N
-    ops += "t" * Op("Hop", [i, mod1(i + 1, N)])
+    # Bose-Hubbard chain: hopping + on-site interaction
+    block = Boson(N, d, nbosons)
+    ops = OpSum()
+    for i in 1:N
+        ops += "t" * Op("Hop", [i, mod1(i + 1, N)])
+    end
+    ops += "U" * Op("HubbardU")
+    ops["t"] = 1.0
+    ops["U"] = 4.0
+
+    e0 = eigval0(ops, block)
+    @show e0
 end
-ops += "U" * Op("HubbardU")
-ops["t"] = 1.0
-ops["U"] = 4.0
-
-e0 = eigval0(ops, block)
-@show e0
 # --8<-- [end:Boson]
+
+# --8<-- [start:expect]
+let
+    block = Spinhalf(8)
+    ops = OpSum()
+    for i in 1:8
+	ops += "J" * Op("SdotS", [i, mod1(i + 1, 8)])
+    end
+    ops["J"] = 1.0
+    e0, psi0 = eig0(ops, block)
+    szs = expect(psi0, "Sz")
+end
+# --8<-- [end:expect]
+
+# --8<-- [start:correlation_matrix]
+let
+    block = Spinhalf(8)
+    ops = OpSum()
+    for i in 1:8
+	ops += "J" * Op("SdotS", [i, mod1(i + 1, 8)])
+    end
+    ops["J"] = 1.0
+    e0, psi0 = eig0(ops, block)
+    szsz = correlation_matrix(psi0, "Sz", "Sz")
+end
+# --8<-- [end:correlation_matrix]

@@ -10,18 +10,15 @@ A block in a  $t-J$ type Hilbert space, i.e. fermions with $\uparrow, \downarrow
 
 === "C++"	
 	```c++
-	tJDistributed(int64_t nsites, int64_t nup, int64_t ndn, std::string backend = "auto");
+	tJDistributed(int64_t nsites, int64_t nup, int64_t ndn);
 	```
-
 
 | Name    | Description                                                                          | Default |
 |:--------|:-------------------------------------------------------------------------------------|---------|
 | nsites  | number of sites (integer)                                                            |         |
 | nup     | number of "up" electrons (integer)                                                   |         |
 | ndn     | number of "dn" electrons (integer)                                                   |         |
-| backend | backend used for coding the basis states                                             | `auto`  |
 
-The parameter `backend` chooses how the block is coded internally. By using the default parameter `auto` the backend is chosen automatically. Alternatives are `32bit`, `64bit`.
 
 ## Local configurations and operators
 
@@ -41,7 +38,7 @@ An tJDistributed block can be iterated over, where at each iteration a [ProductS
 	```c++
     auto block = tJDistributed(4, 2, 1);
 	for (auto pstate : block) {
-		Log("{} {}", to_string(pstate), index(block, pstate));
+		Log("{} {}", to_string(pstate), block.index(pstate));
 	}
 	```
 
@@ -53,7 +50,7 @@ Returns the index of a given [ProductState](../states/product_state.md) in the b
 
 === "C++"	
 	```c++
-	int64_t index(tJDistributed const &block, ProductState const &pstate);
+	int64_t tJDistributed::index(ProductState const &pstate);
 	```
 
 #### nsites

@@ -5,9 +5,7 @@ title: Measurements
 # Measurements
 
 Measurements in the form of expectation values of wavefunctions,
-
 $$   \langle \mathcal{O}\rangle =  \langle \psi | \mathcal{O} | \psi \rangle,$$
-
 can be evaluated using the [inner](../documentation/states/algebra.md#inner) function. For example, we compute a static spin correlation $\langle S_{0}^{z} S_{j}^{z}\rangle$ between site $0$ (resp. $1$ in Julia) and $j$.
 
 === "Julia"
@@ -52,9 +50,7 @@ A common task is to evaluate the expectation value of a single-site operator on 
 ## Correlation matrices
 
 Similarly, the two-point correlations of a pair of single-site operators between all pairs of sites can be computed in one call with the [correlation_matrix](../documentation/states/correlation_matrix.md) function. Given two operator types, it returns the matrix
-
 $$ C_{ij} = \langle \psi | \mathcal{O}^{(1)}_i \, \mathcal{O}^{(2)}_j | \psi \rangle. $$
-
 === "Julia"
 	```julia
 	--8<-- "examples/user_guide/main.jl:usage_guide_corr"

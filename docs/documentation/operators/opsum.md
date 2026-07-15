@@ -3,12 +3,9 @@ title: OpSum
 ---
 
 Object representing a generic many-body operator by a sum of operators of the form 
-
 $$ \mathcal{O} = \sum_i c_i \mathcal{O}_i. $$
 
 **Sources:** [opsum.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.hpp) · [opsum.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/opsum.cpp)
-
---- 
 
 An OpSum is consists of a sum of pairs given by
 
@@ -21,8 +18,6 @@ Generically, an OpSum can thus have coupling constants defined by either strings
 Thus, OpSums can be defined independently of the numerical values of the coupling constants, e.g. in an input file. Upon execution of the code, these constants can then be set. Most operations in XDiag require the OpSum to be convertible to a plain OpSum.
 
 OpSums can be added and subtracted, as well as multiplied with and divided by a scalar value, i.e. a real or complex number. In addition, two OpSums can be **multiplied** with one another, forming the (generally non-commutative) product of the two operators. Together, these operations turn the set of OpSums into an **algebra**. Complemented by the hermitian conjugation [hc](hc.md), which is an involution satisfying $(\mathcal{A}\mathcal{B})^\dagger = \mathcal{B}^\dagger\mathcal{A}^\dagger$, the OpSums form an **involutive algebra** ($*$-algebra), precisely the mathematical structure carried by operators in quantum mechanics.
-
----
 
 ## Constructors
 
@@ -66,8 +61,6 @@ Alternatively, an OpSum can also be constructed via the `* operator`, for exampl
 		ops += "J" * Op("SzSz", [i, mod1(i+1, N)]);
 	```
 	
----
-
 ## Complex couplings
 
 XDiag allows all couplings to be complex. A complex coupling always acts as a plain prefactor $c$ multiplying the operator. Under hermitian conjugation with [hc](hc.md), the coupling is complex-conjugated to $c^\star$ (while the operator type is mapped to its hermitian-conjugate partner, e.g. $\mathrm{hc}(S^+) = S^-$),
@@ -80,7 +73,6 @@ Consequently, a complex coupling generally turns a hermitian operator into a non
 
 	Prior to version 0.5, the hopping (`Hop`, `Hopup`, `Hopdn`) and exchange (`Exchange`) operators were defined to be hermitian even in the presence of a complex coupling, i.e. the coupling entered as $t\,c^\dagger_i c_j + t^\star c^\dagger_j c_i$. This convention was changed, because with it the [OpSum](opsum.md) objects would not form an [algebra](#operator-algebra-product). Since then, a complex coupling is a plain prefactor as described above. To obtain the antisymmetric (non-hermitian) hopping and exchange terms, the dedicated operator types [`HopAsym`](operator_types.md) and [`ExchangeAsym`](operator_types.md) (as well as the spin-resolved `HopupAsym` and `HopdnAsym`) were introduced.
 
----
 
 ## Methods
 
@@ -97,7 +89,6 @@ Converts an OpSum with possible string couplings to an OpSum with purely numeric
 	```julia
 	plain(ops::OpSum)::OpSum
 	```
----
 
 #### operator* (Creation)
 
@@ -117,7 +108,6 @@ Creates an OpSum with a single pair of coupling constant and an [Op](op.md) obje
 	Base.:*(coupling::ComplexF64, op::Op)::OpSum
 	Base.:*(coupling::String, op::Op)::OpSum
 	```
----
 
 #### operator+ / operator +=
 
@@ -135,7 +125,6 @@ Adds two OpSum objects $\mathcal{A} = \sum_i a_i \mathcal{A}_i$ and $\mathcal{B}
 	Base.:+(ops1::OpSum, ops2::OpSum)::OpSum
 	```
 
----
 #### operator- / operator -=
 
 Subtracts to OpSum objects.
@@ -150,7 +139,6 @@ Subtracts to OpSum objects.
 	```julia
 	Base.:-(ops::OpSum, ops2::OpSum)::OpSum
 	```
----
 
 #### operator* , operator/ (scalar muliplication/division)
 
@@ -191,8 +179,6 @@ $$\mathcal{B} = b \sum_i a_i \mathcal{A}_i$$
 	Base.:/(ops::OpSum, coupling::ComplexF64)::OpSum
 	```
 
----
-
 #### operator* (algebra product)
 
 Multiplies two OpSum objects $\mathcal{A} = \sum_i a_i \mathcal{A}_i$ and $\mathcal{B} = \sum_j b_j \mathcal{B}_j$ to form their operator product, distributing over the sums,
@@ -212,8 +198,6 @@ The product is generally **non-commutative**, reflecting that quantum mechanical
 	Base.:*(ops1::OpSum, ops2::OpSum)::OpSum
 	```
 
----
-
 #### operator[]
 
 Sets a coupling constant defined as a string to a numerical value.
@@ -228,22 +212,6 @@ Sets a coupling constant defined as a string to a numerical value.
 	Base.setindex!(ops::OpSum, cpl::Float64, name::String)
 	Base.setindex!(ops::OpSum, cpl::ComplexF64, name::String)
 	```	
----
-
-#### constants
-
-Returns a vector of strings with the coupling constants defined, i.e. the strings that define some of the coupling constants.
-
-=== "C++"
-	```c++
-	std::vector<std::string> constants(OpSum const &ops) const;
-	```
-=== "Julia"
-	```julia
-	constants(ops::OpSum)::Vector{String}
-	```
-	
----
 
 #### isreal
 
@@ -258,23 +226,6 @@ Returns whether an [OpSum](opsum.md) is a real operator.
 	```julia
     isreal(ops::OpSum)::Bool
 	```
----
-
-#### isapprox
-
-Returns whether two OpSums are approximately equal.
-	
-=== "C++"	
-	```c++
-	bool isapprox(OpSum const &ops1, OpSum const &ops2, double rtol = 1e-12,
-	              double atol = 1e-12);
-	```
-
-=== "Julia"
-	```julia
-	isapprox(ops1::OpSum, ops2::OpSum, rtol::Float64=1e-12, atol::Float64=1e-12)::Bool
-	```
----
 
 #### to_string (operator<<)
 
@@ -290,7 +241,6 @@ Converts the OpSum to a readable string representation.
 	```julia
 	to_string(ops::OpSum)::String
 	```
----
 	
 ## Usage Example
 

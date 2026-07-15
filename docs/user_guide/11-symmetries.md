@@ -6,8 +6,6 @@ title: Symmetries
 
 Symmetries are fundamental properties of any physical systems. In quantum mechanics, symmetries of a Hamiltonian lead to a set of conserved quantities, also referred to as quantum numbers. Mathematically, quantum numbers are irreducible representations of symmetry groups. A particularly important set of symmetries are space group symmetries like translation symmetries in a solid or point group symmetries in molecules. Abstractly, these symmetries are permutations of sites of the interaction graph. Permutation groups then have irreducible representations, which can denote the momentum for translation groups or angular momentum in point groups. XDiag features functionality to efficiently employ these symmetries to allow for more efficient computation but also physical insights, by e.g., allowing for tower-of-states analysis (see e.g. [Wietek et al. (2017)](https://arxiv.org/abs/1704.08622)). 
 
----
-
 ## Permutations
 
 Mathematically, a permutation $\pi$ of order $n$ is a bijective mapping,
@@ -50,8 +48,6 @@ Notice, that also here we start counting from 1 in Julia, and from 0 in C++. [Pe
 
 Internally, the group axioms are validated, and an error will be thrown if not all group properties are fulfilled. This means that the existence of the identity permutation is required. Every permutation also necessitates its inverse to be present, and the product of two permutations needs to be defined as well.
 
----
-
 ## Representations
 
 Mathematically, a representation $\rho$ of a group $G$ is a mapping from a group to the group of invertible matrices $\textrm{GL}(V)$ on a vector space $V$, 
@@ -88,16 +84,12 @@ $$
 f * g=h \Rightarrow \chi(f) \cdot \chi(g)=\chi(h).
 $$
 
----
-
 ## Symmetry-adapted blocks
 
 Representations $\rho$ of a permutation symmetry group $G$ can then be used to create symmetry-adapted blocks. Given a computational basis state $|\mathbf{\sigma}\rangle = |\sigma_1\sigma_2\cdots\sigma_N\rangle$, the corresponding symmetry-adapted state is given as,
-
 $$
 	|\mathbf{\sigma}_{\rho}\rangle \equiv \frac{1}{N_{\rho,\psi}} \sum_{g \in G} \chi_{\rho}(g)^{*} g |\mathbf{\sigma}\rangle.
 $$
-
 Here, the action of a permutation $g$ on a product state $|\sigma\rangle$ is defined as,
 $$
     g|\mathbf{\sigma}\rangle = g|\sigma_1\sigma_2\cdots\sigma_N\rangle = 
@@ -141,8 +133,6 @@ A symmetry-adapted block shares most functionality with conventional blocks. We 
 A sample output of symmetry-adapted blocks of different kinds is shown in the [figure below](#fig-sym-block). Symmetry-adapted blocks can, among other use cases, be used to create a representation of an operator in the symmetry-adapted basis using the [matrix](../documentation/kernels/matrix.md) function and to create symmetric states by constructing [State](../documentation/states/state.md) objects. Also symmetry-adapted operators, e.g. created using [symmetrize](../documentation/algebra/symmetrize.md) as described in the section [Symmetrized operators](#symmetrized-operators), in the form of an [OpSum](../documentation/operators/opsum.md) can be applied to symmetry-adapted states, where consistency of quantum numbers is validated.
 
 ![Fig. 2: Different symmetry-adapted blocks.](../img/usage_guide_hs_sym.png){#fig-sym-block}
-
----
 
 ## Reading symmetries from TOML files
 
@@ -199,8 +189,6 @@ The symmetry group and the irreducible representations are then easily read in u
 	```
 
 Notice that the [read_representation](../documentation/io/read_representation.md) function is not just handed the name of the representation but also the tag that defines the permutation symmetry group, as the representation needs to know which group it is representing. 
-
----
 
 ## Symmetrized operators
 

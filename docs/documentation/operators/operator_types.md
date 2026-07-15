@@ -10,19 +10,19 @@ Throughout, $c^\dagger_{i\sigma}, c_{i\sigma}$ denote fermionic creation/annihil
 
 ### Spin operators
 
-| Type              | Description                                                                             | No. of sites | Blocks                          |
-|:------------------|:----------------------------------------------------------------------------------------|:------------:|:--------------------------------|
-| `Sz`              | local magnetic moment $S^z_i$                                                            | 1            | Spinhalf, tJ, Electron, Boson   |
-| `Sx`              | local magnetic moment $S^x_i$                                                            | 1            | Spinhalf, tJ, Electron, Boson   |
-| `Sy`              | local magnetic moment $S^y_i$                                                            | 1            | Spinhalf, tJ, Electron, Boson   |
-| `S+`              | spin raising operator $S^+_i$                                                            | 1            | Spinhalf, tJ, Electron, Boson   |
-| `S-`              | spin lowering operator $S^-_i$                                                           | 1            | Spinhalf, tJ, Electron, Boson   |
-| `SdotS`           | Heisenberg interaction $\mathbf{S}_i \cdot \mathbf{S}_j$                                 | 2            | Spinhalf, tJ, Electron, Boson   |
-| `SzSz`            | Ising interaction $S^z_i S^z_j$                                                          | 2            | Spinhalf, tJ, Electron, Boson   |
-| `Exchange`        | spin exchange $\frac{1}{2}(J S^+_i S^-_j + J^\star S^-_i S^+_j)$                         | 2            | Spinhalf, tJ, Electron, Boson   |
-| `ExchangeAsym`    | antisymmetric exchange $\frac{1}{2}(J S^+_i S^-_j - J^\star S^-_i S^+_j)$                | 2            | Spinhalf, tJ, Electron, Boson   |
-| `ScalarChirality` | scalar chirality $\mathbf{S}_i \cdot (\mathbf{S}_j \times \mathbf{S}_k)$                 | 3            | Spinhalf, Boson                 |
-| `TotalSz`         | total magnetization $\sum_i S^z_i$                                                       | 0            | Spinhalf, tJ, Electron          |
+| Type              | Description                                                              | No. of sites | Blocks                        |
+|:------------------|:-------------------------------------------------------------------------|:------------:|:------------------------------|
+| `Sz`              | local magnetic moment $S^z_i$                                            | 1            | Spinhalf, tJ, Electron, Boson |
+| `Sx`              | local magnetic moment $S^x_i$                                            | 1            | Spinhalf, tJ, Electron, Boson |
+| `Sy`              | local magnetic moment $S^y_i$                                            | 1            | Spinhalf, tJ, Electron, Boson |
+| `S+`              | spin raising operator $S^+_i$                                            | 1            | Spinhalf, tJ, Electron, Boson |
+| `S-`              | spin lowering operator $S^-_i$                                           | 1            | Spinhalf, tJ, Electron, Boson |
+| `SdotS`           | Heisenberg interaction $\mathbf{S}_i \cdot \mathbf{S}_j$                 | 2            | Spinhalf, tJ, Electron, Boson |
+| `SzSz`            | Ising interaction $S^z_i S^z_j$                                          | 2            | Spinhalf, tJ, Electron, Boson |
+| `Exchange`        | spin exchange $\frac{1}{2}(S^+_i S^-_j +  S^-_i S^+_j)$                  | 2            | Spinhalf, tJ, Electron, Boson |
+| `ExchangeAsym`    | antisymmetric exchange $\frac{1}{2}(S^+_i S^-_j - S^-_i S^+_j)$          | 2            | Spinhalf, tJ, Electron, Boson |
+| `ScalarChirality` | scalar chirality $\mathbf{S}_i \cdot (\mathbf{S}_j \times \mathbf{S}_k)$ | 3            | Spinhalf, Boson               |
+| `TotalSz`         | total magnetization $\sum_i S^z_i$                                       | 0            | Spinhalf, tJ, Electron        |
 
 On a [Boson](../blocks/boson.md) block the spin operators refer to the spin $S = (d-1)/2$ associated with the local dimension $d$.
 
@@ -46,16 +46,16 @@ On a [Boson](../blocks/boson.md) block the spin operators refer to the spin $S =
 
 ### Hopping operators
 
-The hopping terms are the hermitian combination $-(c^\dagger_i c_j + \mathrm{h.c.})$ carrying an overall minus sign. Note that the coupling multiplies the whole term, so a complex coupling makes it non-hermitian (see [Complex couplings](opsum.md#complex-couplings)). The `*Asym` variants provide the antisymmetric combination $-(c^\dagger_i c_j - \mathrm{h.c.})$.
+The hopping terms are the hermitian combination $-(c^\dagger_i c_j + c^\dagger_{j\sigma}c_{i\sigma}))$ carrying an overall minus sign. Note that the coupling multiplies the whole term, so a complex coupling makes it non-hermitian (see [Complex couplings](opsum.md#complex-couplings)). The `*Asym` variants provide the antisymmetric combination $-(c^\dagger_i c_j - c^\dagger_{j\sigma}c_{i\sigma}))$.
 
-| Type        | Description                                                                | No. of sites | Blocks                          |
-|:------------|:---------------------------------------------------------------------------|:------------:|:--------------------------------|
-| `Hop`       | hopping over all species, $-\sum_\sigma (c^\dagger_{i\sigma}c_{j\sigma} + \mathrm{h.c.})$ | 2 | tJ, Electron, Boson, Fermion |
-| `Hopup`     | hopping of $\uparrow$ electrons, $-(c^\dagger_{i\uparrow}c_{j\uparrow} + \mathrm{h.c.})$ | 2 | tJ, Electron |
-| `Hopdn`     | hopping of $\downarrow$ electrons, $-(c^\dagger_{i\downarrow}c_{j\downarrow} + \mathrm{h.c.})$ | 2 | tJ, Electron |
-| `HopAsym`   | antisymmetric hopping over all species                                     | 2            | tJ, Electron, Boson, Fermion    |
-| `HopupAsym` | antisymmetric $\uparrow$ hopping                                           | 2            | tJ, Electron                    |
-| `HopdnAsym` | antisymmetric $\downarrow$ hopping                                        | 2            | tJ, Electron                    |
+| Type        | Description                                                                                                              | No. of sites | Blocks                       |
+|:------------|:-------------------------------------------------------------------------------------------------------------------------|:------------:|:-----------------------------|
+| `Hop`       | hopping over all species, $-\sum_\sigma (c^\dagger_{i\sigma}c_{j\sigma} + c^\dagger_{j\sigma}c_{i\sigma})$               | 2            | tJ, Electron, Boson, Fermion |
+| `Hopup`     | hopping of $\uparrow$ electrons, $-(c^\dagger_{i\uparrow}c_{j\uparrow} + c^\dagger_{j\uparrow}c_{i\uparrow})$            | 2            | tJ, Electron                 |
+| `Hopdn`     | hopping of $\downarrow$ electrons, $-(c^\dagger_{i\downarrow}c_{j\downarrow} + c^\dagger_{j\downarrow}c_{i\downarrow})$  | 2            | tJ, Electron                 |
+| `HopAsym`   | antisymmetric hopping over all species, $-\sum_\sigma (c^\dagger_{i\sigma}c_{j\sigma} - c^\dagger_{j\sigma}c_{i\sigma})$ | 2            | tJ, Electron, Boson, Fermion |
+| `HopupAsym` | antisymmetric $\uparrow$ hopping, $-(c^\dagger_{i\uparrow}c_{j\uparrow} - c^\dagger_{j\uparrow}c_{i\uparrow})$           | 2            | tJ, Electron                 |
+| `HopdnAsym` | antisymmetric $\downarrow$ hopping, $-(c^\dagger_{i\downarrow}c_{j\downarrow} - c^\dagger_{j\downarrow}c_{i\downarrow})$ | 2            | tJ, Electron                 |
 
 ### Density and interaction operators
 

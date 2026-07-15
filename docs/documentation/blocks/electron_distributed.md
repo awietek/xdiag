@@ -18,9 +18,6 @@ A block in an electron type Hilbert space, i.e. fermions with $\uparrow, \downar
 | nsites  | number of sites (integer)                                                            |         |
 | nup     | number of "up" electrons (integer)                                                   |         |
 | ndn     | number of "dn" electrons (integer)                                                   |         |
-| backend | backend used for coding the basis states                                             | `auto`  |
-
-The parameter `backend` chooses how the block is coded internally. By using the default parameter `auto` the backend is chosen automatically. Alternatives are `32bit`, `64bit`.
 
 ## Local configurations and operators
 
@@ -40,7 +37,7 @@ An ElectronDistributed block can be iterated over, where at each iteration a [Pr
 	```c++
     auto block = ElectronDistributed(4, 2, 1);
 	for (auto pstate : block) {
-		Log("{} {}", to_string(pstate), index(block, pstate));
+		Log("{} {}", to_string(pstate), block.index(pstate));
 	}
 	```
 
@@ -52,7 +49,7 @@ Returns the index of a given [ProductState](../states/product_state.md) in the b
 
 === "C++"	
 	```c++
-	int64_t index(ElectronDistributed const &block, ProductState const &pstate);
+	int64_t ElectronDistributed::index(ProductState const &pstate);
 	```
 
 #### nsites

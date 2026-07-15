@@ -21,8 +21,6 @@ XDiag can conveniently be installed via the Julia package manager. First, a Juli
 
 That's it! No further compilation step is required.
 
----
-
 ## C++ library
 
 The first step in employing the C++ version is to compile the library. The source code can be obtained from [GitHub](https://github.com/awietek/xdiag) by cloning it using [git](https://git-scm.com/).

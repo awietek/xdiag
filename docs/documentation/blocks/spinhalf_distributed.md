@@ -10,17 +10,13 @@ A block in a spin $S=1/2$ Hilbert space with distributed computing capabilities.
 
 === "C++"	
 	```c++
-	SpinhalfDistributed(int64_t nsites, int64_t nup, std::string backend = "auto");
+	SpinhalfDistributed(int64_t nsites, int64_t nup);
 	```
 	
 | Name    | Description                                                                          | Default |
 |:--------|:-------------------------------------------------------------------------------------|---------|
 | nsites  | number of sites (integer)                                                            |         |
 | nup     | number of "up" spin setting spin (integer)                                           |         |
-| backend | backend used for coding the basis states                                             | `auto`  |
-	
-	
-The parameter `backend` chooses how the block is coded internally. By using the default parameter `auto` the backend is chosen automatically. Alternatives are `32bit`, `64bit`.
 
 ## Local configurations and operators
 
@@ -52,7 +48,7 @@ Returns the index of a given [ProductState](../states/product_state.md) in the b
 
 === "C++"	
 	```c++
-	int64_t index(SpinhalfDistributed const &block, ProductState const &pstate);
+	int64_t SpinhalfDistributed::index(ProductState const &pstate);
 	```
 
 #### nsites
