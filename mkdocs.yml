@@ -67,7 +67,7 @@ nav:
   - About: about.md
 
 hooks:
-  - hooks/bibliography.py
+  - docs/hooks/bibliography.py
 
 plugins:
   - search
