@@ -32,7 +32,8 @@ template <typename enumeration_tt> class RepresentativeTable {
 public:
   using enumeration_t = enumeration_tt;
   using bit_t = typename enumeration_t::bit_t;
-  using const_iterator = bits::BitVectorConstIterator<bit_t>;
+  // using const_iterator = bits::BitVectorConstIterator<bit_t>;
+  using const_iterator = typename std::vector<bit_t>::const_iterator;
 
   RepresentativeTable() = default;
   RepresentativeTable(enumeration_t const &enumeration,
@@ -71,7 +72,11 @@ public:
   bool operator!=(RepresentativeTable const &rhs) const;
 
 private:
-  bits::BitVector<bit_t> representative_;
+  // Representatives are stored unpacked for fast, inlinable sequential access
+  // in the matrix-vector product. Heap-owning bit types (BitsetDynamic) still
+  // work here, just without the compact packing of the other tables.
+  // bits::BitVector<bit_t> representative_;
+  std::vector<bit_t> representative_;
   bits::BitVector<uint64_t> representative_index_;
   bits::BitVector<uint64_t> representative_symmetry_;
   bits::BitVector<uint64_t> representative_norm_index_;

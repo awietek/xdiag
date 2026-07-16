@@ -28,6 +28,15 @@ struct fermi_capable<bits::Bitset<chunk_t, nchunks>> : std::true_type {};
 // number of inversions among the permuted occupied sites) is returned. `true`
 // means sign -1, `false` means sign +1.
 //
+// The raw-pointer overload takes the permutation image array `perm[0..nsites)`
+// directly. It is used on hot paths (representative-table build, fermionic
+// norms) where the permutations are already validated members of a group, so
+// wrapping them in a fresh Permutation (heap copy + O(nsites^2) revalidation)
+// on every call is pure overhead; pass PermutationGroup::ptr(sym) instead.
+template <typename bit_t>
+bool fermi_bool_of_permutation(bit_t const &state, int64_t const *perm,
+                               int64_t nsites);
+
 template <typename bit_t>
 bool fermi_bool_of_permutation(bit_t const &state, Permutation const &perm);
 

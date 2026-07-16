@@ -17,8 +17,18 @@ BitArray<bit_t, nbits> unpack(int64_t number, int64_t q,
                                int64_t n_slots = -1);
 
 // inverse of unpack: returns the integer whose q-ary representation is the
-// first n slots of array
+// first n slots of array. Defined inline (hot: called from SchaeferTable::index
+// in the matrix-vector product); taken by const reference to avoid copying the
+// BitArray on every call.
 template <typename bit_t, int nbits>
-int64_t pack(BitArray<bit_t, nbits> array, int64_t q, int64_t n);
+inline int64_t pack(BitArray<bit_t, nbits> const &array, int64_t q, int64_t n) {
+  int64_t result = 0;
+  int64_t base = 1;
+  for (int64_t i = 0; i < n; ++i) {
+    result += array.get(i) * base;
+    base *= q;
+  }
+  return result;
+}
 
 } // namespace xdiag::bits

@@ -141,18 +141,6 @@ BoundedPartitionsIterator<bitarray_t>::BoundedPartitionsIterator(
     int64_t n, int64_t total, int64_t d, int64_t idx, bitarray_t current)
     : n_(n), total_(total), d_(d), idx_(idx), current_(current) {}
 
-template <typename bitarray_t>
-bool BoundedPartitionsIterator<bitarray_t>::operator==(
-    BoundedPartitionsIterator<bitarray_t> const &rhs) const {
-  return idx_ == rhs.idx_;
-}
-
-template <typename bitarray_t>
-bool BoundedPartitionsIterator<bitarray_t>::operator!=(
-    BoundedPartitionsIterator<bitarray_t> const &rhs) const {
-  return idx_ != rhs.idx_;
-}
-
 // Advance to the next sequence in reverse-lex order (slot n-1 most significant,
 // slot 0 least significant — consistent with BoundedMultisets).
 // Scan from i = 1 up to n-1: at the leftmost position where a[i] can be
@@ -193,11 +181,6 @@ BoundedPartitionsIterator<bitarray_t>::operator+(int64_t n) const {
   BoundedPartitionsIterator copy = *this;
   copy += n;
   return copy;
-}
-
-template <typename bitarray_t>
-auto BoundedPartitionsIterator<bitarray_t>::operator*() const -> bitarray_t {
-  return current_;
 }
 
 // ---------------------------------------------------------------------------

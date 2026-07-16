@@ -95,7 +95,8 @@ static arma::vec eigvals(op_t const &ops, Block const &block, int64_t neigs,
     Log.warn("Warning: block zero dimensional in eigvals");
     return arma::vec();
   }
-  auto res = eigs_lobpcg(ops, block, neigs, lobpcg_guard, precision,
+  auto res = eigs_lobpcg(ops, block, neigs, lobpcg_guard,
+			 sqrt(precision),  // reduce precision -> too strict
                          max_iterations, random_seed);
   return res.eigenvalues;
 }
@@ -126,7 +127,8 @@ eigs(op_t const &ops, Block const &block, int64_t neigs, double precision,
     Log.warn("Warning: block zero dimensional in eigs");
     return {arma::vec(), State()};
   }
-  auto res = eigs_lobpcg(ops, block, neigs, lobpcg_guard, precision,
+  auto res = eigs_lobpcg(ops, block, neigs, lobpcg_guard,
+			 sqrt(precision), // reduce precision -> too strict
                          max_iterations, random_seed);
   return {res.eigenvalues, res.eigenvectors};
 }

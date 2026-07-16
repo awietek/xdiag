@@ -6,7 +6,10 @@
 
 #include <cmath>
 
+#include <xdiag/bits/bitmask.hpp>
 #include <xdiag/bits/bitset.hpp>
+#include <xdiag/bits/extract_deposit.hpp>
+#include <xdiag/bits/popcount.hpp>
 #include <xdiag/bits/zero_one.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
@@ -64,6 +67,15 @@ BasistJSymmetric<enumeration_t>::BasistJSymmetric(
   int64_t nsites = enum_up.n();
   bit_t sitesmask{};
 
+  // The valid dn configurations of an up representative are exactly the dns
+  // supported on its free (non-up) sites. In the compressed order these are the
+  // same for every up rep -- the ndn-subsets of (nsites - nup) sites -- so we
+  // enumerate the C(nsites - nup, ndn) compressed patterns ONCE (ascending) and
+  // later deposit each into a given up rep's free-site mask. This avoids
+  // scanning the whole dn Hilbert space per up rep and discarding the
+  // double-occupied configurations.
+  std::vector<bit_t> compressed_dns;
+
   // Compressed-dn rank over Combinations(nsites - nup, ndn). Only built for the
   // number-conserving integral case; the branch is discarded by if constexpr
   // otherwise so enum.k() / LinTable<BitsetDynamic> are never instantiated for
@@ -74,6 +86,9 @@ BasistJSymmetric<enumeration_t>::BasistJSymmetric(
       int64_t nup = enum_up.k();
       int64_t ndn = enum_dn.k();
       lintable_dnsc_ = combinatorics::LinTable<bit_t>(nsites - nup, ndn);
+      for (bit_t c : combinatorics::Combinations<bit_t>(nsites - nup, ndn)) {
+        compressed_dns.push_back(c);
+      }
     }
   }
 
@@ -93,6 +108,14 @@ BasistJSymmetric<enumeration_t>::BasistJSymmetric(
   // configurations to the up representative, so EVERY up representative
   // materialises its own dn block (filtered by the constraint). One-time
   // construction, kept serial.
+  //
+  // valid_dns holds this up rep's valid dn configurations (no double occupancy,
+  // i.e. the dns supported on its free / non-up sites), reused across up reps.
+  // In the number-conserving case every up rep has exactly C(nsites-nup, ndn) of
+  // them (== compressed_dns.size()), so reserve that capacity once up front;
+  // clear() below keeps it, so the per-up-rep fill never reallocates.
+  std::vector<bit_t> valid_dns;
+  valid_dns.reserve(compressed_dns.size());
   size_ = 0;
   for (int64_t idx_up = 0; idx_up < n_rep_ups; ++idx_up) {
     bit_t ups = basis_up_[idx_up];
@@ -104,25 +127,48 @@ BasistJSymmetric<enumeration_t>::BasistJSymmetric(
       extractors_.emplace_back((bit_t)((~ups) & sitesmask));
     }
 
-    if (stab_size(idx_up) == 1) {
-      // trivial up-stabilizer: every dn with no double occupancy, norm 1. The
-      // dn enumeration is ascending, so the block stays ascending.
-      for (bit_t dns : basis_dn_) {
-        if (bits::iszero(dns & ups)) {
-          dns_storage_.push_back(dns);
-          norms_storage_.push_back(1.0);
+    // Collect the valid dns in ascending order. In the integral
+    // (compressed-index) case we obtain them DIRECTLY by depositing the
+    // precomputed compressed dn patterns into the free-site mask, instead of
+    // scanning the whole dn Hilbert space and discarding the double-occupied
+    // ones. deposit is the inverse of the compressor and monotonic, so the dns
+    // come out in the same ascending order (hence the same block layout) as the
+    // old full-scan-and-filter. The BitsetDynamic fallback keeps the full scan.
+    valid_dns.clear();
+    if constexpr (use_compressed_index_) {
+      bit_t free = extractors_[idx_up].mask();
+      if constexpr (combinatorics::is_subsets_v<enumeration_t>) {
+        // no number conservation: valid dns are ALL subsets of the free sites
+        int64_t nfree = bits::popcount(free);
+        for (int64_t c = 0; c < (int64_t(1) << nfree); ++c) {
+          valid_dns.push_back(bits::deposit((bit_t)c, free));
+        }
+      } else {
+        for (bit_t c : compressed_dns) {
+          valid_dns.push_back(bits::deposit(c, free));
         }
       }
     } else {
-      // non-trivial up-stabilizer: materialise the dn-rep block, dropping
-      // double-occupied configurations and zero-norm representatives. The
-      // stabilizer of the representative equals syms_ups(ups) since ups is a
-      // rep here.
-      std::vector<int64_t> stab = syms_ups(ups);
       for (bit_t dns : basis_dn_) {
-        if (!bits::iszero(dns & ups)) {
-          continue; // no double occupancy
+        if (bits::iszero(dns & ups)) {
+          valid_dns.push_back(dns);
         }
+      }
+    }
+
+    if (stab_size(idx_up) == 1) {
+      // trivial up-stabilizer: every valid dn has norm 1. valid_dns is
+      // ascending, so the block stays ascending.
+      for (bit_t dns : valid_dns) {
+        dns_storage_.push_back(dns);
+        norms_storage_.push_back(1.0);
+      }
+    } else {
+      // non-trivial up-stabilizer: materialise the dn-rep block, keeping only dn
+      // representatives with non-zero coupled norm. The stabilizer of the
+      // representative equals syms_ups(ups) since ups is a rep here.
+      std::vector<int64_t> stab = syms_ups(ups);
+      for (bit_t dns : valid_dns) {
         bit_t dns_rep = symmetries::representative_subset(dns, action_, stab);
         if (dns == dns_rep) {
           double nrm = coupled_norm<enumeration_t>(ups, dns, action_, stab,

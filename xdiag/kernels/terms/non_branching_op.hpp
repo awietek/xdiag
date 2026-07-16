@@ -9,6 +9,7 @@
 #include <vector>
 
 #include <xdiag/armadillo.hpp>
+#include <xdiag/bits/get_set.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 
@@ -25,8 +26,23 @@ public:
     return hops_[s];
   }
 
-  int64_t extract(bit_t state) const;
-  bit_t deposit(int64_t local, bit_t state) const;
+  // Defined inline (hot: called per non-zero term in the matrix-vector
+  // product). extract reads the d-ary digits at sites_ into a linear index;
+  // deposit writes a linear index back out into the state at sites_.
+  inline int64_t extract(bit_t state) const {
+    int64_t local = 0;
+    for (int64_t i = (int64_t)sites_.size() - 1; i >= 0; --i) {
+      local = local * d_ + bits::get(state, sites_[i]);
+    }
+    return local;
+  }
+  inline bit_t deposit(int64_t local, bit_t state) const {
+    for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
+      bits::set(state, sites_[i], local % d_);
+      local /= d_;
+    }
+    return state;
+  }
 
 private:
   std::vector<int64_t> sites_;

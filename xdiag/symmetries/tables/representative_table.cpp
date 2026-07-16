@@ -40,7 +40,8 @@ template <bool fermionic, typename enumeration_t, typename coeff_t>
 static void representative_table_initialize(
     enumeration_t const &enumeration, SitePermutation const &action,
     arma::Col<coeff_t> const &characters,
-    bits::BitVector<typename enumeration_t::bit_t> &representative,
+    // bits::BitVector<typename enumeration_t::bit_t> &representative,
+    std::vector<typename enumeration_t::bit_t> &representative,
     bits::BitVector<uint64_t> &representative_index,
     bits::BitVector<uint64_t> &representative_symmetry,
     bits::BitVector<uint64_t> &representative_norm_index,
@@ -151,9 +152,10 @@ static void representative_table_initialize(
 
   // Create vector holding the representatives
   try {
-    int64_t size = nrepresentatives;
-    int64_t nbits = enumeration.bitwidth();
-    representative = BitVector<bit_t>(size, nbits);
+    // int64_t size = nrepresentatives;
+    // int64_t nbits = enumeration.bitwidth();
+    // representative = BitVector<bit_t>(size, nbits);
+    representative = std::vector<bit_t>(nrepresentatives);
   } catch (...) {
     XDIAG_THROW("Unable to allocate representative array");
   }
@@ -218,7 +220,12 @@ static void representative_table_initialize(
       if (isrepresentative(state, action)) {
         double nrm = orbit_norm(state);
         if (std::fabs(nrm) > 1e-6) {
-          representative.atomic_or_element(local_rep_idx, state);
+          // Each thread writes a disjoint index range into the unpacked
+          // representative vector, so a plain assignment is race-free (unlike
+          // the packed norm-index BitVector below, whose adjacent elements may
+          // share a storage chunk and hence use atomic_or_element).
+          // representative.atomic_or_element(local_rep_idx, state);
+          representative[local_rep_idx] = state;
           auto it2 = std::find_if(norms.begin(), norms.end(), [&](double n) {
             return std::fabs(n - nrm) < 1e-6;
           });
@@ -284,7 +291,8 @@ static void representative_table_initialize(
         representative_index.atomic_or_element(idx, (uint64_t)(rep_idx + 1));
         representative_symmetry.atomic_or_element(idx, (uint64_t)inv_sym);
         if constexpr (fermionic) {
-          if (fermi_bool_of_permutation(state, group[inv_sym])) {
+          if (fermi_bool_of_permutation(state, group.ptr(inv_sym),
+                                        group.nsites())) {
             representative_fermi.atomic_or_element(idx, (uint64_t)1);
           }
         }
@@ -302,7 +310,8 @@ static void representative_table_initialize(
       representative_index[idx] = (uint64_t)(rep_idx + 1);
       representative_symmetry[idx] = (uint64_t)inv_sym;
       if constexpr (fermionic) {
-        if (fermi_bool_of_permutation(state, group[inv_sym])) {
+        if (fermi_bool_of_permutation(state, group.ptr(inv_sym),
+                                      group.nsites())) {
           representative_fermi[idx] = (uint64_t)1;
         }
       }

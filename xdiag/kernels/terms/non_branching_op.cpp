@@ -57,24 +57,9 @@ NonBranchingOp<bit_t, coeff_t>::NonBranchingOp(
   }
 }
 
-template <typename bit_t, typename coeff_t>
-int64_t NonBranchingOp<bit_t, coeff_t>::extract(bit_t state) const {
-  int64_t local = 0;
-  for (int64_t i = (int64_t)sites_.size() - 1; i >= 0; --i) {
-    local = local * d_ + bits::get(state, sites_[i]);
-  }
-  return local;
-}
-
-template <typename bit_t, typename coeff_t>
-bit_t NonBranchingOp<bit_t, coeff_t>::deposit(int64_t local,
-                                              bit_t state) const {
-  for (int64_t i = 0; i < (int64_t)sites_.size(); ++i) {
-    bits::set(state, sites_[i], local % d_);
-    local /= d_;
-  }
-  return state;
-}
+// NonBranchingOp::extract and ::deposit are now defined inline in the header
+// (hot matrix-vector-product primitives, so they must inline into the kernel
+// loops); the explicit class instantiation below still emits them.
 
 template <typename coeff_t>
 static std::vector<arma::Mat<coeff_t>>

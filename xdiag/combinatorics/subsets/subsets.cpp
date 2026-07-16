@@ -60,24 +60,6 @@ template <class bit_t>
 SubsetsIterator<bit_t>::SubsetsIterator(int64_t idx) : current_(idx) {}
 
 template <class bit_t>
-bool SubsetsIterator<bit_t>::operator==(
-    const SubsetsIterator<bit_t> &rhs) const {
-  return current_ == rhs.current_;
-}
-
-template <class bit_t>
-bool SubsetsIterator<bit_t>::operator!=(
-    const SubsetsIterator<bit_t> &rhs) const {
-  return !operator==(rhs);
-}
-
-template <class bit_t>
-SubsetsIterator<bit_t> &SubsetsIterator<bit_t>::operator++() {
-  ++current_;
-  return *this;
-}
-
-template <class bit_t>
 SubsetsIterator<bit_t> &SubsetsIterator<bit_t>::operator+=(int64_t n) {
   current_ += n;
   return *this;
@@ -88,10 +70,6 @@ SubsetsIterator<bit_t> SubsetsIterator<bit_t>::operator+(int64_t n) const {
   SubsetsIterator copy = *this;
   copy += n;
   return copy;
-}
-
-template <class bit_t> bit_t SubsetsIterator<bit_t>::operator*() const {
-  return (bit_t)current_;
 }
 
 template class SubsetsIterator<uint32_t>;

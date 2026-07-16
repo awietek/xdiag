@@ -25,9 +25,13 @@ examples/*/build
 examples/*/outfiles
 examples/*/build/*
 examples/*/outfiles/*
-benchmark/old
-benchmark/*/build
-benchmark/*/build/*
+benchmarks/old
+benchmarks/*/build
+benchmarks/*/build/*
+benchmarks/*/main.prof
+benchmarks/*/main.prof.pdf
+benchmarks/*/heap.pdf
+benchmarks/*/heap.alloc.pdf
 .DS_Store
 *.gcda
 *.gcno

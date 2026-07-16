@@ -5,69 +5,11 @@
 #include "enumerate_combinations.hpp"
 
 #include <type_traits>
-#include <xdiag/bits/zero_one.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/math/binomial.hpp>
 
 namespace xdiag::combinatorics {
-
-template <typename bit_t> bit_t next_combination(bit_t v) noexcept {
-  // Bit twiddling Hack from
-  // http://graphics.stanford.edu/~seander/bithacks.html
-  // #NextBitPermutation
-
-  // DONT USE FAST VERSION
-
-  // // Fast version (needs __builtin_ctz(v)) (some problem with 0)
-  // bit_t t = v | (v - 1); // t gets v's least significant 0
-  // return ((t + 1) | (((~t & -~t) - 1) >> (__builtin_ctz(v) + 1)));
-
-  // // Fast version (needs __builtin_ctz(v)) (some problem with 0)
-  // int_t t = v | (v - 1); // t gets v's least significant 0
-  // return v == 0 ? ~v :((t + 1) | (((~t & -~t) - 1) >> (__builtin_ctz(v) +
-  // 1)));
-
-  // Slow version (should work everywhere)
-  const bit_t zero = bits::zero<bit_t>();
-  const bit_t one = bits::one<bit_t>();
-  bit_t t = (v | (v - one)) + one;
-  return v == zero ? ~v : t | ((((t & -t) / (v & -v)) >> 1) - one);
-}
-
-// next_combination(v, n): efficient specialization for Bitset types.
-// For integral bit_t delegates to next_combination(v).
-// For Bitset bit_t replaces multi-word arithmetic with O(1) bit accesses:
-//   find the lowest set bit (low), measure the run of consecutive 1s from it
-//   (length m), then: clear [low, low+m), set bit low+m, set bits [0, m-1).
-// This avoids negation, addition, and division across nchunks words.
-template <typename bit_t> bit_t next_combination(bit_t v, int64_t n) noexcept {
-  if constexpr (std::is_integral_v<bit_t>) {
-    (void)n;
-    return next_combination(v);
-  } else {
-    // Locate lowest set bit
-    int64_t low = 0;
-    while (low < n && !v.test(low))
-      ++low;
-    if (low >= n)
-      return v;
-    // Measure run of consecutive 1s from low
-    int64_t m = 0;
-    while (low + m < n && v.test(low + m))
-      ++m;
-    // Guard: called on the last combination (run reaches bit n)
-    if (low + m >= n)
-      return v;
-    // Perform the update using only set/reset
-    for (int64_t i = low; i < low + m; ++i)
-      v.reset(i);
-    v.set(low + m);
-    for (int64_t i = 0; i < m - 1; ++i)
-      v.set(i);
-    return v;
-  }
-}
 
 // rank_combination: colex rank of the k-subset encoded in bits (bits b_0 < b_1
 // < ... < b_{k-1} set) = sum_{j=0}^{k-1} binom(b_j, j+1).
@@ -88,10 +30,10 @@ template <class bit_t>
 bit_t nth_combination(int64_t n, int64_t k, int64_t idx, int64_t width) {
   // For dynamic Bitset (nchunks==0), default construction yields empty storage;
   // must pass a capacity to allocate enough chunks. The capacity is `width` (>=
-  // n), defaulting to n; a wider capacity lets callers (e.g. the tJ compressed-dn
-  // fiber) store the k-of-n pattern in a bitset matching a larger bit width. For
-  // integers and static Bitsets, the Bitset(width) constructor is equivalent to
-  // the default constructor.
+  // n), defaulting to n; a wider capacity lets callers (e.g. the tJ
+  // compressed-dn fiber) store the k-of-n pattern in a bitset matching a larger
+  // bit width. For integers and static Bitsets, the Bitset(width) constructor
+  // is equivalent to the default constructor.
   if (width < 0)
     width = n;
   bit_t result;

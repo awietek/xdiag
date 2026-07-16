@@ -6,9 +6,9 @@
 
 #include <xdiag/bits/bitarray.hpp>
 #include <xdiag/bits/bitset.hpp>
-#include <xdiag/math/log2.hpp>
 #include <xdiag/bits/pack_unpack.hpp>
 #include <xdiag/math/ipow.hpp>
+#include <xdiag/math/log2.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
@@ -93,19 +93,7 @@ template <typename bitarray_t>
 BoundedMultisetsIterator<bitarray_t>::BoundedMultisetsIterator(int64_t n,
                                                                int64_t idx,
                                                                int64_t d)
-    : n_(n), idx_(idx), d_(d),
-      current_(bits::unpack<bit_t, nbits>(idx, d, n)) {}
-
-template <typename bitarray_t>
-bool BoundedMultisetsIterator<bitarray_t>::operator==(
-    BoundedMultisetsIterator<bitarray_t> const &rhs) const {
-  return idx_ == rhs.idx_;
-}
-
-template <typename bitarray_t>
-bool BoundedMultisetsIterator<bitarray_t>::operator!=(
-    BoundedMultisetsIterator<bitarray_t> const &rhs) const {
-  return idx_ != rhs.idx_;
+    : n_(n), idx_(idx), d_(d), current_(bits::unpack<bit_t, nbits>(idx, d, n)) {
 }
 
 template <typename bitarray_t>
@@ -137,11 +125,6 @@ BoundedMultisetsIterator<bitarray_t>::operator+(int64_t n) const {
   BoundedMultisetsIterator copy = *this;
   copy += n;
   return copy;
-}
-
-template <typename bitarray_t>
-auto BoundedMultisetsIterator<bitarray_t>::operator*() const -> bitarray_t {
-  return current_;
 }
 
 // clang-format off

@@ -14,6 +14,7 @@
 #include <xdiag/math/ipow.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/timing.hpp>
 
 // Locally Optimal Block Preconditioned Conjugate Gradient (LOBPCG), specialized
 // to the *standard* Hermitian eigenproblem A X = X Lambda (no mass matrix B, no
@@ -156,8 +157,8 @@ arma::vec column_norms(arma::Mat<coeff_t> const &R, dot_f dot) {
 //                  overwritten with the Ritz vectors on output.
 // neigs:           number of lowest eigenvalues that must reach "tol".
 //
-// Large n x blocksize arrays held: X (in/out), AX, P, AP, R, AR, bestX, and two
-// update temporaries -> one matrix-block MVM per iteration.
+// Large n x blocksize arrays held: X (in/out), AX, P, AP, R, bestX, and one
+// reused update scratch -> one matrix-block MVM per iteration.
 template <typename coeff_t, class multiply_f, class dot_f>
 lobpcg_result_t lobpcg(multiply_f multiplyA, dot_f dot, arma::Mat<coeff_t> &X,
                        int64_t neigs, double tol = 1e-10,
@@ -194,7 +195,9 @@ lobpcg_result_t lobpcg(multiply_f multiplyA, dot_f dot, arma::Mat<coeff_t> &X,
     XDIAG_THROW("Linearly dependent initial approximations in LOBPCG");
   }
   mat_t AX(n, blocksize);
+  auto tm = rightnow();
   multiplyA(X, AX);
+  timing(tm, rightnow(), "  time (MBM: X -> AX):", 2);
   mat_t gramXAX = dot(X, AX);
   gramXAX = (gramXAX + gramXAX.t()) / 2.0;
   arma::vec lambda;
@@ -207,11 +210,19 @@ lobpcg_result_t lobpcg(multiply_f multiplyA, dot_f dot, arma::Mat<coeff_t> &X,
 
   // Persistent auxiliary blocks (allocated once, reused each iteration).
   mat_t R(n, blocksize, arma::fill::zeros);  // residuals
-  mat_t AR(n, blocksize, arma::fill::zeros); // A * (active residuals)
+  // mat_t AR(n, blocksize, arma::fill::zeros); // A * (active residuals) -- was
+  // allocated (and zero-filled) but never read or written anywhere; the
+  // per-iteration A*aR is computed into the local aAR instead. Dropped to save
+  // one n x blocksize block.
   mat_t P(n, blocksize, arma::fill::zeros);  // implicit conjugate directions
   mat_t AP(n, blocksize, arma::fill::zeros); // A * P
   mat_t bestX = X;                           // smallest-residual iterate
   arma::vec bestLambda = lambda;
+
+  // One reused scratch for the X and AX rotation-and-update, allocated once, so
+  // the per-iteration update materialises no large n x blocksize expression
+  // temporaries (see the update step below). Used for X, then again for AX.
+  mat_t Xtmp(n, blocksize);
 
   std::vector<arma::rowvec> lambdaHistory;
   std::vector<arma::rowvec> residualHistory;
@@ -230,6 +241,8 @@ lobpcg_result_t lobpcg(multiply_f multiplyA, dot_f dot, arma::Mat<coeff_t> &X,
   arma::vec residualNorms;
 
   while (iterationNumber < max_iterations) {
+    auto t0 = rightnow();
+
     ++iterationNumber;
 
     // Residuals R = A X - X Lambda and their column norms.
@@ -249,11 +262,13 @@ lobpcg_result_t lobpcg(multiply_f multiplyA, dot_f dot, arma::Mat<coeff_t> &X,
                math::ipow(2, restart_control) * smallestResidualNorm) {
       // Divergence guard: recompute A X exactly and force a P restart.
       forcedRestart = true;
+      tm = rightnow();
       multiplyA(X, AX);
+      timing(tm, rightnow(), "MBM: X -> AX", 2);
     }
 
-    Log(1, "LOBPCG iteration {}: mean residual {:.2e}", iterationNumber,
-        residualNorm);
+    Log(1, "LOBPCG iteration {}:", iterationNumber);
+    Log(1, "  mean residual {:.2e}", residualNorm);
 
     // Converged once the lowest neigs columns are all below tolerance.
     if (residualNorms.head(neigs).max() < tol) {
@@ -293,7 +308,9 @@ lobpcg_result_t lobpcg(multiply_f multiplyA, dot_f dot, arma::Mat<coeff_t> &X,
       break;
     }
     mat_t aAR(n, currentBlockSize);
+    tm = rightnow();
     multiplyA(aR, aAR); // the single MVM per iteration
+    timing(tm, rightnow(), "  time (MBM: X -> AX):", 2);
 
     // Prepare the conjugate directions P (implicit form, see below).
     mat_t aP, aAP;
@@ -388,25 +405,62 @@ lobpcg_result_t lobpcg(multiply_f multiplyA, dot_f dot, arma::Mat<coeff_t> &X,
     // coming from R (and old P), *excluding* X. Storing this combination rather
     // than the difference X_new - X_old avoids catastrophic cancellation near
     // convergence -- the central stabilizing trick of LOBPCG.
-    mat_t pp = aR * cR;
-    mat_t app = aAR * cR;
+    // Old version (allocated fresh pp / app each iteration and materialised
+    // large n x blocksize expression temporaries in the X / AX updates):
+    // mat_t pp = aR * cR;
+    // mat_t app = aAR * cR;
+    // if (!restart) {
+    //   mat_t cP = coeff.rows(blocksize + currentBlockSize,
+    //                         blocksize + 2 * currentBlockSize - 1);
+    //   pp += aP * cP;
+    //   app += aAP * cP;
+    // }
+    // X = X * cX + pp;
+    // AX = AX * cX + app; // updated by linear combination -> no extra MVM
+    // P = pp;
+    // AP = app;
+
+    // Form it directly in the persistent P / AP buffers (these are the old
+    // "pp" / "app" temporaries). The active columns of the OLD P / AP were
+    // already copied out into aP / aAP above, so overwriting P / AP now is safe.
+    P = aR * cR;
+    AP = aAR * cR;
     if (!restart) {
       mat_t cP = coeff.rows(blocksize + currentBlockSize,
                             blocksize + 2 * currentBlockSize - 1);
-      pp += aP * cP;
-      app += aAP * cP;
+      P += aP * cP;
+      AP += aAP * cP;
     }
 
-    X = X * cX + pp;
-    AX = AX * cX + app; // updated by linear combination -> no extra MVM
-    P = pp;
-    AP = app;
+    // Rotate X, AX by cX and add the conjugate direction:
+    //   X_new = X * cX + P ,  AX_new = AX * cX + AP .
+    // X (AX) appears on both sides, so accumulate into a reused scratch buffer
+    // and swap it in. Writing the product as "Xtmp += X * cX" lets armadillo
+    // issue an in-place gemm (beta = 1) with no large temporary, instead of the
+    // two n x blocksize temporaries "X = X * cX + P" would allocate.
+    Xtmp = P;
+    Xtmp += X * cX;
+    X.swap(Xtmp);      // X = X*cX + P; Xtmp now holds the (reusable) old X buffer
+    Xtmp = AP;
+    Xtmp += AX * cX;   // updated by linear combination -> no extra MVM
+    AX.swap(Xtmp);
+
+    timing(t0, rightnow(), "  time (full iteration):", 2);
+    std::string eigs_str;
+
+    for (int64_t i = 0; i < std::min<int64_t>(lambda.size(), 3); ++i) {
+      eigs_str += fmt::format("{:.16f} ", lambda(i));
+    }
+    Log(2, "  eigs: {}", eigs_str);
+
   } // main iteration loop
 
   // Final exact Rayleigh-Ritz on the best iterate: clean up eigenpairs and make
   // the returned vectors orthonormal Ritz vectors of A.
   X = bestX;
+  tm = rightnow();
   multiplyA(X, AX);
+  timing(tm, rightnow(), "  time (MBM: X -> AX)", 2);
   gramXAX = dot(X, AX);
   gramXAX = (gramXAX + gramXAX.t()) / 2.0;
   mat_t gramXX = dot(X, X);
@@ -424,7 +478,7 @@ lobpcg_result_t lobpcg(multiply_f multiplyA, dot_f dot, arma::Mat<coeff_t> &X,
   if (residualNorms.head(neigs).max() > tol && criterion == "maxiterations") {
     Log.warn("LOBPCG: reached max_iterations={} with accuracy {:.2e} > tol "
              "{:.2e} for the lowest {} eigenvalue(s).",
-             max_iterations, residualNorms.head(neigs).max(), tol, neigs);
+             max_iterations, residualNorms.head(neigs).max(), sqrt(tol), neigs);
   }
 
   arma::mat lambdaHist(lambdaHistory.size(), blocksize);

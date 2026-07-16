@@ -20,20 +20,12 @@ BitArray<bit_t, nbits> unpack(int64_t number, int64_t q, int64_t n_slots) {
   return array;
 }
 
-template <typename bit_t, int nbits>
-int64_t pack(BitArray<bit_t, nbits> array, int64_t q, int64_t n) {
-  int64_t result = 0;
-  int64_t base = 1;
-  for (int64_t i = 0; i < n; ++i) {
-    result += array.get(i) * base;
-    base *= q;
-  }
-  return result;
-}
+// pack() is now defined inline in pack_unpack.hpp (hot: called from
+// SchaeferTable::index in the matrix-vector product). Only unpack() remains
+// out-of-line here, as it is used exclusively during basis construction.
 
 #define INSTANTIATE_UNPACK(bit_t, n)                                           \
-  template BitArray<bit_t, n> unpack<bit_t, n>(int64_t, int64_t, int64_t);    \
-  template int64_t pack<bit_t, n>(BitArray<bit_t, n>, int64_t, int64_t);
+  template BitArray<bit_t, n> unpack<bit_t, n>(int64_t, int64_t, int64_t);
 #define INSTANTIATE_UNPACK_ALL(bit_t)                                          \
   INSTANTIATE_UNPACK(bit_t, 1)                                                 \
   INSTANTIATE_UNPACK(bit_t, 2)                                                 \

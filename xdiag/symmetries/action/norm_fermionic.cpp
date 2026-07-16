@@ -18,10 +18,11 @@ template <typename bit_t, typename coeff_t, typename action_t>
 double norm_fermionic(bit_t state, action_t const &action,
                       arma::Col<coeff_t> const &characters) {
   auto const &group = action.group();
+  int64_t nsites = group.nsites();
   coeff_t amplitude = 0.0;
   for (int64_t sym = 0; sym < action.size(); ++sym) {
     if (action.apply(sym, state) == state) {
-      bool fermi = fermi_bool_of_permutation(state, group[sym]);
+      bool fermi = fermi_bool_of_permutation(state, group.ptr(sym), nsites);
       amplitude += fermi ? -characters(sym) : characters(sym);
     }
   }

@@ -14,13 +14,13 @@
 namespace xdiag::symmetries {
 
 template <typename bit_t>
-bool fermi_bool_of_permutation(bit_t const &state, Permutation const &perm) {
+bool fermi_bool_of_permutation(bit_t const &state, int64_t const *perm,
+                               int64_t nsites) {
 
   // We walk the sites in increasing order; the inversions contributed by a
   // newly occupied site's image v are exactly the already-seen images greater
   // than v. Tracking the seen images in a bitmask makes that an O(1) popcount
   // per site, so the whole routine is O(nsites) instead of O(nfermion^2).
-  int64_t nsites = perm.size();
   bit_t seen = bits::zero<bit_t>(nsites);
   int64_t n_seen = 0;
   bool fermi = false;
@@ -53,7 +53,15 @@ bool fermi_bool_of_permutation(bit_t const &state, Permutation const &perm) {
   //   return fermi;
 }
 
+template <typename bit_t>
+bool fermi_bool_of_permutation(bit_t const &state, Permutation const &perm) {
+  return fermi_bool_of_permutation(state, perm.array().data(), perm.size());
+}
+
 #define INSTANTIATE_FERMI_BOOL_OF_PERMUTATION(BIT_TYPE)                        \
+  template bool fermi_bool_of_permutation(BIT_TYPE const &state,               \
+                                          int64_t const *perm,                 \
+                                          int64_t nsites);                     \
   template bool fermi_bool_of_permutation(BIT_TYPE const &state,               \
                                           Permutation const &perm);
 

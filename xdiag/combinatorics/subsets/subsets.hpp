@@ -33,10 +33,10 @@ public:
   Subsets() = default;
   explicit Subsets(int64_t n);
 
-  int64_t n() const;                            // Total number of bit positions
-  constexpr int64_t d() const { return 2; }     // Local dim per site
-  int64_t size() const;                         // Total number of subsets (2^n)
-  int64_t bitwidth() const;                     // bits needed to represent state (=n)
+  int64_t n() const;                        // Total number of bit positions
+  constexpr int64_t d() const { return 2; } // Local dim per site
+  int64_t size() const;                     // Total number of subsets (2^n)
+  int64_t bitwidth() const;            // bits needed to represent state (=n)
   bit_t operator[](int64_t idx) const; // Bit pattern at index idx
   iterator_t begin() const;            // Iterator to first subset
   iterator_t end() const;              // Iterator past last subset
@@ -60,12 +60,19 @@ public:
   SubsetsIterator() = default;
   SubsetsIterator(int64_t idx);
 
-  bool operator==(const SubsetsIterator<bit_t> &rhs) const;
-  bool operator!=(const SubsetsIterator<bit_t> &rhs) const;
-  SubsetsIterator &operator++();
+  inline bool operator==(const SubsetsIterator<bit_t> &rhs) const {
+    return current_ == rhs.current_;
+  }
+  inline bool operator!=(const SubsetsIterator<bit_t> &rhs) const {
+    return !operator==(rhs);
+  }
+  inline SubsetsIterator &operator++() {
+    ++current_;
+    return *this;
+  }
   SubsetsIterator &operator+=(int64_t n);
   SubsetsIterator operator+(int64_t n) const;
-  bit_t operator*() const;
+  inline bit_t operator*() const { return (bit_t)current_; }
 
 private:
   int64_t current_;
@@ -75,8 +82,7 @@ private:
 // number-conservation-agnostic bases (e.g. BasistJ) to branch the np vs no-np
 // seam at compile time.
 template <typename enumeration_t> struct is_subsets : std::false_type {};
-template <typename bit_t>
-struct is_subsets<Subsets<bit_t>> : std::true_type {};
+template <typename bit_t> struct is_subsets<Subsets<bit_t>> : std::true_type {};
 template <typename enumeration_t>
 inline constexpr bool is_subsets_v = is_subsets<enumeration_t>::value;
 

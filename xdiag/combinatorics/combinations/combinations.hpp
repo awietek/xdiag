@@ -5,6 +5,7 @@
 #pragma once
 
 #include <cstdint>
+#include <xdiag/combinatorics/combinations/enumerate_combinations.hpp>
 
 namespace xdiag::combinatorics {
 
@@ -39,11 +40,11 @@ public:
   // bit width). Throws if k > n, k < 0, or n < 0.
   Combinations(int64_t n, int64_t k, int64_t width = -1);
 
-  int64_t n() const;                            // Total number of bit positions
-  int64_t k() const;                            // Number of bits set in each pattern
-  constexpr int64_t d() const { return 2; }     // Local dim per site
-  int64_t size() const;                         // Total number of combinations C(n,k)
-  int64_t bitwidth() const;                     // bits needed to represent state (=n)
+  int64_t n() const; // Total number of bit positions
+  int64_t k() const; // Number of bits set in each pattern
+  constexpr int64_t d() const { return 2; } // Local dim per site
+  int64_t size() const;                // Total number of combinations C(n,k)
+  int64_t bitwidth() const;            // bits needed to represent state (=n)
   bit_t operator[](int64_t idx) const; // Bit pattern at index idx
   int64_t index(bit_t bits) const;     // Index of given bit pattern
   iterator_t begin() const;            // Iterator to first combination
@@ -70,12 +71,20 @@ public:
   CombinationsIterator() = default;
   CombinationsIterator(int64_t n, int64_t k, int64_t idx, int64_t width = -1);
 
-  bool operator==(CombinationsIterator<bit_t> const &rhs) const;
-  bool operator!=(CombinationsIterator<bit_t> const &rhs) const;
-  CombinationsIterator &operator++();
+  inline bool operator==(CombinationsIterator<bit_t> const &rhs) const {
+    return idx_ == rhs.idx_;
+  }
+  inline bool operator!=(CombinationsIterator<bit_t> const &rhs) const {
+    return idx_ != rhs.idx_;
+  }
+  inline CombinationsIterator &operator++() {
+    current_ = combinatorics::next_combination(current_, n_);
+    ++idx_;
+    return *this;
+  }
   CombinationsIterator &operator+=(int64_t n);
   CombinationsIterator operator+(int64_t n) const;
-  bit_t operator*() const;
+  inline bit_t operator*() const { return current_; }
 
 private:
   bit_t current_;

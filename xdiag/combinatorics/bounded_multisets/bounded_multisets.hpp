@@ -61,12 +61,18 @@ public:
   BoundedMultisetsIterator() = default;
   BoundedMultisetsIterator(int64_t n, int64_t idx, int64_t d);
 
-  bool operator==(BoundedMultisetsIterator<bitarray_t> const &rhs) const;
-  bool operator!=(BoundedMultisetsIterator<bitarray_t> const &rhs) const;
+  inline bool
+  operator==(BoundedMultisetsIterator<bitarray_t> const &rhs) const {
+    return idx_ == rhs.idx_;
+  }
+  inline bool
+  operator!=(BoundedMultisetsIterator<bitarray_t> const &rhs) const {
+    return idx_ != rhs.idx_;
+  }
   BoundedMultisetsIterator &operator++();
   BoundedMultisetsIterator &operator+=(int64_t n);
   BoundedMultisetsIterator operator+(int64_t n) const;
-  bitarray_t operator*() const;
+  inline bitarray_t operator*() const { return current_; }
 
 private:
   int64_t n_ = 0;

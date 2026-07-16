@@ -64,12 +64,18 @@ public:
   BoundedPartitionsIterator(int64_t n, int64_t total, int64_t d, int64_t idx,
                             bitarray_t current);
 
-  bool operator==(BoundedPartitionsIterator<bitarray_t> const &rhs) const;
-  bool operator!=(BoundedPartitionsIterator<bitarray_t> const &rhs) const;
+  inline bool
+  operator==(BoundedPartitionsIterator<bitarray_t> const &rhs) const {
+    return idx_ == rhs.idx_;
+  }
+  inline bool
+  operator!=(BoundedPartitionsIterator<bitarray_t> const &rhs) const {
+    return idx_ != rhs.idx_;
+  }
   BoundedPartitionsIterator &operator++();
   BoundedPartitionsIterator &operator+=(int64_t n);
   BoundedPartitionsIterator operator+(int64_t n) const;
-  bitarray_t operator*() const;
+  inline bitarray_t operator*() const { return current_; }
 
 private:
   int64_t n_ = 0;

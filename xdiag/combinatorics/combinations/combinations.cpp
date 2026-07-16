@@ -8,7 +8,6 @@
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
-#include <xdiag/combinatorics/combinations/enumerate_combinations.hpp>
 #include <xdiag/math/binomial.hpp>
 #include <xdiag/utils/error.hpp>
 
@@ -99,25 +98,6 @@ CombinationsIterator<bit_t>::CombinationsIterator(int64_t n, int64_t k,
       idx_(idx), n_(n), width_(width < 0 ? n : width) {}
 
 template <class bit_t>
-bool CombinationsIterator<bit_t>::operator==(
-    CombinationsIterator<bit_t> const &rhs) const {
-  return idx_ == rhs.idx_;
-}
-
-template <class bit_t>
-bool CombinationsIterator<bit_t>::operator!=(
-    CombinationsIterator<bit_t> const &rhs) const {
-  return idx_ != rhs.idx_;
-}
-
-template <class bit_t>
-CombinationsIterator<bit_t> &CombinationsIterator<bit_t>::operator++() {
-  current_ = combinatorics::next_combination(current_, n_);
-  ++idx_;
-  return *this;
-}
-
-template <class bit_t>
 CombinationsIterator<bit_t> &
 CombinationsIterator<bit_t>::operator+=(int64_t n) {
   idx_ += n;
@@ -131,10 +111,6 @@ CombinationsIterator<bit_t>::operator+(int64_t n) const {
   CombinationsIterator copy = *this;
   copy += n;
   return copy;
-}
-
-template <class bit_t> bit_t CombinationsIterator<bit_t>::operator*() const {
-  return current_;
 }
 
 template class CombinationsIterator<uint32_t>;
