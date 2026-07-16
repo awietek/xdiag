@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <xdiag/armadillo.hpp>
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
@@ -16,16 +17,46 @@ namespace xdiag {
 // arma::Mat (real or complex).
 // vec_out is zeroed before accumulation. block_in and block_out must be the
 // same Block type.
-template <typename mat_t>
-XDIAG_API void apply(Op const &op, Block const &block_in, mat_t const &vec_in,
-                     Block const &block_out, mat_t &vec_out);
-template <typename mat_t>
-XDIAG_API void apply(Monomial const &mono, Block const &block_in,
-                     mat_t const &vec_in, Block const &block_out,
-                     mat_t &vec_out);
-template <typename mat_t>
-XDIAG_API void apply(OpSum const &ops, Block const &block_in,
-                     mat_t const &vec_in, Block const &block_out,
-                     mat_t &vec_out);
+
+// Comment: this is not templated over the vec/mat type, to make it
+// automatically accessible to the Julia wrapper generator
+XDIAG_API void apply(Op const &op, Block const &block_in,
+                     arma::vec const &vec_in, Block const &block_out,
+                     arma::vec &vec_out);
+XDIAG_API void apply(Op const &op, Block const &block_in,
+                     arma::cx_vec const &vec_in, Block const &block_out,
+                     arma::cx_vec &vec_out);
+XDIAG_API void apply(Op const &op, Block const &block_in,
+                     arma::mat const &vec_in, Block const &block_out,
+                     arma::mat &vec_out);
+XDIAG_API void apply(Op const &op, Block const &block_in,
+                     arma::cx_mat const &vec_in, Block const &block_out,
+                     arma::cx_mat &vec_out);
+
+XDIAG_API void apply(Monomial const &op, Block const &block_in,
+                     arma::vec const &vec_in, Block const &block_out,
+                     arma::vec &vec_out);
+XDIAG_API void apply(Monomial const &op, Block const &block_in,
+                     arma::cx_vec const &vec_in, Block const &block_out,
+                     arma::cx_vec &vec_out);
+XDIAG_API void apply(Monomial const &op, Block const &block_in,
+                     arma::mat const &vec_in, Block const &block_out,
+                     arma::mat &vec_out);
+XDIAG_API void apply(Monomial const &op, Block const &block_in,
+                     arma::cx_mat const &vec_in, Block const &block_out,
+                     arma::cx_mat &vec_out);
+
+XDIAG_API void apply(OpSum const &op, Block const &block_in,
+                     arma::vec const &vec_in, Block const &block_out,
+                     arma::vec &vec_out);
+XDIAG_API void apply(OpSum const &op, Block const &block_in,
+                     arma::cx_vec const &vec_in, Block const &block_out,
+                     arma::cx_vec &vec_out);
+XDIAG_API void apply(OpSum const &op, Block const &block_in,
+                     arma::mat const &vec_in, Block const &block_out,
+                     arma::mat &vec_out);
+XDIAG_API void apply(OpSum const &op, Block const &block_in,
+                     arma::cx_mat const &vec_in, Block const &block_out,
+                     arma::cx_mat &vec_out);
 
 } // namespace xdiag

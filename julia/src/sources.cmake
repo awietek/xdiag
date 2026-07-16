@@ -1,5 +1,6 @@
 set(XDIAG_JULIA_SOURCES
     src/algebra.cpp
+    src/apply.cpp
     src/armadillo.cpp
     src/blocks.cpp
     src/io.cpp

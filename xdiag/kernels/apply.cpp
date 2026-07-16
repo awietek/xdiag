@@ -48,9 +48,9 @@ namespace xdiag {
 // dispatch (the numerical kernel is selected by block_t in kernels.cpp). A
 // block type with no dispatch_basis overload is a compile error here.
 template <typename block_t, typename vec_t>
-static void apply_impl(OpSum const &ops, block_t const &block_in,
-                       vec_t const &vec_in, block_t const &block_out,
-                       vec_t &vec_out) try {
+static void apply_template(OpSum const &ops, block_t const &block_in,
+                           vec_t const &vec_in, block_t const &block_out,
+                           vec_t &vec_out) try {
   vec_out.zeros();
 
   if constexpr (is_distributed_v<block_t>) {
@@ -83,52 +83,84 @@ static void apply_impl(OpSum const &ops, block_t const &block_in,
 XDIAG_CATCH
 
 template <typename mat_t>
-void apply(Op const &op, Block const &block_in, mat_t const &vec_in,
-           Block const &block_out, mat_t &vec_out) try {
-  apply(OpSum(op), block_in, vec_in, block_out, vec_out);
-}
-XDIAG_CATCH
-
-template <typename mat_t>
-void apply(Monomial const &mono, Block const &block_in, mat_t const &vec_in,
-           Block const &block_out, mat_t &vec_out) try {
-  apply(OpSum(mono), block_in, vec_in, block_out, vec_out);
-}
-XDIAG_CATCH
-
-template <typename mat_t>
-void apply(OpSum const &ops, Block const &block_in, mat_t const &vec_in,
-           Block const &block_out, mat_t &vec_out) try {
+static void apply_variant(OpSum const &ops, Block const &block_in,
+                          mat_t const &vec_in, Block const &block_out,
+                          mat_t &vec_out) try {
   // Layer 1: unwrap the Block variant (op_t is promoted to OpSum inside) and
   // forward to the block-generic apply_impl.
   utils::visit_same_type(
       block_in, block_out,
       [&](auto const &bin, auto const &bout) {
-        apply_impl(OpSum(ops), bin, vec_in, bout, vec_out);
+        apply_template(OpSum(ops), bin, vec_in, bout, vec_out);
       },
       "Type mismatch of Block types");
 }
 XDIAG_CATCH
 
-#define INSTANTIATE_XDIAG_APPLY(OP_TYPE, MAT_TYPE)                             \
-  template void apply(OP_TYPE const &, Block const &, MAT_TYPE const &,        \
-                      Block const &, MAT_TYPE &);
+void apply(Op const &op, Block const &block_in, arma::vec const &vec_in,
+           Block const &block_out, arma::vec &vec_out) try {
+  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
 
-using namespace arma;
-INSTANTIATE_XDIAG_APPLY(Op, vec)
-INSTANTIATE_XDIAG_APPLY(Op, cx_vec)
-INSTANTIATE_XDIAG_APPLY(Op, mat)
-INSTANTIATE_XDIAG_APPLY(Op, cx_mat)
+void apply(Op const &op, Block const &block_in, arma::cx_vec const &vec_in,
+           Block const &block_out, arma::cx_vec &vec_out) try {
+  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply(Op const &op, Block const &block_in, arma::mat const &vec_in,
+           Block const &block_out, arma::mat &vec_out) try {
+  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply(Op const &op, Block const &block_in, arma::cx_mat const &vec_in,
+           Block const &block_out, arma::cx_mat &vec_out) try {
+  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
 
-INSTANTIATE_XDIAG_APPLY(Monomial, vec)
-INSTANTIATE_XDIAG_APPLY(Monomial, cx_vec)
-INSTANTIATE_XDIAG_APPLY(Monomial, mat)
-INSTANTIATE_XDIAG_APPLY(Monomial, cx_mat)
+void apply(Monomial const &op, Block const &block_in, arma::vec const &vec_in,
+           Block const &block_out, arma::vec &vec_out) try {
+  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply(Monomial const &op, Block const &block_in,
+           arma::cx_vec const &vec_in, Block const &block_out,
+           arma::cx_vec &vec_out) try {
+  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply(Monomial const &op, Block const &block_in, arma::mat const &vec_in,
+           Block const &block_out, arma::mat &vec_out) try {
+  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply(Monomial const &op, Block const &block_in,
+           arma::cx_mat const &vec_in, Block const &block_out,
+           arma::cx_mat &vec_out) try {
+  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
 
-INSTANTIATE_XDIAG_APPLY(OpSum, vec)
-INSTANTIATE_XDIAG_APPLY(OpSum, cx_vec)
-INSTANTIATE_XDIAG_APPLY(OpSum, mat)
-INSTANTIATE_XDIAG_APPLY(OpSum, cx_mat)
+void apply(OpSum const &op, Block const &block_in, arma::vec const &vec_in,
+           Block const &block_out, arma::vec &vec_out) try {
+  apply_variant(op, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply(OpSum const &op, Block const &block_in, arma::cx_vec const &vec_in,
+           Block const &block_out, arma::cx_vec &vec_out) try {
+  apply_variant(op, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply(OpSum const &op, Block const &block_in, arma::mat const &vec_in,
+           Block const &block_out, arma::mat &vec_out) try {
+  apply_variant(op, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply(OpSum const &op, Block const &block_in, arma::cx_mat const &vec_in,
+           Block const &block_out, arma::cx_mat &vec_out) try {
+  apply_variant(op, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
 
-#undef INSTANTIATE_XDIAG_APPLY
 } // namespace xdiag

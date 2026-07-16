@@ -42,6 +42,7 @@ struct IsMirroredType<TimeEvolveExpokitInplaceResult> : std::false_type {};
 namespace xdiag::julia {
 void define_types(jlcxx::Module &mod);
 void define_algebra(jlcxx::Module &mod);
+void define_apply(jlcxx::Module &mod);
 void define_blocks(jlcxx::Module &mod);
 void define_io(jlcxx::Module &mod);
 void define_kernels(jlcxx::Module &mod);

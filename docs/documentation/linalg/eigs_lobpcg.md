@@ -4,16 +4,28 @@ title: eigs_lobpcg
 
 Computes the `neigs` algebraically smallest eigenvalues and eigenvectors of a hermitian operator with the **LOBPCG** algorithm (*Locally Optimal Block Preconditioned Conjugate Gradient*). LOBPCG is a *block* eigensolver: it iterates a whole set of trial vectors simultaneously and is therefore well suited to compute several of the lowest eigenpairs at once and to reliably resolve degeneracies. This function exposes the full result of the algorithm, including residual norms and convergence histories; the convenience wrappers [eigvals](eigvals.md) and [eigs](eigs.md) are built on top of it.
 
+For general information on the LOBPCG algorithm, we refer to [Wikipedia](https://en.wikipedia.org/wiki/LOBPCG) and the original publication:
+> Toward the Optimal Preconditioned Eigensolver: Locally Optimal Block Preconditioned Conjugate Gradient Method<br>
+> Andrew V. Knyazev<br>
+> SIAM Journal on Scientific Computing, Vol. 23, No. 2, pp. 517–541, 2001.<br>
+> DOI: [10.1137/S1064827500366124](https://doi.org/10.1137/S1064827500366124)
+
+Our implementation closely follows the implementation of the [SciPy LOBPCG](https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.lobpcg.html), although we specialize to standard eigenvalue problems without a preconditioner.
+
 The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../kernels/sparse/sparse_matrix_types.md)).
 
 **Sources:** [eigs_lobpcg.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/lobpcg/eigs_lobpcg.hpp) · [eigs_lobpcg.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/lobpcg/eigs_lobpcg.cpp)
-
----
 
 ## Definition
 
 #### On-the-fly
 
+=== "Julia"
+	```julia
+	eigs_lobpcg(ops::OpSum, block::Block; neigs::Int64 = 1, guard::Int64 = 2,
+	            tol::Float64 = 1e-10, max_iterations::Int64 = 1000,
+	            random_seed::Int64 = 42)
+	```
 === "C++"
 	```c++
 	EigsLobpcgResult eigs_lobpcg(OpSum const &ops, Block const &block,
@@ -21,15 +33,15 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 	                             double tol = 1e-10, int64_t max_iterations = 1000,
 	                             int64_t random_seed = 42);
 	```
-=== "Julia"
-	```julia
-	eigs_lobpcg(ops::OpSum, block::Block; neigs::Int64 = 1, guard::Int64 = 2,
-	            tol::Float64 = 1e-10, max_iterations::Int64 = 1000,
-	            random_seed::Int64 = 42)
-	```
 
 #### Sparse matrix
 
+=== "Julia"
+	```julia
+	eigs_lobpcg(A::CSRMatrix, block::Block; neigs::Int64 = 1, guard::Int64 = 2,
+	            tol::Float64 = 1e-10, max_iterations::Int64 = 1000,
+	            random_seed::Int64 = 42)
+	```
 === "C++"
 	```c++
 	template <typename idx_t, typename coeff_t>
@@ -39,14 +51,6 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 	                             int64_t max_iterations = 1000,
 	                             int64_t random_seed = 42);
 	```
-=== "Julia"
-	```julia
-	eigs_lobpcg(A::CSRMatrix, block::Block; neigs::Int64 = 1, guard::Int64 = 2,
-	            tol::Float64 = 1e-10, max_iterations::Int64 = 1000,
-	            random_seed::Int64 = 42)
-	```
-
----
 
 ## Parameters
 
@@ -59,8 +63,6 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 | tol            | convergence tolerance on the residual norms                                                                                | 1e-10   |
 | max_iterations | maximum number of iterations                                                                                               | 1000    |
 | random_seed    | random seed for the initial block of vectors                                                                              | 42      |
-
----
 
 ## Returns
 
@@ -75,8 +77,6 @@ A struct with the following entries
 | criterion              | string denoting the reason why the algorithm stopped                                                                 |
 | eigenvalue_history     | the eigenvalue estimates recorded at every iteration (useful for monitoring convergence)                            |
 | residual_norms_history | the residual norms recorded at every iteration                                                                       |
-
----
 
 ## Usage Example
 

@@ -6,7 +6,6 @@ Creates a numerical matrix with real (`matrix`) or complex (`matrixC`) coefficie
 
 **Sources:** [matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/matrix.hpp) · [matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/matrix.cpp)
 
----
 
 ## Definition
 
@@ -14,6 +13,11 @@ A matrix can be created in two ways:
 
 1. Only the input block on which the operator is defined is given. The output block is calculated and eventually created automatically.
 
+	=== "Julia"
+		```julia
+		matrix(op::Op, block::Block)
+		matrix(ops::OpSum, block::Block)
+		```
 	=== "C++"
 		```c++
 		arma::mat matrix(Op const &op, Block const &block);
@@ -21,15 +25,27 @@ A matrix can be created in two ways:
 		arma::cx_mat matrixC(Op const &op, Block const &block);
 		arma::cx_mat matrixC(OpSum const &ops, Block const &block);
 		```
+		
+2. Using both the input and output block. Useful if output block has already been constructed to avoid reinitialization.
+
 	=== "Julia"
 		```julia
-		matrix(op::Op, block::Block)
-		matrix(ops::OpSum, block::Block)
+		matrix(op::Op, block_in::Block, block_out::Block)
+		matrix(ops::OpSum, block_in::Block, block_out::Block)
 		```
-
-**Comment:** In Julia, depending on whether a real/complex matrix is generated also a real/complex matrix is returned. The C++ version has to return a fixed type. If a real matrix is desired, use the functions `coo_matrix` or `coo_matrix_32`. If a complex matrix is desired, use the functions `coo_matrixC` and `coo_matrixC_32`.
-
----
+	=== "C++"
+		```c++
+		arma::mat matrix(Op const &op, Block const &block_in,
+		                 Block const &block_out);
+		arma::mat matrix(OpSum const &ops, Block const &block_in,
+		                 Block const &block_out);
+		arma::cx_mat matrixC(Op const &op, Block const &block_in,
+		                     Block const &block_out);
+		arma::cx_mat matrixC(OpSum const &ops, Block const &block_in,
+		                     Block const &block_out);
+		```
+		
+**Comment:** In Julia, depending on whether a real/complex matrix is generated also a real/complex matrix is returned. The C++ version has to return a fixed type. If a real matrix is desired, use the function `matrix`. If a complex matrix is desired, use the function `matrixC`.
 
 ## Parameters
 
@@ -39,16 +55,13 @@ A matrix can be created in two ways:
 | block / block_in | input block on which the operator is defined                                     |
 | block_out        | output block the operator maps the input block to                                |
 
----
-
 ## Usage Example
-
-=== "C++"
-	```c++
-	--8<-- "examples/usage_examples/main.cpp:matrix"
-	```
 
 === "Julia"
 	```julia
 	--8<-- "examples/usage_examples/main.jl:matrix"
+	```
+=== "C++"
+	```c++
+	--8<-- "examples/usage_examples/main.cpp:matrix"
 	```

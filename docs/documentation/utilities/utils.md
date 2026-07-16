@@ -12,46 +12,40 @@ Set how much logging is generated my XDiag to monitor the progress and behaviour
 
 This can be useful, e.g. to monitor the progress of an iterative algorithm
 
-=== "C++"
-	```c++
-    void set_verbosity(int64_t level);
-	```
-
 === "Julia"
 	```julia
 	set_verbosity(level::Int64)
 	```
-
----
-
+=== "C++"
+	```c++
+    void set_verbosity(int64_t level);
+	```
+	
 ## say_hello
 
 Prints a nice welcome message containing the version number and git commit used.
 
-=== "C++"
-	```c++
-    void say_hello()
-	```
-	
 === "Julia"
 	```julia
 	say_hello()
 	```
-
----
+=== "C++"
+	```c++
+    void say_hello()
+	```
 
 ## print_version
 
 If `say_hello` is too much flower power for you, one can also just have a boring print-out of the version number using this function. 
 
+=== "Julia"
+	```julia
+	print_version()
+	```
 === "C++"
 	```c++
     void print_version()
 	```
 	
-=== "Julia"
-	```julia
-	print_version()
-	```
 
 

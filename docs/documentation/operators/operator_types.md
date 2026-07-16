@@ -46,7 +46,7 @@ On a [Boson](../blocks/boson.md) block the spin operators refer to the spin $S =
 
 ### Hopping operators
 
-The hopping terms are the hermitian combination $-(c^\dagger_i c_j + c^\dagger_{j\sigma}c_{i\sigma}))$ carrying an overall minus sign. Note that the coupling multiplies the whole term, so a complex coupling makes it non-hermitian (see [Complex couplings](opsum.md#complex-couplings)). The `*Asym` variants provide the antisymmetric combination $-(c^\dagger_i c_j - c^\dagger_{j\sigma}c_{i\sigma}))$.
+The hopping terms are the hermitian combination $-(c^\dagger_i c_j + c^\dagger_{j\sigma}c_{i\sigma})$ carrying an overall minus sign. Note that the coupling multiplies the whole term, so a complex coupling makes it non-hermitian (see [Complex couplings](opsum.md#complex-couplings)). The `*Asym` variants provide the antisymmetric combination $-(c^\dagger_i c_j - c^\dagger_{j\sigma}c_{i\sigma})$.
 
 | Type        | Description                                                                                                              | No. of sites | Blocks                       |
 |:------------|:-------------------------------------------------------------------------------------------------------------------------|:------------:|:-----------------------------|

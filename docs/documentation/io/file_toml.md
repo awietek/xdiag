@@ -6,25 +6,22 @@ A file handler for TOML files. Most funtionality is only provided for the C++ ve
 
 **Sources** [file_toml.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/io/file_toml.hpp), [file_toml.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/io/file_toml.cpp)
 
----
-
 ## Constructors
 
+=== "Julia"
+	```julia
+    FileToml(filename::String)
+	```
 === "C++"	
 	```c++
 	FileToml(const char *filename);
 	FileToml(std::string filename);
 	```
-=== "Julia"
-	```julia
-    FileToml(filename::String)
-	```
+
 	
 | Name     | Description               | Default |
 |:---------|:--------------------------|---------|
 | filename | filename of the TOML file |         |
-
----
 
 ## Methods
 
@@ -36,9 +33,7 @@ Returns whether or not the TOML file has a certain key defined.
 	```c++
 	bool defined(FileToml const &fl, std::string key);
 	```
-		
----
-
+F
 #### getindex / operator[] (C++ only)
 
 Returns a handler to a value to be read from the TOML file.
@@ -48,7 +43,6 @@ Returns a handler to a value to be read from the TOML file.
 	io::FileTomlHandler operator[](std::string key);
 	```
 	
-
 ## Usage Example
 
 === "C++"

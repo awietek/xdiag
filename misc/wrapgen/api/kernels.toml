@@ -19,6 +19,71 @@ args = ["CSRMatrix const& A"]
 
 
 # ============================================================
+# xdiag/kernels/apply.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["Op const& op", "Block const& block_in", "arma::vec const& vec_in", "Block const& block_out", "arma::vec& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["Op const& op", "Block const& block_in", "arma::cx_vec const& vec_in", "Block const& block_out", "arma::cx_vec& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["Op const& op", "Block const& block_in", "arma::mat const& vec_in", "Block const& block_out", "arma::mat& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["Op const& op", "Block const& block_in", "arma::cx_mat const& vec_in", "Block const& block_out", "arma::cx_mat& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["Monomial const& op", "Block const& block_in", "arma::vec const& vec_in", "Block const& block_out", "arma::vec& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["Monomial const& op", "Block const& block_in", "arma::cx_vec const& vec_in", "Block const& block_out", "arma::cx_vec& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["Monomial const& op", "Block const& block_in", "arma::mat const& vec_in", "Block const& block_out", "arma::mat& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["Monomial const& op", "Block const& block_in", "arma::cx_mat const& vec_in", "Block const& block_out", "arma::cx_mat& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["OpSum const& op", "Block const& block_in", "arma::vec const& vec_in", "Block const& block_out", "arma::vec& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["OpSum const& op", "Block const& block_in", "arma::cx_vec const& vec_in", "Block const& block_out", "arma::cx_vec& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["OpSum const& op", "Block const& block_in", "arma::mat const& vec_in", "Block const& block_out", "arma::mat& vec_out"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["OpSum const& op", "Block const& block_in", "arma::cx_mat const& vec_in", "Block const& block_out", "arma::cx_mat& vec_out"]
+
+
+# ============================================================
 # xdiag/kernels/sparse/apply.hpp
 # ============================================================
 

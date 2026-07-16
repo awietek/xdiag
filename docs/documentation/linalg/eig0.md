@@ -8,19 +8,9 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 
 **Sources:** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/sparse_diag.hpp) · [sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/sparse_diag.cpp)
 
----
-
 ## Definition
 
 #### On-the-fly
-
-=== "C++"
-
-    ```c++
-	std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
-		double precision = 1e-12, int64_t max_iterations = 1000, 
-		int64_t random_seed = 42);
-	```
 
 === "Julia"
 	
@@ -28,9 +18,22 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
     eig0(ops::OpSum, block::Block;	precision::Float64 = 1e-12, 
 	     max_iterations::Int64 = 1000, random_seed::Int64 = 42)
 	```
+=== "C++"
+
+    ```c++
+	std::tuple<double, State> eig0(OpSum const &ops, Block const &block,
+		double precision = 1e-12, int64_t max_iterations = 1000, 
+		int64_t random_seed = 42);
+	```
 	
 #### Sparse matrix
 
+=== "Julia"
+	
+	``` julia
+	eig0(ops::CSRMatrix, block::Block; precision::Float64 = 1e-12, 
+         max_iterations::Int64 = 1000, random_seed::Int64 = 42)
+	```
 === "C++"
 
     ```c++
@@ -41,16 +44,6 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 		int64_t random_seed = 42);
 	```
 
-=== "Julia"
-	
-	``` julia
-	eig0(ops::CSRMatrix, block::Block; precision::Float64 = 1e-12, 
-         max_iterations::Int64 = 1000, random_seed::Int64 = 42)
-	```
-
-
----
-
 ## Parameters
 
 | Name           | Description                                                                                                    | Default |
@@ -60,8 +53,6 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 | precision      | accuracy of the computed ground state                                                                          | 1e-12   |
 | max_iterations | maximum number of iterations                                                                                   | 1000    |
 | random_seed    | random seed for setting up the initial vector                                                                  | 42      |
-
----
 
 ## Returns
 
@@ -74,13 +65,11 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 
 ## Usage Example
 
-=== "C++"
-	```c++
-	--8<-- "examples/usage_examples/main.cpp:eig0"
-	```
-	
 === "Julia"
 	```julia
 	--8<-- "examples/usage_examples/main.jl:eig0"
 	```
-
+=== "C++"
+	```c++
+	--8<-- "examples/usage_examples/main.cpp:eig0"
+	```

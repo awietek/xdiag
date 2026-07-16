@@ -19,7 +19,7 @@ misc/dump/*
 build/*
 misc/.venv
 *__pycache__
-misc/wrapgen2/generated
+misc/wrapgen/out
 cmake-build-debug
 examples/*/build
 examples/*/outfiles

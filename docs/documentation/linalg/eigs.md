@@ -8,12 +8,15 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 
 **Sources:** [sparse_diag.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/sparse_diag.hpp) · [sparse_diag.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/sparse_diag.cpp)
 
----
-
 ## Definition
 
 #### On-the-fly
 
+=== "Julia"
+	```julia
+	eigs(ops::OpSum, block::Block, neigs::Int64; precision::Float64 = 1e-12,
+	     max_iterations::Int64 = 1000, random_seed::Int64 = 42)
+	```
 === "C++"
 	```c++
 	std::tuple<arma::vec, State>
@@ -21,14 +24,15 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 	     double precision = 1e-12, int64_t max_iterations = 1000,
 	     int64_t random_seed = 42);
 	```
-=== "Julia"
-	```julia
-	eigs(ops::OpSum, block::Block, neigs::Int64; precision::Float64 = 1e-12,
-	     max_iterations::Int64 = 1000, random_seed::Int64 = 42)
-	```
+
 
 #### Sparse matrix
 
+=== "Julia"
+	```julia
+	eigs(ops::CSRMatrix, block::Block, neigs::Int64; precision::Float64 = 1e-12,
+	     max_iterations::Int64 = 1000, random_seed::Int64 = 42)
+	```
 === "C++"
 	```c++
 	template <typename idx_t, typename coeff_t>
@@ -37,13 +41,6 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 	     double precision = 1e-12, int64_t max_iterations = 1000,
 	     int64_t random_seed = 42);
 	```
-=== "Julia"
-	```julia
-	eigs(ops::CSRMatrix, block::Block, neigs::Int64; precision::Float64 = 1e-12,
-	     max_iterations::Int64 = 1000, random_seed::Int64 = 42)
-	```
-
----
 
 ## Parameters
 
@@ -56,13 +53,9 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 | max_iterations | maximum number of iterations                                                                                               | 1000    |
 | random_seed    | random seed for setting up the initial block of vectors                                                                    | 42      |
 
----
-
 ## Returns
 
 A tuple `(eigenvalues, eigenvectors)`, where `eigenvalues` is an `arma::vec` (Julia: `Vector{Float64}`) holding the `neigs` lowest eigenvalues in ascending order, and `eigenvectors` is a single [State](../states/state.md) object of shape $D \times$ `neigs` holding the corresponding eigenvectors as its columns.
-
----
 
 ## Usage Example
 

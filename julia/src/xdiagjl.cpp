@@ -7,6 +7,7 @@ JLCXX_MODULE define_julia_module(jlcxx::Module &mod) {
   julia::define_types(mod);
   julia::define_sparse_algebra(mod); // CSRMatrix types viewed by the algorithms
   julia::define_algebra(mod);
+  julia::define_apply(mod);
   julia::define_blocks(mod);
   julia::define_io(mod);
   julia::define_kernels(mod);

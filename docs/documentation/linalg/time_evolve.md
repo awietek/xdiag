@@ -3,16 +3,14 @@ title: time_evolve
 ---
 
 Computes the real-time evolution, 
-
-$$\vert \psi(t) \rangle = e^{-iHt} \vert \psi_0\rangle,$$ 
-
+$$
+\vert \psi(t) \rangle = e^{-iHt} \vert \psi_0\rangle,
+$$
 of a [State](../states/state.md) $\vert \psi_0 \rangle$ and a Hermitian operator $H$ using an iterative algorithm. 
 
 The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse matrix* in the compressed-sparse-row format (see [CSRMatrix](../kernels/sparse/sparse_matrix_types.md)).
 
 **Sources:** [time_evolve.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/time_evolve.hpp) · [time_evolve.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/time_evolve.cpp)
-
----
 
 ## Definition
 
@@ -22,6 +20,12 @@ The method is provided in two variants:
 
 1. Returning a new state while the input state remains untouched. This variant is safe to use and simple to code.
 
+	=== "Julia"
+		``` julia
+		time_evolve(H::OpSum, psi0::State, time::Float64; 
+                    precision::Float64 = 1e-12, 
+		            algorithm::String = "lanczos")::State
+		```
 	=== "C++"
 		```c++
 		State time_evolve(OpSum const &H, State psi0, double time,
@@ -29,15 +33,14 @@ The method is provided in two variants:
                           std::string algorithm = "lanczos");
 		```
 		
-	=== "Julia"
-		``` julia
-		time_evolve(H::OpSum, psi0::State, time::Float64; 
-                    precision::Float64 = 1e-12, 
-		            algorithm::String = "lanczos")::State
-		```
-
 2. An *inplace* variant `time_evolve_inplace`, where the input state is overwritten and contains the time evolved state upon exit. This version is more memory efficient than `time_evolve`.
 
+	=== "Julia"
+		``` julia
+		time_evolve_inplace(H::OpSum, psi0::State, time::Float64; 
+		                    precision::Float64 = 1e-12, 
+		                    algorithm::String = "lanczos")
+		```
 	=== "C++"
 
 		```c++
@@ -46,17 +49,16 @@ The method is provided in two variants:
                                  std::string algorithm = "lanczos");
 		```
 
-	=== "Julia"
-		``` julia
-		time_evolve_inplace(H::OpSum, psi0::State, time::Float64; 
-		                    precision::Float64 = 1e-12, 
-		                    algorithm::String = "lanczos")
-		```
-
 #### Sparse matrix
 
 1. Returning a new state while the input state remains untouched. This variant is safe to use and simple to code.
 
+	=== "Julia"
+		``` julia
+		time_evolve(ops::CSRMatrix, psi0::State, time::Float64; 
+            precision::Float64 = 1e-12, 
+			algorithm::String = "lanczos")::State
+		```
 	=== "C++"
 		```c++
 		template <typename idx_t, typename coeff_t>
@@ -64,16 +66,14 @@ The method is provided in two variants:
 			double time, double precision = 1e-12,
 			std::string algorithm = "lanczos");
 		```
-		
-	=== "Julia"
-		``` julia
-		time_evolve(ops::CSRMatrix, psi0::State, time::Float64; 
-            precision::Float64 = 1e-12, 
-			algorithm::String = "lanczos")::State
-		```
 
 2. An *inplace* variant `time_evolve_inplace`, where the input state is overwritten and contains the time evolved state upon exit. This version is more memory efficient than `time_evolve`.
 
+	=== "Julia"
+		``` julia
+		time_evolve_inplace(ops::CSRMatrix, psi0::State, time::Float64; 
+			precision::Float64 = 1e-12, algorithm::String = "lanczos")
+		```
 	=== "C++"
 
 		```c++
@@ -82,14 +82,6 @@ The method is provided in two variants:
 			State &psi, double time, double precision = 1e-12,
 			std::string algorithm = "lanczos");
 		```
-
-	=== "Julia"
-		``` julia
-		time_evolve_inplace(ops::CSRMatrix, psi0::State, time::Float64; 
-			precision::Float64 = 1e-12, algorithm::String = "lanczos")
-		```
-
----
 
 ## Parameters
 
@@ -103,16 +95,13 @@ The method is provided in two variants:
 
 The `algorithm` parameter decised which backend is run. If `lanczos` is chosen, the [evolve_lanczos](evolve_lanczos.md) routine is called with the standard arguments. Alternatively, `expokit` chooses the [time_evolve_expokit](time_evolve_expokit.md) routine. For a detailed documentation of the algorithms we refer to the [evolve_lanczos](evolve_lanczos.md) and [time_evolve_expokit](time_evolve_expokit.md) pages. Broadly speaking, the `expokit` can yield higher precision states at arbitrarily long times at the cost of increased memory and computing time. In practice, we recommend analysing the effect of the `precision` parameters on the time evolution series obtained in both cases. 
 
----
-
 ## Usage Example
 
-=== "C++"
-	```c++
-	--8<-- "examples/usage_examples/main.cpp:time_evolve"
-	```
 === "Julia"
 	```julia
 	--8<-- "examples/usage_examples/main.jl:time_evolve"
 	```
-	
+=== "C++"
+	```c++
+	--8<-- "examples/usage_examples/main.cpp:time_evolve"
+	```

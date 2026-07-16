@@ -19,8 +19,6 @@ The algorithm can be run either *on-the-fly* (matrix-free) or using a *sparse ma
 
 **Sources:** [time_evolve_expokit.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/time_evolve_expokit.hpp) · [time_evolve_expokit.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/linalg/time_evolution/time_evolve_expokit.cpp)
 
----
-
 ## Definition
 
 #### On-the-fly
@@ -29,38 +27,44 @@ The method is provided in two variants:
 
 1. Returning a new state while the input state remains untouched. This variant is safe to use and simple to code.
 
-	=== "C++"
-		```c++
-	    TimeEvolveExpokitResult time_evolve_expokit(
-			OpSum const &H, State state, double time, double precision = 1e-12,
-			int64_t m = 30, double anorm = 0., int64_t nnorm = 2);
-		```
 	=== "Julia"
 		```julia
 		time_evolve_expokit(H::OpSum, state::State, time::Float64;
 		                    precision::Float64=1e-12, m::Int64 = 30, 
 							anorm::Float64 = 0.0, nnorm::Int64 = 2)
 		```
+	=== "C++"
+		```c++
+	    TimeEvolveExpokitResult time_evolve_expokit(
+			OpSum const &H, State state, double time, double precision = 1e-12,
+			int64_t m = 30, double anorm = 0., int64_t nnorm = 2);
+		```
 
 2. An *inplace* variant `time_evolve_expokit_inplace`, where the input state is overwritten and contains the time evolved state upon exit. This version is more memory efficient than `time_evolve_expokit`.
 
-	=== "C++"
-		```c++
-		TimeEvolveExpokitInplaceResult time_evolve_expokit_inplace(
-			OpSum const &H, State &state, double time, double precision = 1e-12,
-			int64_t m = 30, double anorm = 0., int64_t nnorm = 2);
-		```
 	=== "Julia"
 		```julia
 		time_evolve_expokit_inplace(H::OpSum, state::State, time::Float64;
 		                            precision::Float64=1e-12, m::Int64 = 30, 
 							        anorm::Float64 = 0.0, nnorm::Int64 = 2)
 		```
+	=== "C++"
+		```c++
+		TimeEvolveExpokitInplaceResult time_evolve_expokit_inplace(
+			OpSum const &H, State &state, double time, double precision = 1e-12,
+			int64_t m = 30, double anorm = 0., int64_t nnorm = 2);
+		```
 		
 #### Sparse matrix
 		
 1. Returning a new state while the input state remains untouched. This variant is safe to use and simple to code.
 
+	=== "Julia"
+		```julia
+		time_evolve_expokit(H::CSRMatrix, state::State, time::Float64;
+			precision::Float64=1e-12, m::Int64 = 30, anorm::Float64 = 0.0,
+			nnorm::Int64 = 2)::TimeEvolveExpokitResult
+		```
 	=== "C++"
 		```c++
 	   	template <typename idx_t, typename coeff_t>
@@ -69,16 +73,15 @@ The method is provided in two variants:
 			State psi0, double time, double precision = 1e-12, 
 			int64_t m = 30, double anorm = 0., int64_t nnorm = 2);
 		```
-		
-	=== "Julia"
-		```julia
-		time_evolve_expokit(H::CSRMatrix, state::State, time::Float64;
-			precision::Float64=1e-12, m::Int64 = 30, anorm::Float64 = 0.0,
-			nnorm::Int64 = 2)::TimeEvolveExpokitResult
-		```
 
 2. An *inplace* variant `time_evolve_expokit_inplace`, where the input state is overwritten and contains the time evolved state upon exit. This version is more memory efficient than `time_evolve_expokit`.
 
+	=== "Julia"
+		```julia
+		time_evolve_expokit_inplace(H::CSRMatrix, state::State, time::Float64;
+			precision::Float64=1e-12, m::Int64 = 30, anorm::Float64 = 0.0,
+			nnorm::Int64 = 2)::TimeEvolveExpokitInplaceResult	
+		```
 	=== "C++"
 		```c++
 		template <typename idx_t, typename coeff_t>
@@ -88,16 +91,6 @@ The method is provided in two variants:
 			double precision = 1e-12, int64_t m = 30, double anorm = 0.,
 			int64_t nnorm = 2);
 		```
-		
-	=== "Julia"
-		```julia
-		time_evolve_expokit_inplace(H::CSRMatrix, state::State, time::Float64;
-			precision::Float64=1e-12, m::Int64 = 30, anorm::Float64 = 0.0,
-			nnorm::Int64 = 2)::TimeEvolveExpokitInplaceResult	
-		```
-		
-		
----
 
 ## Parameters
 
@@ -111,8 +104,6 @@ The method is provided in two variants:
 | anorm     | 1-norm estimate of the operator $H$, if unknown default 0. computes it fresh                                                                   | 0.      |
 | nnorm     | number of random samples to estimate 1-norm, usually not more than 2 required                                                                  | 2       |
 
----
-
 ## Returns
 
 A struct with the following entries
@@ -122,8 +113,6 @@ A struct with the following entries
 | error | the computed error estimate during evolution                                                      |
 | hump  | the "hump" as defined in Expokit [10.1145/285861.285868](https://doi.org/10.1145/285861.285868)   |
 | state | time-evolved [State](../states/state.md) $\vert \psi(t)\rangle$ (not defined for inplace variant) |
-
----
 
 ## Convergence criterion
 
@@ -138,17 +127,16 @@ where $\vert \tilde{\psi}(t) \rangle$ denotes the approximation computed during 
 > ACM Trans. Math. Softw., 24(1):130-156, 1998. (1998)<br>
 > DOI: [10.1145/285861.285868](https://doi.org/10.1145/285861.285868)
 
----
-
 ## Usage Example
 
+=== "Julia"
+	```julia
+	--8<-- "examples/usage_examples/main.jl:time_evolve_expokit"
+	```
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:time_evolve_expokit"
 	```
 	
-=== "Julia"
-	```julia
-	--8<-- "examples/usage_examples/main.jl:time_evolve_expokit"
-	```
+
 	

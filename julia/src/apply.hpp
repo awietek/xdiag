@@ -11,5 +11,5 @@
 #include <xdiag/all.hpp>
 
 namespace xdiag::julia {
-void define_matrix(jlcxx::Module &mod);
+void define_apply(jlcxx::Module &mod);
 }

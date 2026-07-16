@@ -10,14 +10,17 @@ For a description of the COO sparse matrix format, see [Sparse matrix types](spa
 
 **Sources:** [coo_matrix.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/sparse/coo_matrix.hpp) · [coo_matrix.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/kernels/sparse/coo_matrix.cpp)
 
----
-
 ## Definition
 
 The sparse matrix can be created in two ways:
 
 1. Only the input block on which the operator is defined is given. The output block is calculated and eventually created automatically.
 
+	=== "Julia"
+		```julia
+		coo_matrix(ops::OpSum, block::Block, i0::Int64=1)
+		coo_matrix_32(ops::OpSum, block::Block, i0::Int64=1)
+		```
 	=== "C++"
 		```c++
 		COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block, idx_t i0 = 0);
@@ -25,14 +28,14 @@ The sparse matrix can be created in two ways:
 		COOMatrix<int32_t, double> coo_matrix_32(OpSum const &ops, Block const &block, idx_t i0 = 0);
 		COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops, Block const &block, idx_t i0 = 0);
 		```
-	=== "Julia"
-		```julia
-		coo_matrix(ops::OpSum, block::Block, i0::Int64=1)
-		coo_matrix_32(ops::OpSum, block::Block, i0::Int64=1)
-		```
 		
 2. The output block is also handed as an argument. The compatibility of quantum numbers is checked. This way the output block is not created automatically and, thus, can be used to save computation time if the output block appears repeatedly in the computation.
 
+	=== "Julia"
+		```julia
+		coo_matrix(ops::OpSum, block_in::Block, block_out::Block, i0::Int64=1)
+		coo_matrix_32(ops::OpSum, block_in::Block, block_out::Block, i0::Int64=1)
+		```
 	=== "C++"
 		```c++
 		COOMatrix<int64_t, double> coo_matrix(OpSum const &ops, Block const &block_in, Block const &block_out, idx_t i0 = 0);
@@ -40,15 +43,9 @@ The sparse matrix can be created in two ways:
 		COOMatrix<int32_t, double> coo_matrix_32(OpSum const &ops, Block const &block_in, Block const &block_out, idx_t i0 = 0);
 		COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops, Block const &block_in, Block const &block_out, idx_t i0 = 0);
 		```
-	=== "Julia"
-		```julia
-		coo_matrix(ops::OpSum, block_in::Block, block_out::Block, i0::Int64=1)
-		coo_matrix_32(ops::OpSum, block_in::Block, block_out::Block, i0::Int64=1)
-		```
+
 		
 **Comment:** In Julia, depending on whether a real/complex matrix is generated also a real/complex matrix is returned. The C++ version has to return a fixed type. If a real matrix is desired, use the functions `coo_matrix` or `coo_matrix_32`. If a complex matrix is desired, use the functions `coo_matrixC` and `coo_matrixC_32`.
-
----
 
 ## Parameters
 
@@ -63,12 +60,13 @@ The sparse matrix can be created in two ways:
 
 ## Usage Example
 
+=== "Julia"
+	```julia
+	--8<-- "examples/usage_examples/main.jl:coo_matrix"
+	```
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:coo_matrix"
 	```
 
-=== "Julia"
-	```julia
-	--8<-- "examples/usage_examples/main.jl:coo_matrix"
-	```
+

@@ -10,17 +10,17 @@ A block in an Electron (fermions with $\uparrow, \downarrow$ spin) Hilbert space
 	
 === "Julia"
 	```julia
-	Electron(nsites::Int64, backend::String="auto")
-	Electron(nsites::Int64, nup::Int64, ndn::Int64, backend::String="auto")
-	Electron(nsites::Int64, irrep::Representation, backend::String="auto")
-	Electron(nsites::Int64, nup::Int64, ndn::Int64, irrep::Representation, backend::String="auto")
+	Electron(nsites::Int64)
+	Electron(nsites::Int64, nup::Int64, ndn::Int64)
+	Electron(nsites::Int64, irrep::Representation)
+	Electron(nsites::Int64, nup::Int64, ndn::Int64, irrep::Representation)
 	```
 === "C++"	
 	```c++
-    Electron(int64_t nsites, std::string backend = "auto");
-    Electron(int64_t nsites, int64_t nup, int64_t ndn, std::string backend = "auto");
-    Electron(int64_t nsites, Representation irrep, std::string backend = "auto");
-    Electron(int64_t nsites, int64_t nup, int64_t ndn, Representation irrep, std::string backend = "auto");
+    Electron(int64_t nsites);
+    Electron(int64_t nsites, int64_t nup, int64_t ndn");
+    Electron(int64_t nsites, Representation irrep);
+    Electron(int64_t nsites, int64_t nup, int64_t ndn);
 	```
 
 | Name    | Description                                                                          |        |
@@ -29,9 +29,7 @@ A block in an Electron (fermions with $\uparrow, \downarrow$ spin) Hilbert space
 | nup     | number of "up" electrons (integer)                                                   |        |
 | ndn     | number of "dn" electrons (integer)                                                   |        |
 | irrep   | Irreducible [Representation](../symmetries/representation.md)  of the symmetry group |        |
-| backend | backend used for coding the basis states                                             | `auto` |
 
-The parameter `backend` chooses how the block is coded internally. By using the default parameter `auto` the backend is chosen automatically. Alternatives are `32bit`, `64bit`
 
 ## Local configurations
 
@@ -44,7 +42,7 @@ Each site of an Electron block carries a local dimension $d=4$, allowing double 
 | `2`     | down-spin electron     | ↓      |
 | `3`     | doubly occupied        | ⇅      |
 
-The integer encodes the occupation bit-wise: bit $0$ is the $\uparrow$ occupation, bit $1$ the $\downarrow$ occupation. The Jordan-Wigner sign convention used for the fermionic operators is described in the [Hilbert spaces](../../user_guide/03-hilbert-spaces.md#normal-ordering-of-fermionic-blocks) section of the user guide.
+The integer encodes the occupation bit-wise: bit $0$ is the $\uparrow$ occupation, bit $1$ the $\downarrow$ occupation. The normal ordering sign convention used for the fermionic operators is described in the [Hilbert spaces](../../user_guide/03-hilbert-spaces.md#normal-ordering-of-fermionic-blocks) section of the user guide.
 
 ## Operators
 
