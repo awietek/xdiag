@@ -1,0 +1,59 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
+#include "permute.hpp"
+
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+
+namespace xdiag {
+
+Op permute(Op const &op, Permutation const &perm) try {
+  if (op.hassites()) {
+    auto type = op.type();
+    auto sites = op.sites();
+
+    std::vector<int64_t> sites_permuted(sites.size());
+    int64_t i = 0;
+    for (int64_t s : sites) {
+      if (s < 0) {
+        XDIAG_THROW(fmt::format("Cannot permute Op: found a site which is "
+                                "negative: \"{}\"\nOp:\n{}",
+                                s, to_string(op)));
+      } else if (s >= perm.size()) {
+        XDIAG_THROW(
+            fmt::format("Cannot permute Op: Op has a site with number \"{}\" "
+                        "which exceeds the length of the Permutation \"{}\", "
+                        "\nOp:\n{}\nPermutation:\n{}",
+                        s, perm.size(), to_string(op), to_string(perm)));
+      } else {
+        sites_permuted[i++] = perm[s];
+      }
+    }
+
+    if (op.hasmatrix()) {
+      return Op(type, sites_permuted, op.matrix());
+    } else {
+      return Op(type, sites_permuted);
+    }
+  } else {
+    return op;
+  }
+}
+XDIAG_CATCH
+
+OpSum permute(OpSum const &ops, Permutation const &perm) try {
+  OpSum ops_permuted;
+  for (auto const &[coeff, mono] : ops.plain()) {
+    Monomial mono_permuted;
+    for (auto const &op : mono) {
+      mono_permuted *= permute(op, perm);
+    }
+    ops_permuted += coeff * mono_permuted;
+  }
+  return ops_permuted;
+}
+XDIAG_CATCH
+
+} // namespace xdiag

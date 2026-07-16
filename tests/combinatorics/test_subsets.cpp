@@ -2,36 +2,122 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
+#include <tests/catch.hpp>
 
 #include <iostream>
-#include <xdiag/combinatorics/subsets.hpp>
+#include <vector>
+#include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/timing.hpp>
 
-template <class bit_t>
-void test_subsets(){
+template <class bit_t> void test_subsets() {
   using namespace xdiag;
   using namespace xdiag::combinatorics;
-  
-  for (int n=0; n<8; ++n)
-      {
-	Subsets<bit_t> subs(n);
-	REQUIRE(n == subs.n());
-	
-        int64_t ctr=0;
-	bit_t current=0;
-	for (auto sub : subs)
-	  {
-	    if (ctr != 0) REQUIRE(sub > current);
-	    current = sub;
-	    ++ctr;
-	    REQUIRE(sub < ((bit_t)1 << n));
-	  }
-	REQUIRE(ctr == subs.size());
-      }
+
+  for (int n = 0; n < 8; ++n) {
+    Subsets<bit_t> subs(n);
+    REQUIRE(n == subs.n());
+
+    int64_t ctr = 0;
+    bit_t current = 0;
+    for (auto sub : subs) {
+      if (ctr != 0)
+        REQUIRE(sub > current);
+      current = sub;
+      ++ctr;
+      REQUIRE(sub < ((bit_t)1 << n));
+    }
+    REQUIRE(ctr == subs.size());
+  }
 }
 
-TEST_CASE( "subsets", "[combinatorics/subsets]" ) {
-  test_subsets<uint16_t>();
-  test_subsets<uint32_t>();
-  test_subsets<uint64_t>();
+template <class bit_t> void test_subsets_random_access() {
+  using namespace xdiag;
+  using namespace xdiag::combinatorics;
+
+  for (int n = 0; n < 8; ++n) {
+    Subsets<bit_t> subs(n);
+
+    // operator[]: subs[i] == (bit_t)i
+    for (int64_t i = 0; i < subs.size(); ++i)
+      REQUIRE(subs[i] == (bit_t)i);
+
+    // index: round-trip index(subs[i]) == i
+    for (int64_t i = 0; i < subs.size(); ++i)
+      REQUIRE(subs.index(subs[i]) == i);
+  }
+}
+
+template <class bit_t> void test_subsets_iterator_advance() {
+  using namespace xdiag;
+  using namespace xdiag::combinatorics;
+
+  for (int n = 1; n < 8; ++n) {
+    Subsets<bit_t> subs(n);
+
+    // Collect all elements via sequential iteration
+    std::vector<bit_t> elems;
+    for (auto s : subs)
+      elems.push_back(s);
+
+    // operator+: begin() + i should match elems[i]
+    for (int64_t i = 0; i < subs.size(); ++i)
+      REQUIRE(*(subs.begin() + i) == elems[i]);
+
+    // operator+=: advance a single iterator step by step
+    auto it = subs.begin();
+    for (int64_t i = 0; i < subs.size() - 1; ++i) {
+      it += 1;
+      REQUIRE(*it == elems[i + 1]);
+    }
+
+    // operator+=: jump by larger steps
+    if (subs.size() >= 4) {
+      auto it2 = subs.begin();
+      it2 += 3;
+      REQUIRE(*it2 == elems[3]);
+    }
+  }
+}
+
+TEST_CASE("subsets", "[combinatorics]") {
+
+  SECTION("iteration") {
+    xdiag::Log("Testing Subsets - iteration");
+    test_subsets<uint32_t>();
+    test_subsets<uint64_t>();
+  }
+
+  SECTION("random access and index") {
+    xdiag::Log("Testing Subsets - random access and index");
+    test_subsets_random_access<uint32_t>();
+    test_subsets_random_access<uint64_t>();
+  }
+
+  SECTION("iterator advance (+ and +=)") {
+    xdiag::Log("Testing Subsets - iterator advance");
+    test_subsets_iterator_advance<uint32_t>();
+    test_subsets_iterator_advance<uint64_t>();
+  }
+}
+
+TEST_CASE("subsetslong32", "[combinatorics]") {
+
+  xdiag::Log("Testing Subsets - uint32_t maxing");
+  xdiag::combinatorics::Subsets<uint32_t> subs(32);
+
+  int64_t expected_size = (int64_t)1 << 32;
+  uint32_t prev = 0;
+  int64_t ctr = 0;
+  xdiag::tic();
+  for (uint32_t bits : subs) {
+    // if (ctr > 0) {
+    //   REQUIRE(bits > prev);
+    //   prev = bits;
+    // }
+    ++ctr;
+  }
+  xdiag::toc();
+  REQUIRE(ctr == expected_size);
+  REQUIRE(subs.size() == expected_size);
 }

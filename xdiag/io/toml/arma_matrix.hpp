@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <xdiag/extern/armadillo/armadillo>
-#include <xdiag/extern/toml++/toml.hpp>
+#include <xdiag/armadillo.hpp>
+#include <extern/toml++/toml.hpp>
 
 namespace xdiag::io {
 

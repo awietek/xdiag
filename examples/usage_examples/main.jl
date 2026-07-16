@@ -1,5 +1,6 @@
 using XDiag
 
+
 # --8<-- [start:Permutation]
 p1 = Permutation([1, 3, 2, 4])
 p2 = Permutation([3, 1, 2, 4])
@@ -265,7 +266,7 @@ let
     @show res.eigenvalues
 
     # With specific initial state
-    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    psi0 = product_state(block, [1, 0, 1, 0, 1, 0, 1, 0])
     res2 = eigvals_lanczos(ops, psi0)
     @show res.alphas
     @show res.betas
@@ -318,7 +319,7 @@ let
     end
     ops["J"] = 1.0
 
-    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    psi0 = product_state(block, [1, 0, 1, 0, 1, 0, 1, 0])
     time = 1.0
 
     # on-the-fly
@@ -347,7 +348,7 @@ let
     # Compute ground state energy
     e0 = eigval0(ops, block)
  
-    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    psi0 = product_state(block, [1, 0, 1, 0, 1, 0, 1, 0])
     time = 1.0
 
     # on-the-fly
@@ -378,7 +379,7 @@ let
     # Compute ground state energy
     e0 = eigval0(ops, block)
  
-    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    psi0 = product_state(block, [1, 0, 1, 0, 1, 0, 1, 0])
     time = 1.0
 
     # on-the-fly
@@ -405,7 +406,7 @@ let
         ops += Op("SdotS", [i, mod1(i+1, N)])
     end
 
-    psi0 = product_state(block, ["Up", "Dn", "Up", "Dn", "Up", "Dn", "Up", "Dn"])
+    psi0 = product_state(block, [1, 0, 1, 0, 1, 0, 1, 0])
     time = 1.0
 
     # on-the-fly
@@ -457,8 +458,6 @@ let
     ops2["J"] = J;
     ops2["h"] = h;
     
-    @show isapprox(ops1, ops2)
-    @show isapprox(ops1 + ops2, 2.0 * ops1)
     @show to_string(ops1)
 end
 # --8<-- [end:opsum]
@@ -482,7 +481,7 @@ display(vector(psi1))
 make_complex!(psi1)
 display(vector(psi1))
 
-psi2 = State(block, real=false, n_cols=3)
+psi2 = State(block, real=false, ncols=3)
 @show psi2
 display(matrix(psi2))
 
@@ -494,16 +493,13 @@ display(vector(imag(psi3)))
 
 
 # --8<-- [start:product_state]
-pstate = ProductState(["Up", "Dn", "Emp", "UpDn"])
+pstate = ProductState([1, 2, 0, 3])
 for s in pstate
     @show s
 end
 @show pstate
 
-pstate = ProductState()
-push!(pstate, "Dn")
-push!(pstate, "Up")
-push!(pstate, "Dn")
+pstate = ProductState([2, 1, 2])
 @show nsites(pstate)
 for s in pstate
     @show s
@@ -515,34 +511,20 @@ end
 # --8<-- [start:random_state]
 block = Spinhalf(2)
 state = State(block, real=false)  # complex State
-rstate1 = RandomState(1234)
-fill(state, rstate1)
+state = random_state(block, seed=1234)
 display(vector(state))
 
-rstate2 = RandomState(4321)
-fill(state, rstate2)
+state = random_state(block, seed=4321)
 display(vector(state))
 
-fill(state, rstate1)
+state = random_state(block, seed=4321)
 display(vector(state))
 # --8<-- [end:random_state]
-
-# --8<-- [start:fill]
-block = Spinhalf(2)
-state = State(block)
-pstate = ProductState(["Up", "Dn"])
-fill(state, pstate)
-display(vector(state))
-
-rstate = RandomState(1234)
-fill(state, rstate)
-display(vector(state))
-# --8<-- [end:fill]
 
 
 # --8<-- [start:create_state]
 block = Spinhalf(2)
-state = product_state(block, ["Up", "Dn"])
+state = product_state(block, [1, 0])
 display(vector(state))
 
 zero(state)
@@ -692,3 +674,70 @@ k_pi2_half = read_representation(fl, "k_pi2_half")
 @show isreal(k_pi2_half)
 # --8<-- [end:read_representation]
 
+
+# --8<-- [start:Fermion]
+let
+    N = 8
+    nfermions = 4
+
+    # Spinless fermion chain with hopping and nearest-neighbor repulsion
+    block = Fermion(N, nfermions)
+    ops = OpSum()
+    for i in 1:N
+        ops += "t" * Op("Hop", [i, mod1(i + 1, N)])
+        ops += "V" * Op("NN", [i, mod1(i + 1, N)])
+    end
+    ops["t"] = 1.0
+    ops["V"] = 2.0
+
+    e0 = eigval0(ops, block)
+    @show e0
+end
+# --8<-- [end:Fermion]
+
+# --8<-- [start:Boson]
+let
+    N = 6
+    d = 4         # local dimension: up to d-1 = 3 bosons per site
+    nbosons = 6
+
+    # Bose-Hubbard chain: hopping + on-site interaction
+    block = Boson(N, d, nbosons)
+    ops = OpSum()
+    for i in 1:N
+        ops += "t" * Op("Hop", [i, mod1(i + 1, N)])
+    end
+    ops += "U" * Op("HubbardU")
+    ops["t"] = 1.0
+    ops["U"] = 4.0
+
+    e0 = eigval0(ops, block)
+    @show e0
+end
+# --8<-- [end:Boson]
+
+# --8<-- [start:expect]
+let
+    block = Spinhalf(8)
+    ops = OpSum()
+    for i in 1:8
+	ops += "J" * Op("SdotS", [i, mod1(i + 1, 8)])
+    end
+    ops["J"] = 1.0
+    e0, psi0 = eig0(ops, block)
+    szs = expect(psi0, "Sz")
+end
+# --8<-- [end:expect]
+
+# --8<-- [start:correlation_matrix]
+let
+    block = Spinhalf(8)
+    ops = OpSum()
+    for i in 1:8
+	ops += "J" * Op("SdotS", [i, mod1(i + 1, 8)])
+    end
+    ops["J"] = 1.0
+    e0, psi0 = eig0(ops, block)
+    szsz = correlation_matrix(psi0, "Sz", "Sz")
+end
+# --8<-- [end:correlation_matrix]

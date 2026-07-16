@@ -1,0 +1,87 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
+#include "time_evolve.hpp"
+
+#include <xdiag/linalg/time_evolution/evolve_lanczos.hpp>
+#include <xdiag/linalg/time_evolution/time_evolve_expokit.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+
+namespace xdiag {
+
+template <typename op_t>
+static State time_evolve(op_t const &H, State psi, double time,
+                         double precision, std::string algorithm) try {
+  time_evolve_inplace(H, psi, time, precision, algorithm);
+  return psi;
+}
+XDIAG_CATCH
+
+State time_evolve(OpSum const &H, State psi, double time, double precision,
+                  std::string algorithm) try {
+  return time_evolve<OpSum>(H, psi, time, precision, algorithm);
+}
+XDIAG_CATCH
+
+template <typename idx_t, typename coeff_t>
+State time_evolve(CSRMatrix<idx_t, coeff_t> const &H, State psi, double time,
+                  double precision, std::string algorithm) try {
+  return time_evolve<CSRMatrix<idx_t, coeff_t>>(H, psi, time, precision,
+                                                algorithm);
+}
+XDIAG_CATCH
+
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template State time_evolve(CSRMatrix<IDX, COEFF> const &, State, double,     \
+                             double, std::string);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
+
+template <typename op_t>
+static void time_evolve_inplace(op_t const &H, State &psi, double time,
+                                double precision, std::string algorithm) try {
+  if (algorithm == "lanczos") {
+    // minus sign in exp(-iHt) implemented here
+    evolve_lanczos_inplace(H, psi, complex(0, -time), precision);
+  } else if (algorithm == "expokit") {
+    // minus sign in exp(-iHt) implemented in expokit routine
+    time_evolve_expokit_inplace(H, psi, time, precision);
+  } else {
+    XDIAG_THROW(
+        fmt::format("Invalid time-evolution algorithm specified: \"{}\". Must "
+                    "be one of \"lanczos\" or \"expokit\".",
+                    algorithm));
+  }
+}
+XDIAG_CATCH
+
+void time_evolve_inplace(OpSum const &H, State &psi, double time,
+                         double precision, std::string algorithm) try {
+  time_evolve_inplace<OpSum>(H, psi, time, precision, algorithm);
+}
+XDIAG_CATCH
+
+template <typename idx_t, typename coeff_t>
+void time_evolve_inplace(CSRMatrix<idx_t, coeff_t> const &H, State &psi,
+                         double time, double precision,
+                         std::string algorithm) try {
+  time_evolve_inplace<CSRMatrix<idx_t, coeff_t>>(H, psi, time, precision,
+                                                 algorithm);
+}
+XDIAG_CATCH
+
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template void time_evolve_inplace(CSRMatrix<IDX, COEFF> const &, State &,    \
+                                    double, double, std::string);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
+
+} // namespace xdiag

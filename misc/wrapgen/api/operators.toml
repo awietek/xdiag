@@ -1,0 +1,1004 @@
+module = "operators"
+
+
+# ============================================================
+# xdiag/operators/op.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "Op"
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "int64_t site"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "initializer_list const& sites"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "vector const& sites"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "arma::ivec const& sites"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "int64_t site", "arma::mat const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "initializer_list const& sites", "arma::mat const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "vector const& sites", "arma::mat const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "arma::ivec const& sites", "arma::mat const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "int64_t site", "arma::cx_mat const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "initializer_list const& sites", "arma::cx_mat const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "vector const& sites", "arma::cx_mat const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "arma::ivec const& sites", "arma::cx_mat const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "int64_t site", "Matrix const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "Op"
+record = "Op"
+args = ["std::string type", "vector const& sites", "Matrix const& matrix"]
+
+[[entries]]
+kind = "method"
+name = "type"
+record = "Op"
+const = true
+returns = "std::string"
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "Op"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "operator[]"
+record = "Op"
+const = true
+returns = "int64_t"
+args = ["int64_t idx"]
+
+[[entries]]
+kind = "method"
+name = "sites"
+record = "Op"
+const = true
+returns = "vector const&"
+
+[[entries]]
+kind = "method"
+name = "hassites"
+record = "Op"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "hasmatrix"
+record = "Op"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "matrix"
+record = "Op"
+const = true
+returns = "Matrix const&"
+
+[[entries]]
+kind = "method"
+name = "isreal"
+record = "Op"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "Op"
+const = true
+returns = "bool"
+args = ["Op const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "Op"
+const = true
+returns = "bool"
+args = ["Op const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator<"
+record = "Op"
+const = true
+returns = "bool"
+args = ["Op const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "isreal"
+returns = "bool"
+args = ["Op const& op"]
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "Op const& op"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["Op const& op"]
+
+
+# ============================================================
+# xdiag/operators/monomial.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "Monomial"
+
+[[entries]]
+kind = "constructor"
+name = "Monomial"
+record = "Monomial"
+
+[[entries]]
+kind = "constructor"
+name = "Monomial"
+record = "Monomial"
+args = ["Op const& op"]
+
+[[entries]]
+kind = "constructor"
+name = "Monomial"
+record = "Monomial"
+args = ["initializer_list ops"]
+
+[[entries]]
+kind = "constructor"
+name = "Monomial"
+record = "Monomial"
+args = ["vector const& ops"]
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "Monomial"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "empty"
+record = "Monomial"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "operator[]"
+record = "Monomial"
+const = true
+returns = "Op const&"
+args = ["int64_t idx"]
+
+[[entries]]
+kind = "method"
+name = "ops"
+record = "Monomial"
+const = true
+returns = "vector const&"
+
+[[entries]]
+kind = "method"
+name = "begin"
+record = "Monomial"
+const = true
+returns = "__wrap_iter"
+
+[[entries]]
+kind = "method"
+name = "end"
+record = "Monomial"
+const = true
+returns = "__wrap_iter"
+
+[[entries]]
+kind = "method"
+name = "operator*"
+record = "Monomial"
+const = true
+returns = "Monomial"
+args = ["Op const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator*"
+record = "Monomial"
+const = true
+returns = "Monomial"
+args = ["Monomial const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator*="
+record = "Monomial"
+returns = "Monomial&"
+args = ["Op const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator*="
+record = "Monomial"
+returns = "Monomial&"
+args = ["Monomial const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "Monomial"
+const = true
+returns = "bool"
+args = ["Monomial const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "Monomial"
+const = true
+returns = "bool"
+args = ["Monomial const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator<"
+record = "Monomial"
+const = true
+returns = "bool"
+args = ["Monomial const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "isreal"
+record = "Monomial"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "Monomial"
+args = ["Op const& lhs", "Op const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "Monomial"
+args = ["Op const& lhs", "Monomial const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "isreal"
+returns = "bool"
+args = ["Monomial const& m"]
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "Monomial const& m"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["Monomial const& m"]
+
+
+# ============================================================
+# xdiag/operators/opsum.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "OpSum"
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["Op const& op"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["Monomial const& mono"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["Scalar const& coeff", "Op const& op"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["Scalar const& coeff", "Monomial const& mono"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["Coeff const& coeff", "Op const& op"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["Coeff const& coeff", "Monomial const& mono"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["std::string const& coeff", "Op const& op"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["double coeff", "Op const& op"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["complex coeff", "Op const& op"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["std::string const& coeff", "Monomial const& mono"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["double coeff", "Monomial const& mono"]
+
+[[entries]]
+kind = "constructor"
+name = "OpSum"
+record = "OpSum"
+args = ["complex coeff", "Monomial const& mono"]
+
+[[entries]]
+kind = "method"
+name = "operator="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Op const& op"]
+
+[[entries]]
+kind = "method"
+name = "operator="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Monomial const& op"]
+
+[[entries]]
+kind = "method"
+name = "operator+="
+record = "OpSum"
+returns = "OpSum&"
+args = ["OpSum const& ops"]
+
+[[entries]]
+kind = "method"
+name = "operator+="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Op const& op"]
+
+[[entries]]
+kind = "method"
+name = "operator+="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Monomial const& mono"]
+
+[[entries]]
+kind = "method"
+name = "operator+"
+record = "OpSum"
+const = true
+returns = "OpSum"
+args = ["OpSum const& ops"]
+
+[[entries]]
+kind = "method"
+name = "operator+"
+record = "OpSum"
+const = true
+returns = "OpSum"
+args = ["Op const& op"]
+
+[[entries]]
+kind = "method"
+name = "operator+"
+record = "OpSum"
+const = true
+returns = "OpSum"
+args = ["Monomial const& mono"]
+
+[[entries]]
+kind = "method"
+name = "operator-="
+record = "OpSum"
+returns = "OpSum&"
+args = ["OpSum const& ops"]
+
+[[entries]]
+kind = "method"
+name = "operator-="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Op const& op"]
+
+[[entries]]
+kind = "method"
+name = "operator-="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Monomial const& mono"]
+
+[[entries]]
+kind = "method"
+name = "operator-"
+record = "OpSum"
+const = true
+returns = "OpSum"
+args = ["OpSum const& ops"]
+
+[[entries]]
+kind = "method"
+name = "operator-"
+record = "OpSum"
+const = true
+returns = "OpSum"
+args = ["Op const& op"]
+
+[[entries]]
+kind = "method"
+name = "operator-"
+record = "OpSum"
+const = true
+returns = "OpSum"
+args = ["Monomial const& mono"]
+
+[[entries]]
+kind = "method"
+name = "operator-"
+record = "OpSum"
+const = true
+returns = "OpSum"
+
+[[entries]]
+kind = "method"
+name = "operator*="
+record = "OpSum"
+returns = "OpSum&"
+args = ["double scalar"]
+
+[[entries]]
+kind = "method"
+name = "operator*="
+record = "OpSum"
+returns = "OpSum&"
+args = ["complex scalar"]
+
+[[entries]]
+kind = "method"
+name = "operator/="
+record = "OpSum"
+returns = "OpSum&"
+args = ["double scalar"]
+
+[[entries]]
+kind = "method"
+name = "operator/="
+record = "OpSum"
+returns = "OpSum&"
+args = ["complex scalar"]
+
+[[entries]]
+kind = "method"
+name = "operator*="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Scalar const& scalar"]
+
+[[entries]]
+kind = "method"
+name = "operator/="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Scalar const& scalar"]
+
+[[entries]]
+kind = "method"
+name = "operator*"
+record = "OpSum"
+const = true
+returns = "OpSum"
+args = ["OpSum const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator*="
+record = "OpSum"
+returns = "OpSum&"
+args = ["OpSum const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator*"
+record = "OpSum"
+const = true
+returns = "OpSum"
+args = ["Op const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator*="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Op const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator*"
+record = "OpSum"
+const = true
+returns = "OpSum"
+args = ["Monomial const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator*="
+record = "OpSum"
+returns = "OpSum&"
+args = ["Monomial const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator[]"
+record = "OpSum"
+returns = "Scalar&"
+args = ["std::string const& name"]
+
+[[entries]]
+kind = "method"
+name = "operator[]"
+record = "OpSum"
+const = true
+returns = "Scalar const&"
+args = ["std::string const& name"]
+
+[[entries]]
+kind = "method"
+name = "plain"
+record = "OpSum"
+const = true
+returns = "OpSum"
+
+[[entries]]
+kind = "method"
+name = "terms"
+record = "OpSum"
+const = true
+returns = "vector const&"
+
+[[entries]]
+kind = "method"
+name = "params"
+record = "OpSum"
+const = true
+returns = "map const&"
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "OpSum"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "begin"
+record = "OpSum"
+const = true
+returns = "__wrap_iter"
+
+[[entries]]
+kind = "method"
+name = "end"
+record = "OpSum"
+const = true
+returns = "__wrap_iter"
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "OpSum"
+const = true
+returns = "bool"
+args = ["OpSum const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "OpSum"
+const = true
+returns = "bool"
+args = ["OpSum const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "isreal"
+record = "OpSum"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "empty"
+record = "OpSum"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["double coeff", "Op const& op"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["complex coeff", "Op const& op"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["std::string const& coeff", "Op const& op"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Coeff const& coeff", "Op const& op"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Scalar const& coeff", "Op const& op"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Op const& op", "double coeff"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Op const& op", "complex coeff"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Op const& op", "std::string const& coeff"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Op const& op", "Coeff const& coeff"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Op const& op", "Scalar const& coeff"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["double coeff", "Monomial const& mono"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["complex coeff", "Monomial const& mono"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["std::string const& coeff", "Monomial const& mono"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Coeff const& coeff", "Monomial const& mono"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Scalar const& coeff", "Monomial const& mono"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Monomial const& mono", "double coeff"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Monomial const& mono", "complex coeff"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Monomial const& mono", "std::string const& coeff"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Monomial const& mono", "Coeff const& coeff"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Monomial const& mono", "Scalar const& coeff"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["double scalar", "OpSum const& ops"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["complex scalar", "OpSum const& ops"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Scalar const& scalar", "OpSum const& ops"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["OpSum const& ops", "double scalar"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["OpSum const& ops", "complex scalar"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["OpSum const& ops", "Scalar const& scalar"]
+
+[[entries]]
+kind = "function"
+name = "operator/"
+returns = "OpSum"
+args = ["OpSum const& ops", "double scalar"]
+
+[[entries]]
+kind = "function"
+name = "operator/"
+returns = "OpSum"
+args = ["OpSum const& ops", "complex scalar"]
+
+[[entries]]
+kind = "function"
+name = "operator/"
+returns = "OpSum"
+args = ["OpSum const& ops", "Scalar const& scalar"]
+
+[[entries]]
+kind = "function"
+name = "operator+"
+returns = "OpSum"
+args = ["Monomial const& lhs", "Monomial const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "operator-"
+returns = "OpSum"
+args = ["Monomial const& lhs", "Monomial const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "operator-"
+returns = "OpSum"
+args = ["Monomial const& mono"]
+
+[[entries]]
+kind = "function"
+name = "operator+"
+returns = "OpSum"
+args = ["Monomial const& lhs", "OpSum const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "operator-"
+returns = "OpSum"
+args = ["Monomial const& lhs", "OpSum const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Op const& lhs", "OpSum const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "OpSum"
+args = ["Monomial const& lhs", "OpSum const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "isreal"
+returns = "bool"
+args = ["OpSum const& ops"]
+
+[[entries]]
+kind = "function"
+name = "empty"
+returns = "bool"
+args = ["OpSum const& ops"]
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "OpSum const& ops"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["OpSum const& ops"]
+
+
+# ============================================================
+# xdiag/operators/hc.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "hc"
+returns = "OpSum"
+args = ["Op const& op"]
+
+[[entries]]
+kind = "function"
+name = "hc"
+returns = "OpSum"
+args = ["Monomial const& mono"]
+
+[[entries]]
+kind = "function"
+name = "hc"
+returns = "OpSum"
+args = ["OpSum const& ops"]

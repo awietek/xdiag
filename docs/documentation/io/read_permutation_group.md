@@ -6,22 +6,16 @@ Reads an [PermutationGroup](../symmetries/permutation_group.md) object from a TO
 
 **Sources** [read.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/io/read.hpp), [read.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/io/read.cpp)
 
----
-
 ## Definition
 
-
-=== "C++"
-	```c++
-	OpSum read_permutation_group(FileToml file, std::string tag);
-	```
-	
 === "Julia"
 	```julia
 	read_permutation_group(file::FileToml, tag::String)::PermutationGroup
 	```
-
----
+=== "C++"
+	```c++
+	OpSum read_permutation_group(FileToml file, std::string tag);
+	```
 
 ## Parameters
 
@@ -29,8 +23,6 @@ Reads an [PermutationGroup](../symmetries/permutation_group.md) object from a TO
 |:-----|:--------------------------------------------------------------------------------------------------------------|---|
 | file | [FileToml](file_toml.md) object from which the [PermutationGroup](../symmetries/permutation_group.md) is read |   |
 | tag  | tag which holds the information in the TOML file about the PermutatioGroup                                    |   |
-
----
 
 ## Data format
 
@@ -50,19 +42,17 @@ Symmetries = [
 !!! warning "1-indexing in Julia / 0-indexing in C++"
 
 	To enumerate the sites of a Permutation, we start counting at 1 in Julia and 0 in C++.
-	
-
----
 
 ## Usage Example
-
-=== "C++"
-	```c++
-	--8<-- "examples/usage_examples/main.cpp:read_permutation_group"
-	```
 
 === "Julia"
 	```julia
 	--8<-- "examples/usage_examples/main.jl:read_permutation_group"
 	```
+=== "C++"
+	```c++
+	--8<-- "examples/usage_examples/main.cpp:read_permutation_group"
+	```
+
+
 

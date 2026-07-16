@@ -1,0 +1,958 @@
+module = "blocks"
+
+
+# ============================================================
+# xdiag/blocks/boson.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "Boson"
+
+[[entries]]
+kind = "constructor"
+name = "Boson"
+record = "Boson"
+
+[[entries]]
+kind = "constructor"
+name = "Boson"
+record = "Boson"
+args = ["int64_t sites", "int64_t d", "RepresentationSet const& irreps"]
+
+[[entries]]
+kind = "constructor"
+name = "Boson"
+record = "Boson"
+args = ["int64_t sites", "int64_t d"]
+
+[[entries]]
+kind = "constructor"
+name = "Boson"
+record = "Boson"
+args = ["int64_t sites", "int64_t d", "int64_t number"]
+
+[[entries]]
+kind = "constructor"
+name = "Boson"
+record = "Boson"
+args = ["int64_t sites", "int64_t d", "Representation const& irrep"]
+
+[[entries]]
+kind = "constructor"
+name = "Boson"
+record = "Boson"
+args = ["int64_t sites", "int64_t d", "int64_t number", "Representation const& irrep"]
+
+[[entries]]
+kind = "method"
+name = "nsites"
+record = "Boson"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "d"
+record = "Boson"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "dim"
+record = "Boson"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "Boson"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "isreal"
+record = "Boson"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "index"
+record = "Boson"
+const = true
+returns = "int64_t"
+args = ["ProductState const& pstate"]
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "Boson"
+const = true
+returns = "bool"
+args = ["Boson const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "Boson"
+const = true
+returns = "bool"
+args = ["Boson const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "begin"
+record = "Boson"
+const = true
+returns = "BosonIterator"
+
+[[entries]]
+kind = "method"
+name = "end"
+record = "Boson"
+const = true
+returns = "BosonIterator"
+
+[[entries]]
+kind = "method"
+name = "irreps"
+record = "Boson"
+const = true
+returns = "RepresentationSet"
+
+[[entries]]
+kind = "method"
+name = "basis"
+record = "Boson"
+const = true
+returns = "shared_ptr const&"
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "Boson const& block"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["Boson const& block"]
+
+[[entries]]
+kind = "class"
+name = "BosonIterator"
+
+[[entries]]
+kind = "constructor"
+name = "BosonIterator"
+record = "BosonIterator"
+args = ["Boson* block", "int64_t idx"]
+
+[[entries]]
+kind = "method"
+name = "operator++"
+record = "BosonIterator"
+returns = "BosonIterator&"
+
+[[entries]]
+kind = "method"
+name = "operator*"
+record = "BosonIterator"
+const = true
+returns = "ProductState"
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "BosonIterator"
+const = true
+returns = "bool"
+args = ["BosonIterator const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "BosonIterator"
+const = true
+returns = "bool"
+args = ["BosonIterator const& rhs"]
+
+
+# ============================================================
+# xdiag/blocks/electron.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "Electron"
+
+[[entries]]
+kind = "constructor"
+name = "Electron"
+record = "Electron"
+
+[[entries]]
+kind = "constructor"
+name = "Electron"
+record = "Electron"
+args = ["int64_t sites", "RepresentationSet const& irreps"]
+
+[[entries]]
+kind = "constructor"
+name = "Electron"
+record = "Electron"
+args = ["int64_t nsites"]
+
+[[entries]]
+kind = "constructor"
+name = "Electron"
+record = "Electron"
+args = ["int64_t nsites", "int64_t nup", "int64_t ndn"]
+
+[[entries]]
+kind = "constructor"
+name = "Electron"
+record = "Electron"
+args = ["int64_t nsites", "Representation const& irrep"]
+
+[[entries]]
+kind = "constructor"
+name = "Electron"
+record = "Electron"
+args = ["int64_t nsites", "int64_t nup", "int64_t ndn", "Representation const& irrep"]
+
+[[entries]]
+kind = "method"
+name = "nsites"
+record = "Electron"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "d"
+record = "Electron"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "dim"
+record = "Electron"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "Electron"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "isreal"
+record = "Electron"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "index"
+record = "Electron"
+const = true
+returns = "int64_t"
+args = ["ProductState const& pstate"]
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "Electron"
+const = true
+returns = "bool"
+args = ["Electron const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "Electron"
+const = true
+returns = "bool"
+args = ["Electron const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "begin"
+record = "Electron"
+const = true
+returns = "ElectronIterator"
+
+[[entries]]
+kind = "method"
+name = "end"
+record = "Electron"
+const = true
+returns = "ElectronIterator"
+
+[[entries]]
+kind = "method"
+name = "irreps"
+record = "Electron"
+const = true
+returns = "RepresentationSet"
+
+[[entries]]
+kind = "method"
+name = "basis"
+record = "Electron"
+const = true
+returns = "shared_ptr const&"
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "Electron const& block"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["Electron const& block"]
+
+[[entries]]
+kind = "class"
+name = "ElectronIterator"
+
+[[entries]]
+kind = "constructor"
+name = "ElectronIterator"
+record = "ElectronIterator"
+args = ["Electron* block", "int64_t idx"]
+
+[[entries]]
+kind = "method"
+name = "operator++"
+record = "ElectronIterator"
+returns = "ElectronIterator&"
+
+[[entries]]
+kind = "method"
+name = "operator*"
+record = "ElectronIterator"
+const = true
+returns = "ProductState"
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "ElectronIterator"
+const = true
+returns = "bool"
+args = ["ElectronIterator const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "ElectronIterator"
+const = true
+returns = "bool"
+args = ["ElectronIterator const& rhs"]
+
+
+# ============================================================
+# xdiag/blocks/fermion.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "Fermion"
+
+[[entries]]
+kind = "constructor"
+name = "Fermion"
+record = "Fermion"
+
+[[entries]]
+kind = "constructor"
+name = "Fermion"
+record = "Fermion"
+args = ["int64_t nsites", "RepresentationSet const& irreps"]
+
+[[entries]]
+kind = "constructor"
+name = "Fermion"
+record = "Fermion"
+args = ["int64_t nsites"]
+
+[[entries]]
+kind = "constructor"
+name = "Fermion"
+record = "Fermion"
+args = ["int64_t nsites", "int64_t number"]
+
+[[entries]]
+kind = "constructor"
+name = "Fermion"
+record = "Fermion"
+args = ["int64_t nsites", "Representation const& irrep"]
+
+[[entries]]
+kind = "constructor"
+name = "Fermion"
+record = "Fermion"
+args = ["int64_t nsites", "int64_t number", "Representation const& irrep"]
+
+[[entries]]
+kind = "method"
+name = "nsites"
+record = "Fermion"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "d"
+record = "Fermion"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "dim"
+record = "Fermion"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "Fermion"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "isreal"
+record = "Fermion"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "index"
+record = "Fermion"
+const = true
+returns = "int64_t"
+args = ["ProductState const& pstate"]
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "Fermion"
+const = true
+returns = "bool"
+args = ["Fermion const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "Fermion"
+const = true
+returns = "bool"
+args = ["Fermion const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "begin"
+record = "Fermion"
+const = true
+returns = "FermionIterator"
+
+[[entries]]
+kind = "method"
+name = "end"
+record = "Fermion"
+const = true
+returns = "FermionIterator"
+
+[[entries]]
+kind = "method"
+name = "irreps"
+record = "Fermion"
+const = true
+returns = "RepresentationSet"
+
+[[entries]]
+kind = "method"
+name = "basis"
+record = "Fermion"
+const = true
+returns = "shared_ptr const&"
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "Fermion const& block"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["Fermion const& block"]
+
+[[entries]]
+kind = "class"
+name = "FermionIterator"
+
+[[entries]]
+kind = "constructor"
+name = "FermionIterator"
+record = "FermionIterator"
+args = ["Fermion* block", "int64_t idx"]
+
+[[entries]]
+kind = "method"
+name = "operator++"
+record = "FermionIterator"
+returns = "FermionIterator&"
+
+[[entries]]
+kind = "method"
+name = "operator*"
+record = "FermionIterator"
+const = true
+returns = "ProductState"
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "FermionIterator"
+const = true
+returns = "bool"
+args = ["FermionIterator const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "FermionIterator"
+const = true
+returns = "bool"
+args = ["FermionIterator const& rhs"]
+
+
+# ============================================================
+# xdiag/blocks/spinhalf.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "Spinhalf"
+
+[[entries]]
+kind = "constructor"
+name = "Spinhalf"
+record = "Spinhalf"
+
+[[entries]]
+kind = "constructor"
+name = "Spinhalf"
+record = "Spinhalf"
+args = ["int64_t sites", "RepresentationSet const& irreps", "std::string backend = \"auto\""]
+
+[[entries]]
+kind = "constructor"
+name = "Spinhalf"
+record = "Spinhalf"
+args = ["int64_t nsites"]
+
+[[entries]]
+kind = "constructor"
+name = "Spinhalf"
+record = "Spinhalf"
+args = ["int64_t nsites", "int64_t nup"]
+
+[[entries]]
+kind = "constructor"
+name = "Spinhalf"
+record = "Spinhalf"
+args = ["int64_t nsites", "Representation const& irrep", "std::string backend = \"auto\""]
+
+[[entries]]
+kind = "constructor"
+name = "Spinhalf"
+record = "Spinhalf"
+args = ["int64_t nsites", "int64_t nup", "Representation const& irrep", "std::string backend = \"auto\""]
+
+[[entries]]
+kind = "method"
+name = "nsites"
+record = "Spinhalf"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "d"
+record = "Spinhalf"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "dim"
+record = "Spinhalf"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "Spinhalf"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "isreal"
+record = "Spinhalf"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "index"
+record = "Spinhalf"
+const = true
+returns = "int64_t"
+args = ["ProductState const& pstate"]
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "Spinhalf"
+const = true
+returns = "bool"
+args = ["Spinhalf const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "Spinhalf"
+const = true
+returns = "bool"
+args = ["Spinhalf const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "begin"
+record = "Spinhalf"
+const = true
+returns = "SpinhalfIterator"
+
+[[entries]]
+kind = "method"
+name = "end"
+record = "Spinhalf"
+const = true
+returns = "SpinhalfIterator"
+
+[[entries]]
+kind = "method"
+name = "irreps"
+record = "Spinhalf"
+const = true
+returns = "RepresentationSet"
+
+[[entries]]
+kind = "method"
+name = "basis"
+record = "Spinhalf"
+const = true
+returns = "shared_ptr const&"
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "Spinhalf const& block"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["Spinhalf const& block"]
+
+[[entries]]
+kind = "class"
+name = "SpinhalfIterator"
+
+[[entries]]
+kind = "constructor"
+name = "SpinhalfIterator"
+record = "SpinhalfIterator"
+args = ["Spinhalf* block", "int64_t idx"]
+
+[[entries]]
+kind = "method"
+name = "operator++"
+record = "SpinhalfIterator"
+returns = "SpinhalfIterator&"
+
+[[entries]]
+kind = "method"
+name = "operator*"
+record = "SpinhalfIterator"
+const = true
+returns = "ProductState"
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "SpinhalfIterator"
+const = true
+returns = "bool"
+args = ["SpinhalfIterator const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "SpinhalfIterator"
+const = true
+returns = "bool"
+args = ["SpinhalfIterator const& rhs"]
+
+
+# ============================================================
+# xdiag/blocks/tj.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "tJ"
+
+[[entries]]
+kind = "constructor"
+name = "tJ"
+record = "tJ"
+
+[[entries]]
+kind = "constructor"
+name = "tJ"
+record = "tJ"
+args = ["int64_t nsites", "RepresentationSet const& irreps"]
+
+[[entries]]
+kind = "constructor"
+name = "tJ"
+record = "tJ"
+args = ["int64_t nsites"]
+
+[[entries]]
+kind = "constructor"
+name = "tJ"
+record = "tJ"
+args = ["int64_t nsites", "int64_t nup", "int64_t ndn"]
+
+[[entries]]
+kind = "constructor"
+name = "tJ"
+record = "tJ"
+args = ["int64_t nsites", "Representation const& irrep"]
+
+[[entries]]
+kind = "constructor"
+name = "tJ"
+record = "tJ"
+args = ["int64_t nsites", "int64_t nup", "int64_t ndn", "Representation const& irrep"]
+
+[[entries]]
+kind = "method"
+name = "nsites"
+record = "tJ"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "d"
+record = "tJ"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "dim"
+record = "tJ"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "tJ"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "isreal"
+record = "tJ"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "index"
+record = "tJ"
+const = true
+returns = "int64_t"
+args = ["ProductState const& pstate"]
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "tJ"
+const = true
+returns = "bool"
+args = ["tJ const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "tJ"
+const = true
+returns = "bool"
+args = ["tJ const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "begin"
+record = "tJ"
+const = true
+returns = "tJIterator"
+
+[[entries]]
+kind = "method"
+name = "end"
+record = "tJ"
+const = true
+returns = "tJIterator"
+
+[[entries]]
+kind = "method"
+name = "irreps"
+record = "tJ"
+const = true
+returns = "RepresentationSet"
+
+[[entries]]
+kind = "method"
+name = "basis"
+record = "tJ"
+const = true
+returns = "shared_ptr const&"
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "tJ const& block"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["tJ const& block"]
+
+[[entries]]
+kind = "class"
+name = "tJIterator"
+
+[[entries]]
+kind = "constructor"
+name = "tJIterator"
+record = "tJIterator"
+args = ["tJ* block", "int64_t idx"]
+
+[[entries]]
+kind = "method"
+name = "operator++"
+record = "tJIterator"
+returns = "tJIterator&"
+
+[[entries]]
+kind = "method"
+name = "operator*"
+record = "tJIterator"
+const = true
+returns = "ProductState"
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "tJIterator"
+const = true
+returns = "bool"
+args = ["tJIterator const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "tJIterator"
+const = true
+returns = "bool"
+args = ["tJIterator const& rhs"]
+
+
+# ============================================================
+# xdiag/blocks/blocks.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "dim"
+returns = "int64_t"
+args = ["Block const& block"]
+
+[[entries]]
+kind = "function"
+name = "size"
+returns = "int64_t"
+args = ["Block const& block"]
+
+[[entries]]
+kind = "function"
+name = "nsites"
+returns = "int64_t"
+args = ["Block const& block"]
+
+[[entries]]
+kind = "function"
+name = "isreal"
+returns = "bool"
+args = ["Block const& block"]
+
+[[entries]]
+kind = "function"
+name = "index"
+returns = "int64_t"
+args = ["Block const& block", "ProductState const& pstate"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["ProductState const& state", "Block const& block"]
+
+[[entries]]
+kind = "function"
+name = "isapprox"
+returns = "bool"
+args = ["Block const& b1", "Block const& b2", "double tol = 1e-12"]

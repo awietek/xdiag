@@ -2,7 +2,7 @@
 
 **Author** Martin Ulaga
 
-Uses the [Lanczos algorithm](../documentation/algorithms/eigvals_lanczos.md)[[1]](#1) to calculate the Green's function of the Hubbard model. See also the documentation page for the [spin structure factor](spinhalf_chain_structure_factor.md). The Green's function is given by
+Uses the [Lanczos algorithm](../documentation/linalg/eigvals_lanczos.md)[[1]](#1) to calculate the Green's function of the Hubbard model. See also the documentation page for the [spin structure factor](spinhalf_chain_structure_factor.md). The Green's function is given by
 
 $$
     G({\bf k}, \omega)=-i\int dt e^{-i\omega t}\langle \lbrace c_{\bf k}(t),c^{\dagger}_{\bf k}\rbrace\rangle.

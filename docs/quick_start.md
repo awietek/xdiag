@@ -2,37 +2,51 @@
 title: Quick start
 ---
 
-## Julia
+# Quick start
 
-To install XDiag, enter the package mode in the Julia REPL using `]` and type
+Welcome to XDiag! This quick start walks you through your very first exact diagonalization: computing the ground-state energy of the spin $S=1/2$ Heisenberg chain,
+$$ H = J\sum_{\langle i,j \rangle} \mathbf{S}_i \cdot \mathbf{S}_j, $$
+on a periodic one-dimensional lattice. Here $\mathbf{S}_i = (S_i^x, S_i^y, S_i^z)$ are the spin $S=1/2$ operators and $\langle i,j \rangle$ denotes summation over nearest-neighbor sites $i$ and $j$.
 
-```julia
-add XDiag
-```
+XDiag comes in two flavors that share the same API — a [Julia](#installation) package for interactive use and a [C++](#installation) library for maximum performance. Pick whichever you prefer below. For a thorough, step-by-step introduction, see the [User Guide](user_guide/index.md).
 
-That's it! Now we are ready to perform our first exact diagonalization. We compute the ground state energy of the $S=1/2$ Heisenberg chain on a periodic chain lattice in one dimension. The Hamiltonian is given by
+## Installation
 
-$$ H = J\sum_{\langle i,j \rangle} \mathbf{S}_i \cdot \mathbf{S}_j$$
+=== "Julia"
+	Enter the package mode in the Julia REPL by typing `]` and run
+	```julia
+	add XDiag
+	```
+	That's it — no compilation step is required.
 
-where $\mathbf{S}_i = (S_i^x, S_i^y, S_i^z)$ are the spin $S=1/2$ operators
-and $\langle i,j \rangle$ denotes summation over nearest-meighbor sites
-$i$ and $j$.
+=== "C++"
+	First compile and install the XDiag library, following the [library compilation](documentation/compilation/compilation.md#library-compilation) instructions. The application code below is then compiled against it.
 
-```julia
---8<-- "examples/spinhalf_chain_e0/main.jl"
-```
+## Your first calculation
 
-For more examples, see our [Example Collection](examples.md).
+The complete program to set up the Heisenberg chain and compute its ground-state energy reads:
 
+=== "Julia"
+	```julia
+	--8<-- "examples/spinhalf_chain_e0/main.jl"
+	```
+=== "C++"
+	```c++
+	--8<-- "examples/spinhalf_chain_e0/main.cpp"
+	```
 
-## C++ 
+In just a few lines we define the Hilbert space (a `Spinhalf` block), build the Hamiltonian as an `OpSum`, and obtain the ground-state energy with `eigval0`.
 
-Using XDiag with C++, we first need to compile the XDiag library, see the [Library compilation](documentation/compilation/compilation.md#library-compilation) instructions. Then, our application code looks like this:
+!!! tip "C++ error traces"
 
-```c++
---8<-- "examples/spinhalf_chain_e0/main.cpp"
-```
+	The `try / catch` clause implements an error-trace mechanism, activated by `error_trace`. While optional, we recommend it for every XDiag application, as it produces a readable traceback when a runtime error occurs.
 
-The `try / catch` clause implements an error trace mechanism, which we recommend for every XDiag application. The application is then compiled as well, see [Application compilation](documentation/compilation/compilation.md#application-compilation) instructions, resulting in our final executable.
+!!! info "C++ compilation"
 
-The C++ versions offers the opportunity to optimize compilation the code for the target architecture, see [C++ optimization](documentation/compilation/compilation.md#optimization)
+	Once written, the application is compiled with CMake — see the [application compilation](documentation/compilation/compilation.md#application-compilation) instructions. The C++ version also lets you optimize the compiled code for your target architecture, which can give a substantial speed-up (see [optimization](documentation/compilation/compilation.md#optimization)).
+
+## Next steps
+
+- Work through the [User Guide](user_guide/index.md) for a guided tour of all core features.
+- Browse the [Example collection](examples.md) for fully worked applications.
+- Consult the [Documentation](documentation/index.md) for the complete API reference.

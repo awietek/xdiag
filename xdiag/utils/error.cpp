@@ -3,20 +3,21 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #include "error.hpp"
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
 #include <mpi.h>
 #endif
 #include <iomanip> // std::setw
 #include <variant>
 
-#define FMT_HEADER_ONLY
-#include <xdiag/extern/fmt/format.hpp>
+#include <extern/fmt/format.hpp>
 
 #ifndef XDIAG_DISABLE_COLOR
-#include <xdiag/extern/fmt/color.hpp>
+#include <extern/fmt/color.hpp>
 #endif
 
-#include <xdiag/extern/armadillo/armadillo>
+#include <xdiag/armadillo.hpp>
+#include <xdiag/config.hpp>
+#include <xdiag/math/ipow.hpp>
 
 #ifdef __APPLE__
 #ifdef __clang__
@@ -77,7 +78,7 @@ void rethrow_error(Error const &error, const char *file, const char *func,
 
 void error_trace(Error const &error) {
 
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
   int mpi_rank;
   MPI_Comm_rank(MPI_COMM_WORLD, &mpi_rank);
   if (mpi_rank == 0) {
@@ -102,10 +103,19 @@ void error_trace(Error const &error) {
       ++idx;
     }
 
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
   }
 #endif
 }
+
+void check_dimension_reasonable(int64_t dim) try {
+  int64_t max_exponent = 14;
+  if (dim > math::ipow(10, max_exponent)) {
+    XDIAG_THROW(fmt::format("Dimension of requested block larger than 10^{}",
+                            max_exponent));
+  }
+}
+XDIAG_CATCH
 
 void check_dimension_works_with_blas_int_size(int64_t dim) try {
   // Backend 32 bit Blas implementation
@@ -129,7 +139,7 @@ XDIAG_CATCH
 
 template <typename bit_t> void check_nsites_work_with_bits(int64_t nsites) try {
   int64_t n_bits = std::numeric_limits<bit_t>::digits;
-  if (nsites >= n_bits) {
+  if (nsites > n_bits) {
     XDIAG_THROW(
         fmt::format("Cannot encode basis with nsites={} using only {} bits. "
                     "Consider using a different backend if possible.",
@@ -138,7 +148,6 @@ template <typename bit_t> void check_nsites_work_with_bits(int64_t nsites) try {
 }
 XDIAG_CATCH
 
-template void check_nsites_work_with_bits<uint16_t>(int64_t nsites);
 template void check_nsites_work_with_bits<uint32_t>(int64_t nsites);
 template void check_nsites_work_with_bits<uint64_t>(int64_t nsites);
 } // namespace xdiag

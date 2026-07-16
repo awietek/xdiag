@@ -5,7 +5,7 @@
 #pragma once
 
 #include <vector>
-#include <xdiag/extern/toml++/toml.hpp>
+#include <extern/toml++/toml.hpp>
 
 namespace xdiag::io {
 

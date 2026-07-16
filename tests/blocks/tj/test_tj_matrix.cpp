@@ -2,17 +2,21 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../../catch.hpp"
-
 #include <iostream>
 
-#include "../spinhalf/testcases_spinhalf.hpp"
-#include "testcases_tj.hpp"
-#include <xdiag/algebra/apply.hpp>
-#include <xdiag/algebra/isapprox.hpp>
-#include <xdiag/algebra/matrix.hpp>
+#include <tests/blocks/random_opsum_matrix.hpp>
+#include <tests/blocks/spinhalf/testcases_spinhalf.hpp>
+#include <tests/blocks/tj/testcases_tj.hpp>
+#include <tests/catch.hpp>
+
 #include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/math/isapprox.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/matrix.hpp>
+#include <xdiag/states/apply.hpp>
 #include <xdiag/states/create_state.hpp>
+#include <xdiag/states/random_state.hpp>
+#include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
 
@@ -24,7 +28,7 @@ static void test_onsite(std::string op1, std::string op12) {
         for (int s = 0; s < nsites; ++s) {
           arma::mat m1 = matrix(Op(op1, s), b);
           arma::mat m12 = matrix(Op(op12, {s, s}), b);
-          REQUIRE(isapprox(m12, m1 * m1));
+          REQUIRE(isapprox(m12, arma::mat(m1 * m1)));
         }
       }
     }
@@ -155,7 +159,7 @@ TEST_CASE("tj_matrix", "[tj]") try {
     auto ops = tj_alltoall_complex(N);
     OpSum ops_hb;
     for (auto [cpl, op] : ops) {
-      if (op.type() == "HB") {
+      if ((op.size() == 1) && (op[0].type() == "SdotS")) {
         ops_hb += cpl * op;
         std::string name = cpl.string();
         ops_hb[name] = ops[name];
@@ -169,7 +173,8 @@ TEST_CASE("tj_matrix", "[tj]") try {
         REQUIRE(arma::norm(H - H.t()) < 1e-12);
       }
 
-    // Check whether eigenvalues agree with HB model
+    // At half filling every tJ site is singly occupied, so the pure-Heisenberg
+    // (SdotS) part acts exactly as the Spinhalf Heisenberg model.
     for (int nup = 0; nup <= N; ++nup) {
       int ndn = N - nup;
       auto block1 = tJ(N, nup, ndn);
@@ -181,7 +186,6 @@ TEST_CASE("tj_matrix", "[tj]") try {
       arma::eig_sym(eigs1, H1);
       arma::vec eigs2;
       arma::eig_sym(eigs2, H2);
-      // Log("eigs1(0): {}, eigs2(0): {}", eigs1(0), eigs2(0));
       REQUIRE(isapprox(eigs1, eigs2));
     }
   }
@@ -260,4 +264,23 @@ TEST_CASE("tj_matrix", "[tj]") try {
 
 } catch (Error e) {
   xdiag::error_trace(e);
+  throw; // do not swallow: a thrown error must fail the test
+}
+
+// Randomized cross-check of the full operator pipeline against naive matrix
+// products on the full (no number conservation) tJ space, where every elementary
+// operator is an endomorphism. Exercises expansion (incl. same-site reduction),
+// protected-op expansion in products, normal ordering, fermi signs, and kernel
+// dispatch -- all must agree with multiplying/adding the individual single-Op
+// matrices.
+TEST_CASE("tjrandomopsum", "[tj]") try {
+  for (int nsites = 2; nsites < 5; ++nsites) {
+    Log("tJ random OpSum matrix test: N = {}", nsites);
+    for (uint32_t seed = 0; seed < 5; ++seed) {
+      testcases::test_random_opsum_matrix(tJ(nsites), seed);
+    }
+  }
+} catch (Error e) {
+  xdiag::error_trace(e);
+  throw;
 }

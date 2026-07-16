@@ -4,10 +4,7 @@ title: PermutationGroup
 
 A group of permutations. Group axioms are verified during construction.
 
-**Sources**<br>
-[permutation_group.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp)<br>
-[permutation_group.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.cpp)<br>
-[permutation_group.jl](https://github.com/awietek/XDiag.jl/blob/main/src/symmetries/permutation_group.jl)
+**Sources:** [permutation_group.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.hpp) · [permutation_group.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/symmetries/permutation_group.cpp)
 
 
 ---
@@ -100,6 +97,6 @@ Converts the PermutationGroup to a readable string representation.
 	--8<-- "examples/usage_examples/main.cpp:PermutationGroup"
 	```
 === "Julia"
-	```c++
+	```julia
 	--8<-- "examples/usage_examples/main.jl:PermutationGroup"
 	```

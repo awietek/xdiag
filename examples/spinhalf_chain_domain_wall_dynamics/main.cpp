@@ -22,9 +22,9 @@ try {
 
     // define initial state with domain wall
     auto block = Spinhalf(N);
-    std::vector<std::string> psi0_vec (N);
-    for (int i=0; i<N/2; i++) {psi0_vec[i] = "Up";}
-    for (int i=N/2; i<N; i++) {psi0_vec[i] = "Dn";}
+    std::vector<int> psi0_vec (N);
+    for (int i=0; i<N/2; i++) {psi0_vec[i] = 1;} // "Up"
+    for (int i=N/2; i<N; i++) {psi0_vec[i] = 0;} // "Dn"
     auto psi = product_state(block, psi0_vec);
 
     // time evolve psi0 and measure Sz expectation value

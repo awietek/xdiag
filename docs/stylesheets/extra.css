@@ -38,3 +38,11 @@ table th:nth-of-type(4) {
     width: 30%;
 }
 
+/* Keep rendered math formulas from breaking across lines inside table cells.
+   With the default auto table-layout the column then widens to fit the
+   formula, overriding the fixed column-width hints above. */
+.md-typeset table td .katex,
+.md-typeset table th .katex {
+    white-space: nowrap;
+}
+

@@ -5,15 +5,17 @@
 #include "testcases_spinhalf.hpp"
 
 #include <cmath>
+#include <random>
+#include <sstream>
+
+#include <xdiag/armadillo.hpp>
 
 namespace xdiag::testcases::spinhalf {
 
 OpSum HBchain(int64_t nsites, double J1, double J2) {
-
   OpSum ops;
   ops["J1"] = J1;
   ops["J2"] = J2;
-
   for (int64_t s = 0; s < nsites; ++s) {
     ops += "J1" * Op("SdotS", {s, (s + 1) % nsites});
   }
@@ -27,30 +29,28 @@ OpSum HBchain(int64_t nsites, double J1, double J2) {
 
 std::tuple<OpSum, arma::Col<double>> HBchain_fullspectrum_nup(int64_t L,
                                                               int64_t nup) {
-
   auto ops = HBchain(L, 1.0);
-
   arma::Col<double> eigs;
   if (L == 2) {
-    if ((nup == 0) || (nup == 2))
+    if ((nup == 0) || (nup == 2)) {
       eigs = {0.5};
-    else if (nup == 1)
+    } else if (nup == 1) {
       eigs = {-1.5, 0.5};
-
+    }
   } else if (L == 3) {
-    if ((nup == 0) || (nup == 3))
+    if ((nup == 0) || (nup == 3)) {
       eigs = {0.75};
-    else if ((nup == 1) || (nup == 2))
+    } else if ((nup == 1) || (nup == 2)) {
       eigs = {-0.75, -0.75, 0.75};
-
+    }
   } else if (L == 4) {
-    if (nup == 2)
+    if (nup == 2) {
       eigs = {-2.0, -1.0, 0.0, 0.0, 0.0, 1.0};
-    else if ((nup == 1) || (nup == 3))
+    } else if ((nup == 1) || (nup == 3)) {
       eigs = {-1.0, 0.0, 0.0, 1.0};
-    else if ((nup == 0) || (nup == 4))
+    } else if ((nup == 0) || (nup == 4)) {
       eigs = {1.0};
-
+    }
   } else if (L == 5) {
     if ((nup == 2) || (nup == 3)) {
       eigs = {-1.868033988749894,
@@ -69,7 +69,6 @@ std::tuple<OpSum, arma::Col<double>> HBchain_fullspectrum_nup(int64_t L,
     } else if ((nup == 0) || (nup == 5)) {
       eigs = {1.25};
     }
-
   } else if (L == 6) {
     if (nup == 3) {
       eigs = {-2.802775637731995e+00, -2.118033988749895e+00,
@@ -105,9 +104,8 @@ std::tuple<OpSum, arma::Col<double>> HBchain_fullspectrum_nup(int64_t L,
 OpSum HB_alltoall(int64_t nsites) {
   std::default_random_engine generator;
   std::normal_distribution<double> distribution(0., 1.);
-
   OpSum ops;
-  for (int64_t s1 = 0; s1 < nsites; ++s1)
+  for (int64_t s1 = 0; s1 < nsites; ++s1) {
     for (int64_t s2 = s1 + 1; s2 < nsites; ++s2) {
       std::stringstream ss;
       ss << "J" << s1 << "_" << s2;
@@ -116,11 +114,11 @@ OpSum HB_alltoall(int64_t nsites) {
       ops += name * Op("SdotS", {s1, s2});
       ops[name] = value;
     }
+  }
   return ops;
 }
 
 std::tuple<OpSum, double> triangular_12_complex(int64_t nup, double eta) {
-
   OpSum ops;
   ops += "Jz" * Op("SzSz", {0, 5});
   ops += "Jz" * Op("SzSz", {8, 2});
@@ -158,46 +156,84 @@ std::tuple<OpSum, double> triangular_12_complex(int64_t nup, double eta) {
   ops += "Jz" * Op("SzSz", {3, 7});
   ops += "Jz" * Op("SzSz", {7, 10});
   ops += "Jz" * Op("SzSz", {11, 0});
-  ops += "Jx" * Op("Exchange", {0, 8});
-  ops += "Jx" * Op("Exchange", {8, 6});
-  ops += "Jx" * Op("Exchange", {2, 10});
-  ops += "Jx" * Op("Exchange", {1, 9});
-  ops += "Jx" * Op("Exchange", {4, 3});
-  ops += "Jx" * Op("Exchange", {6, 1});
-  ops += "Jx" * Op("Exchange", {10, 4});
-  ops += "Jx" * Op("Exchange", {5, 2});
-  ops += "Jx" * Op("Exchange", {9, 7});
-  ops += "Jx" * Op("Exchange", {3, 11});
-  ops += "Jx" * Op("Exchange", {7, 0});
-  ops += "Jx" * Op("Exchange", {11, 5});
-  ops += "Jx" * Op("Exchange", {0, 10});
-  ops += "Jx" * Op("Exchange", {8, 4});
-  ops += "Jx" * Op("Exchange", {2, 8});
-  ops += "Jx" * Op("Exchange", {1, 11});
-  ops += "Jx" * Op("Exchange", {4, 1});
-  ops += "Jx" * Op("Exchange", {6, 3});
-  ops += "Jx" * Op("Exchange", {10, 6});
-  ops += "Jx" * Op("Exchange", {5, 0});
-  ops += "Jx" * Op("Exchange", {9, 5});
-  ops += "Jx" * Op("Exchange", {3, 9});
-  ops += "Jx" * Op("Exchange", {7, 2});
-  ops += "Jx" * Op("Exchange", {11, 7});
-  ops += "Jx" * Op("Exchange", {0, 11});
-  ops += "Jx" * Op("Exchange", {8, 5});
-  ops += "Jx" * Op("Exchange", {2, 9});
-  ops += "Jx" * Op("Exchange", {1, 10});
-  ops += "Jx" * Op("Exchange", {4, 0});
-  ops += "Jx" * Op("Exchange", {6, 2});
-  ops += "Jx" * Op("Exchange", {10, 7});
-  ops += "Jx" * Op("Exchange", {5, 1});
-  ops += "Jx" * Op("Exchange", {9, 4});
-  ops += "Jx" * Op("Exchange", {3, 8});
-  ops += "Jx" * Op("Exchange", {7, 3});
-  ops += "Jx" * Op("Exchange", {11, 6});
+
+  ops += "Jxr" * Op("Exchange", {0, 8});
+  ops += "Jxr" * Op("Exchange", {8, 6});
+  ops += "Jxr" * Op("Exchange", {2, 10});
+  ops += "Jxr" * Op("Exchange", {1, 9});
+  ops += "Jxr" * Op("Exchange", {4, 3});
+  ops += "Jxr" * Op("Exchange", {6, 1});
+  ops += "Jxr" * Op("Exchange", {10, 4});
+  ops += "Jxr" * Op("Exchange", {5, 2});
+  ops += "Jxr" * Op("Exchange", {9, 7});
+  ops += "Jxr" * Op("Exchange", {3, 11});
+  ops += "Jxr" * Op("Exchange", {7, 0});
+  ops += "Jxr" * Op("Exchange", {11, 5});
+  ops += "Jxr" * Op("Exchange", {0, 10});
+  ops += "Jxr" * Op("Exchange", {8, 4});
+  ops += "Jxr" * Op("Exchange", {2, 8});
+  ops += "Jxr" * Op("Exchange", {1, 11});
+  ops += "Jxr" * Op("Exchange", {4, 1});
+  ops += "Jxr" * Op("Exchange", {6, 3});
+  ops += "Jxr" * Op("Exchange", {10, 6});
+  ops += "Jxr" * Op("Exchange", {5, 0});
+  ops += "Jxr" * Op("Exchange", {9, 5});
+  ops += "Jxr" * Op("Exchange", {3, 9});
+  ops += "Jxr" * Op("Exchange", {7, 2});
+  ops += "Jxr" * Op("Exchange", {11, 7});
+  ops += "Jxr" * Op("Exchange", {0, 11});
+  ops += "Jxr" * Op("Exchange", {8, 5});
+  ops += "Jxr" * Op("Exchange", {2, 9});
+  ops += "Jxr" * Op("Exchange", {1, 10});
+  ops += "Jxr" * Op("Exchange", {4, 0});
+  ops += "Jxr" * Op("Exchange", {6, 2});
+  ops += "Jxr" * Op("Exchange", {10, 7});
+  ops += "Jxr" * Op("Exchange", {5, 1});
+  ops += "Jxr" * Op("Exchange", {9, 4});
+  ops += "Jxr" * Op("Exchange", {3, 8});
+  ops += "Jxr" * Op("Exchange", {7, 3});
+  ops += "Jxr" * Op("Exchange", {11, 6});
+
+  ops += "Jxi" * Op("ExchangeAsym", {0, 8});
+  ops += "Jxi" * Op("ExchangeAsym", {8, 6});
+  ops += "Jxi" * Op("ExchangeAsym", {2, 10});
+  ops += "Jxi" * Op("ExchangeAsym", {1, 9});
+  ops += "Jxi" * Op("ExchangeAsym", {4, 3});
+  ops += "Jxi" * Op("ExchangeAsym", {6, 1});
+  ops += "Jxi" * Op("ExchangeAsym", {10, 4});
+  ops += "Jxi" * Op("ExchangeAsym", {5, 2});
+  ops += "Jxi" * Op("ExchangeAsym", {9, 7});
+  ops += "Jxi" * Op("ExchangeAsym", {3, 11});
+  ops += "Jxi" * Op("ExchangeAsym", {7, 0});
+  ops += "Jxi" * Op("ExchangeAsym", {11, 5});
+  ops += "Jxi" * Op("ExchangeAsym", {0, 10});
+  ops += "Jxi" * Op("ExchangeAsym", {8, 4});
+  ops += "Jxi" * Op("ExchangeAsym", {2, 8});
+  ops += "Jxi" * Op("ExchangeAsym", {1, 11});
+  ops += "Jxi" * Op("ExchangeAsym", {4, 1});
+  ops += "Jxi" * Op("ExchangeAsym", {6, 3});
+  ops += "Jxi" * Op("ExchangeAsym", {10, 6});
+  ops += "Jxi" * Op("ExchangeAsym", {5, 0});
+  ops += "Jxi" * Op("ExchangeAsym", {9, 5});
+  ops += "Jxi" * Op("ExchangeAsym", {3, 9});
+  ops += "Jxi" * Op("ExchangeAsym", {7, 2});
+  ops += "Jxi" * Op("ExchangeAsym", {11, 7});
+  ops += "Jxi" * Op("ExchangeAsym", {0, 11});
+  ops += "Jxi" * Op("ExchangeAsym", {8, 5});
+  ops += "Jxi" * Op("ExchangeAsym", {2, 9});
+  ops += "Jxi" * Op("ExchangeAsym", {1, 10});
+  ops += "Jxi" * Op("ExchangeAsym", {4, 0});
+  ops += "Jxi" * Op("ExchangeAsym", {6, 2});
+  ops += "Jxi" * Op("ExchangeAsym", {10, 7});
+  ops += "Jxi" * Op("ExchangeAsym", {5, 1});
+  ops += "Jxi" * Op("ExchangeAsym", {9, 4});
+  ops += "Jxi" * Op("ExchangeAsym", {3, 8});
+  ops += "Jxi" * Op("ExchangeAsym", {7, 3});
+  ops += "Jxi" * Op("ExchangeAsym", {11, 6});
 
   ops["Jz"] = 1.0;
-  ops["Jx"] = complex(cos(2 * M_PI * eta), sin(2 * M_PI * eta));
-  // lila::Log("Jx {} {}", lila::real(cpls["Jx"]), lila::imag(cpls["Jx"]));
+  ops["Jxr"] = cos(2 * M_PI * eta);
+  ops["Jxi"] = complex(0., sin(2 * M_PI * eta));
 
   double e0 = 0;
   if (nup == 6) {

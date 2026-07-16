@@ -3,15 +3,14 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
-#ifdef XDIAG_USE_MPI
+#ifdef XDIAG_DISTRIBUTED
 
 #include <iostream>
 #include <string>
 
 #include <mpi.h>
 
-#define FMT_HEADER_ONLY
-#include <xdiag/extern/fmt/format.hpp>
+#include <extern/fmt/format.hpp>
 #include <xdiag/utils/error.hpp>
 
 namespace xdiag {

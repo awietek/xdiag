@@ -5,9 +5,27 @@
 #include "permutation_group.hpp"
 
 #include <algorithm>
-#include <xdiag/common.hpp>
+
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+#include <xdiag/utils/to_string_generic.hpp>
 
 namespace xdiag {
+
+static arma::Mat<int64_t>
+matrix_from_permutations(std::vector<Permutation> const &permutations) {
+  if (permutations.empty()) {
+    return arma::Mat<int64_t>();
+  }
+  int64_t nsites = permutations[0].size();
+  int64_t n = (int64_t)permutations.size();
+  arma::Mat<int64_t> mat(nsites, n);
+  for (int64_t i = 0; i < n; ++i) {
+    auto const &arr = permutations[i].array();
+    mat.col(i) = arma::Col<int64_t>(arr.data(), arr.size());
+  }
+  return mat;
+}
 
 static void
 check_valid_group(std::vector<Permutation> const &permutations) try {
@@ -98,7 +116,8 @@ XDIAG_CATCH
 
 PermutationGroup::PermutationGroup(
     std::vector<Permutation> const &permutations) try
-    : permutations_(permutations), inv_(compute_inverse(permutations)),
+    : permutations_(matrix_from_permutations(permutations)),
+      inv_(compute_inverse(permutations)),
       multiply_(compute_multiply(permutations)) {
   check_valid_group(permutations);
 }
@@ -107,9 +126,8 @@ XDIAG_CATCH
 static std::vector<Permutation>
 permutations_from_matrix(arma::Mat<int64_t> const &matrix) try {
   std::vector<Permutation> permutations;
-  for (int64_t i = 0; i < matrix.n_rows; ++i) {
-    auto perm = Permutation(arma::Col<int64_t>(matrix.row(i).t()));
-    permutations.push_back(perm);
+  for (int64_t i = 0; i < (int64_t)matrix.n_cols; ++i) {
+    permutations.emplace_back(matrix.colptr(i), (int64_t)matrix.n_rows);
   }
   return permutations;
 }
@@ -121,20 +139,25 @@ XDIAG_CATCH
 
 PermutationGroup::PermutationGroup(int64_t *ptr, int64_t n_permutations,
                                    int64_t nsites) try
-    : PermutationGroup(permutations_from_matrix(
-          arma::Mat<int64_t>(ptr, n_permutations, nsites, true))) {}
+    : PermutationGroup(arma::Mat<int64_t>(ptr, nsites, n_permutations, true)) {}
 XDIAG_CATCH
 
-int64_t PermutationGroup::nsites() const {
-  return (permutations_.size() == 0) ? 0 : permutations_[0].size();
-}
-int64_t PermutationGroup::size() const { return permutations_.size(); }
-Permutation const &PermutationGroup::operator[](int64_t sym) const try {
+int64_t PermutationGroup::nsites() const { return permutations_.n_rows; }
+int64_t PermutationGroup::size() const { return permutations_.n_cols; }
+
+Permutation PermutationGroup::operator[](int64_t sym) const try {
   if ((sym < 0) || (sym >= size())) {
     XDIAG_THROW("Invalid symmetry index");
-  } else {
-    return permutations_[sym];
   }
+  return Permutation(permutations_.colptr(sym), nsites());
+}
+XDIAG_CATCH
+
+int64_t const *PermutationGroup::ptr(int64_t sym) const try {
+  if ((sym < 0) || (sym >= size())) {
+    XDIAG_THROW("Invalid symmetry index");
+  }
+  return permutations_.colptr(sym);
 }
 XDIAG_CATCH
 
@@ -156,6 +179,23 @@ int64_t PermutationGroup::multiply(int64_t s1, int64_t s2) const try {
 }
 XDIAG_CATCH
 
+PermutationGroup::iterator::iterator(PermutationGroup const *group, int64_t idx)
+    : group_(group), idx_(idx) {}
+Permutation PermutationGroup::iterator::operator*() const {
+  return (*group_)[idx_];
+}
+PermutationGroup::iterator &PermutationGroup::iterator::operator++() {
+  ++idx_;
+  return *this;
+}
+bool PermutationGroup::iterator::operator!=(iterator const &rhs) const {
+  return idx_ != rhs.idx_;
+}
+PermutationGroup::iterator PermutationGroup::begin() const { return {this, 0}; }
+PermutationGroup::iterator PermutationGroup::end() const {
+  return {this, size()};
+}
+
 int64_t nsites(PermutationGroup const &group) { return group.nsites(); }
 int64_t size(PermutationGroup const &group) { return group.size(); }
 PermutationGroup subgroup(PermutationGroup const &group,
@@ -173,30 +213,27 @@ PermutationGroup subgroup(PermutationGroup const &group,
 XDIAG_CATCH
 
 bool PermutationGroup::operator==(PermutationGroup const &rhs) const {
-  return (permutations_ == rhs.permutations_);
+  if (permutations_.n_rows != rhs.permutations_.n_rows ||
+      permutations_.n_cols != rhs.permutations_.n_cols) {
+    return false;
+  }
+  return arma::all(arma::vectorise(permutations_ == rhs.permutations_));
 }
 
 bool PermutationGroup::operator!=(PermutationGroup const &rhs) const {
   return !operator==(rhs);
 }
 
-PermutationGroup::iterator_t PermutationGroup::begin() const {
-  return permutations_.begin();
-}
-PermutationGroup::iterator_t PermutationGroup::end() const {
-  return permutations_.end();
-}
-
 std::ostream &operator<<(std::ostream &out, PermutationGroup const &group) {
   out << "nsites  : " << group.nsites() << "\n";
   out << "size     : " << group.size() << "\n";
-  for (auto const &p : group) {
-    out << p << "\n";
+  for (int64_t i = 0; i < group.size(); ++i) {
+    out << group[i] << "\n";
   }
   return out;
 }
 std::string to_string(PermutationGroup const &group) {
-  return to_string_generic(group);
+  return utils::to_string_generic(group);
 }
 
 } // namespace xdiag

@@ -1,0 +1,846 @@
+module = "states"
+
+
+# ============================================================
+# xdiag/states/product_state.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "ProductState"
+
+[[entries]]
+kind = "constructor"
+name = "ProductState"
+record = "ProductState"
+
+[[entries]]
+kind = "constructor"
+name = "ProductState"
+record = "ProductState"
+args = ["int64_t nsites"]
+
+[[entries]]
+kind = "constructor"
+name = "ProductState"
+record = "ProductState"
+args = ["initializer_list list"]
+
+[[entries]]
+kind = "constructor"
+name = "ProductState"
+record = "ProductState"
+args = ["vector const& local_states"]
+
+[[entries]]
+kind = "constructor"
+name = "ProductState"
+record = "ProductState"
+args = ["vector const& local_states"]
+
+[[entries]]
+kind = "constructor"
+name = "ProductState"
+record = "ProductState"
+args = ["arma::ivec const& local_states"]
+
+[[entries]]
+kind = "method"
+name = "operator[]"
+record = "ProductState"
+const = true
+returns = "int64_t"
+args = ["int64_t i"]
+
+[[entries]]
+kind = "method"
+name = "operator[]"
+record = "ProductState"
+returns = "int64_t&"
+args = ["int64_t i"]
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "ProductState"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "nsites"
+record = "ProductState"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "push_back"
+record = "ProductState"
+args = ["int64_t l"]
+
+[[entries]]
+kind = "method"
+name = "begin"
+record = "ProductState"
+const = true
+returns = "__wrap_iter"
+
+[[entries]]
+kind = "method"
+name = "end"
+record = "ProductState"
+const = true
+returns = "__wrap_iter"
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "ProductState"
+const = true
+returns = "bool"
+args = ["ProductState const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "ProductState"
+const = true
+returns = "bool"
+args = ["ProductState const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "size"
+returns = "int64_t"
+args = ["ProductState const& p"]
+
+[[entries]]
+kind = "function"
+name = "nsites"
+returns = "int64_t"
+args = ["ProductState const& p"]
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "ProductState const& state"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["ProductState const& state"]
+
+
+# ============================================================
+# xdiag/states/state.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "State"
+
+[[entries]]
+kind = "constructor"
+name = "State"
+record = "State"
+
+[[entries]]
+kind = "constructor"
+name = "State"
+record = "State"
+args = ["Block const& block", "bool real = true", "int64_t ncols = 1"]
+
+[[entries]]
+kind = "constructor"
+name = "State"
+record = "State"
+args = ["Block const& block", "arma::vec const& vector"]
+
+[[entries]]
+kind = "constructor"
+name = "State"
+record = "State"
+args = ["Block const& block", "arma::cx_vec const& vector"]
+
+[[entries]]
+kind = "constructor"
+name = "State"
+record = "State"
+args = ["Block const& block", "arma::mat const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "State"
+record = "State"
+args = ["Block const& block", "arma::cx_mat const& matrix"]
+
+[[entries]]
+kind = "method"
+name = "isvalid"
+record = "State"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "nsites"
+record = "State"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "isreal"
+record = "State"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "real"
+record = "State"
+const = true
+returns = "State"
+
+[[entries]]
+kind = "method"
+name = "imag"
+record = "State"
+const = true
+returns = "State"
+
+[[entries]]
+kind = "method"
+name = "make_complex"
+record = "State"
+
+[[entries]]
+kind = "method"
+name = "dim"
+record = "State"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "State"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "nrows"
+record = "State"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "ncols"
+record = "State"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "col"
+record = "State"
+const = true
+returns = "State"
+args = ["int64_t n", "bool copy = true"]
+
+[[entries]]
+kind = "method"
+name = "vector"
+record = "State"
+const = true
+returns = "arma::vec"
+args = ["int64_t n = 0", "bool copy = true"]
+
+[[entries]]
+kind = "method"
+name = "matrix"
+record = "State"
+const = true
+returns = "arma::mat"
+args = ["bool copy = true"]
+
+[[entries]]
+kind = "method"
+name = "vectorC"
+record = "State"
+const = true
+returns = "arma::cx_vec"
+args = ["int64_t n = 0", "bool copy = true"]
+
+[[entries]]
+kind = "method"
+name = "matrixC"
+record = "State"
+const = true
+returns = "arma::cx_mat"
+args = ["bool copy = true"]
+
+[[entries]]
+kind = "constructor"
+name = "State"
+record = "State"
+args = ["Block const& block", "double* ptr", "int64_t ncols", "int64_t stride = 1"]
+
+[[entries]]
+kind = "constructor"
+name = "State"
+record = "State"
+args = ["Block const& block", "complex* ptr", "int64_t ncols"]
+
+[[entries]]
+kind = "method"
+name = "memptr"
+record = "State"
+returns = "double*"
+
+[[entries]]
+kind = "method"
+name = "memptrC"
+record = "State"
+returns = "complex*"
+
+[[entries]]
+kind = "method"
+name = "colptr"
+record = "State"
+returns = "double*"
+args = ["int64_t col"]
+
+[[entries]]
+kind = "method"
+name = "colptrC"
+record = "State"
+returns = "complex*"
+args = ["int64_t col"]
+
+[[entries]]
+kind = "method"
+name = "block"
+record = "State"
+const = true
+returns = "Block"
+
+[[entries]]
+kind = "function"
+name = "isvalid"
+returns = "bool"
+args = ["State const& s"]
+
+[[entries]]
+kind = "function"
+name = "nsites"
+returns = "int64_t"
+args = ["State const& s"]
+
+[[entries]]
+kind = "function"
+name = "isapprox"
+returns = "bool"
+args = ["State const& v", "State const& w", "double rtol = 1e-12", "double atol = 1e-12"]
+
+[[entries]]
+kind = "function"
+name = "isreal"
+returns = "bool"
+args = ["State const& s"]
+
+[[entries]]
+kind = "function"
+name = "real"
+returns = "State"
+args = ["State const& s"]
+
+[[entries]]
+kind = "function"
+name = "imag"
+returns = "State"
+args = ["State const& s"]
+
+[[entries]]
+kind = "function"
+name = "make_complex"
+args = ["State& s"]
+
+[[entries]]
+kind = "function"
+name = "dim"
+returns = "int64_t"
+args = ["State const& s"]
+
+[[entries]]
+kind = "function"
+name = "size"
+returns = "int64_t"
+args = ["State const& s"]
+
+[[entries]]
+kind = "function"
+name = "nrows"
+returns = "int64_t"
+args = ["State const& s"]
+
+[[entries]]
+kind = "function"
+name = "ncols"
+returns = "int64_t"
+args = ["State const& s"]
+
+[[entries]]
+kind = "function"
+name = "col"
+returns = "State"
+args = ["State const& s", "int64_t n", "bool copy = true"]
+
+[[entries]]
+kind = "function"
+name = "vector"
+returns = "arma::vec"
+args = ["State const& s", "int64_t n = 0", "bool copy = true"]
+
+[[entries]]
+kind = "function"
+name = "matrix"
+returns = "arma::mat"
+args = ["State const& s", "bool copy = true"]
+
+[[entries]]
+kind = "function"
+name = "vectorC"
+returns = "arma::cx_vec"
+args = ["State const& s", "int64_t n = 0", "bool copy = true"]
+
+[[entries]]
+kind = "function"
+name = "matrixC"
+returns = "arma::cx_mat"
+args = ["State const& s", "bool copy = true"]
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "State const& state"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["State const& state"]
+
+[[entries]]
+kind = "function"
+name = "operator*="
+returns = "State&"
+args = ["State& X", "double alpha"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "State"
+args = ["State const& X", "double alpha"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "State"
+args = ["double alpha", "State const& X"]
+
+[[entries]]
+kind = "function"
+name = "operator*="
+returns = "State&"
+args = ["State& X", "complex alpha"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "State"
+args = ["State const& X", "complex alpha"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "State"
+args = ["complex alpha", "State const& X"]
+
+[[entries]]
+kind = "function"
+name = "operator/="
+returns = "State&"
+args = ["State& X", "double alpha"]
+
+[[entries]]
+kind = "function"
+name = "operator/"
+returns = "State"
+args = ["State const& X", "double alpha"]
+
+[[entries]]
+kind = "function"
+name = "operator/="
+returns = "State&"
+args = ["State& X", "complex alpha"]
+
+[[entries]]
+kind = "function"
+name = "operator/"
+returns = "State"
+args = ["State const& X", "complex alpha"]
+
+[[entries]]
+kind = "function"
+name = "operator+="
+returns = "State&"
+args = ["State& v", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "operator-="
+returns = "State&"
+args = ["State& v", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "operator+"
+returns = "State"
+args = ["State const& v", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "operator-"
+returns = "State"
+args = ["State const& v", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "operator-"
+returns = "State"
+args = ["State const& v"]
+
+
+# ============================================================
+# xdiag/states/apply.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "apply"
+returns = "State"
+args = ["Op const& op", "State const& v"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+returns = "State"
+args = ["Monomial const& mono", "State const& v"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+returns = "State"
+args = ["OpSum const& ops", "State const& v"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["Op const& op", "State const& v", "State& w"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["Monomial const& mono", "State const& v", "State& w"]
+
+[[entries]]
+kind = "function"
+name = "apply"
+args = ["OpSum const& ops", "State const& v", "State& w"]
+
+
+# ============================================================
+# xdiag/states/correlation_matrix.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "correlation_matrix"
+returns = "arma::mat"
+args = ["State const& state", "std::string type1", "std::string type2"]
+
+[[entries]]
+kind = "function"
+name = "correlation_matrixC"
+returns = "arma::cx_mat"
+args = ["State const& state", "std::string type1", "std::string type2"]
+
+
+# ============================================================
+# xdiag/states/create_state.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "product_state"
+returns = "State"
+args = ["Block const& block", "initializer_list local_state", "bool real = true"]
+
+[[entries]]
+kind = "function"
+name = "product_state"
+returns = "State"
+args = ["Block const& block", "vector const& local_state", "bool real = true"]
+
+[[entries]]
+kind = "function"
+name = "product_state"
+returns = "State"
+args = ["Block const& block", "vector const& local_state", "bool real = true"]
+
+[[entries]]
+kind = "function"
+name = "product_state"
+returns = "State"
+args = ["Block const& block", "arma::ivec const& local_state", "bool real = true"]
+
+[[entries]]
+kind = "function"
+name = "random_state"
+returns = "State"
+args = ["Block const& block", "bool real = true", "int64_t ncols = 1", "int64_t seed = 42", "bool normalized = true"]
+
+[[entries]]
+kind = "function"
+name = "zero_state"
+returns = "State"
+args = ["Block const& block", "bool real = true", "int64_t ncols = 1"]
+
+[[entries]]
+kind = "function"
+name = "zero"
+args = ["State& state"]
+
+
+# ============================================================
+# xdiag/states/dot.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "dot"
+returns = "double"
+args = ["State const& v", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "dotC"
+returns = "complex"
+args = ["State const& v", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "matrix_dot"
+returns = "arma::mat"
+args = ["State const& v", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "matrix_dotC"
+returns = "arma::cx_mat"
+args = ["State const& v", "State const& w"]
+
+
+# ============================================================
+# xdiag/states/expect.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "expect"
+returns = "arma::vec"
+args = ["State const& state", "std::string type"]
+
+[[entries]]
+kind = "function"
+name = "expectC"
+returns = "arma::cx_vec"
+args = ["State const& state", "std::string type"]
+
+
+# ============================================================
+# xdiag/states/random_state.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "RandomState"
+
+[[entries]]
+kind = "constructor"
+name = "RandomState"
+record = "RandomState"
+args = ["int64_t seed = 42", "bool normalized = true"]
+
+[[entries]]
+kind = "method"
+name = "seed"
+record = "RandomState"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "normalized"
+record = "RandomState"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "RandomState const& state"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["RandomState const& state"]
+
+
+# ============================================================
+# xdiag/states/fill.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "fill"
+args = ["State& state", "function coeff_f", "int64_t col = 0"]
+
+[[entries]]
+kind = "function"
+name = "fill"
+args = ["State& state", "function coeff_f", "int64_t col = 0"]
+
+[[entries]]
+kind = "function"
+name = "fill"
+args = ["State& state", "RandomState const& rstate", "int64_t col = 0"]
+
+[[entries]]
+kind = "function"
+name = "fill"
+args = ["State& state", "ProductState const& pstate", "int64_t col = 0"]
+
+[[entries]]
+kind = "function"
+name = "fill"
+args = ["State& state", "GPWF const& gpwf", "int64_t col = 0"]
+
+
+# ============================================================
+# xdiag/states/inner.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "inner"
+returns = "double"
+args = ["Op const& A", "State const& v"]
+
+[[entries]]
+kind = "function"
+name = "inner"
+returns = "double"
+args = ["Monomial const& A", "State const& v"]
+
+[[entries]]
+kind = "function"
+name = "inner"
+returns = "double"
+args = ["OpSum const& A", "State const& v"]
+
+[[entries]]
+kind = "function"
+name = "innerC"
+returns = "complex"
+args = ["Op const& A", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "innerC"
+returns = "complex"
+args = ["Monomial const& A", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "innerC"
+returns = "complex"
+args = ["OpSum const& A", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "inner"
+returns = "double"
+args = ["State const& v", "Op const& A", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "inner"
+returns = "double"
+args = ["State const& v", "Monomial const& A", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "inner"
+returns = "double"
+args = ["State const& v", "OpSum const& A", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "innerC"
+returns = "complex"
+args = ["State const& v", "Op const& A", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "innerC"
+returns = "complex"
+args = ["State const& v", "Monomial const& A", "State const& w"]
+
+[[entries]]
+kind = "function"
+name = "innerC"
+returns = "complex"
+args = ["State const& v", "OpSum const& A", "State const& w"]
+
+
+# ============================================================
+# xdiag/states/norm.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "norm"
+returns = "double"
+args = ["State const& v"]
+
+[[entries]]
+kind = "function"
+name = "norm1"
+returns = "double"
+args = ["State const& v"]
+
+[[entries]]
+kind = "function"
+name = "norminf"
+returns = "double"
+args = ["State const& v"]

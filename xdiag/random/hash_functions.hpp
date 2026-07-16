@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <xdiag/common.hpp>
+#include <cstdint>
 
 namespace xdiag::random {
 
@@ -15,9 +15,6 @@ constexpr uint32_t fnv1_mask_uint32_t =
     fnv1_prime_uint32_t * fnv1_offset_uint32_t;
 constexpr uint32_t hash_fnv1(uint32_t bits) noexcept {
   return fnv1_mask_uint32_t ^ bits;
-}
-constexpr uint16_t hash_fnv1(uint16_t bits) noexcept {
-  return (uint16_t)hash_fnv1((uint32_t)bits);
 }
 
 // Fowler–Noll–Vo hash function for uint64_t
@@ -52,8 +49,8 @@ inline uint64_t hash_div3(uint64_t bits) noexcept {
   uint64_t num = A * 1357911 + B * 1197531 + C * 2739651;
 
   // std::cout << "num1 " << num << "\n";
-  // std::cout << "num2 " << (123456789 * num + 987654321) % 3000000019ULL << "\n\n";
-  
+  // std::cout << "num2 " << (123456789 * num + 987654321) % 3000000019ULL <<
+  // "\n\n";
 
   return (123456789 * num + 987654321) % 3000000019ULL;
 }
@@ -78,12 +75,9 @@ inline uint32_t hash_div3(uint32_t bits) noexcept {
   uint32_t num = A * 1357911 + B * 1197531 + C * 2739651;
 
   //   std::cout << "num1 " << num << "\n";
-  // std::cout << "num2 " << (123456789 * num + 987654321) % 3000000019ULL << "\n\n";
+  // std::cout << "num2 " << (123456789 * num + 987654321) % 3000000019ULL <<
+  // "\n\n";
   return (123456789 * num + 987654321) % 3000000019ULL;
-}
-
-inline uint16_t hash_div3(uint16_t bits) noexcept {
-  return (uint16_t)hash_div3((uint32_t)bits);
 }
 
 // Taken from boost::hash_combine
@@ -95,6 +89,19 @@ constexpr uint32_t hash_combine(uint32_t h1, uint32_t h2) {
 constexpr uint64_t hash_combine(uint64_t h1, uint64_t h2) {
   h1 ^= h2 + 0x517cc1b727220a95 + (h1 << 6) + (h1 >> 2);
   return h1;
+}
+
+// splitmix64 finalizer: a bijective avalanche step that spreads the entropy of
+// a hash over all 64 bits. Applied to the public hashes so that low-entropy
+// inputs (small charges, nsites, ...) do not leave the high bits nearly
+// constant (which made block / irrep IDs share a long common prefix).
+constexpr uint64_t hash_finalize(uint64_t h) noexcept {
+  h ^= h >> 30;
+  h *= 0xbf58476d1ce4e5b9ULL;
+  h ^= h >> 27;
+  h *= 0x94d049bb133111ebULL;
+  h ^= h >> 31;
+  return h;
 }
 
 } // namespace xdiag::random

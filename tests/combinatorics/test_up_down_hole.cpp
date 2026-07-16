@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
+#include <tests/catch.hpp>
 
 template <class bit_t>
 void test_up_down_hole(int nsites, int nupspins, int n_downspins) {

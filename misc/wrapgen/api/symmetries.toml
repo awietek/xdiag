@@ -1,0 +1,439 @@
+module = "symmetries"
+
+
+# ============================================================
+# xdiag/symmetries/permutation.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "Permutation"
+
+[[entries]]
+kind = "constructor"
+name = "Permutation"
+record = "Permutation"
+
+[[entries]]
+kind = "constructor"
+name = "Permutation"
+record = "Permutation"
+args = ["int64_t size"]
+
+[[entries]]
+kind = "constructor"
+name = "Permutation"
+record = "Permutation"
+args = ["initializer_list list"]
+
+[[entries]]
+kind = "constructor"
+name = "Permutation"
+record = "Permutation"
+args = ["vector const& array"]
+
+[[entries]]
+kind = "constructor"
+name = "Permutation"
+record = "Permutation"
+args = ["vector const& array"]
+
+[[entries]]
+kind = "constructor"
+name = "Permutation"
+record = "Permutation"
+args = ["arma::ivec const& array"]
+
+[[entries]]
+kind = "constructor"
+name = "Permutation"
+record = "Permutation"
+args = ["int64_t* ptr", "int64_t size"]
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "Permutation"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "operator[]"
+record = "Permutation"
+const = true
+returns = "int64_t"
+args = ["int64_t i"]
+
+[[entries]]
+kind = "method"
+name = "inv"
+record = "Permutation"
+const = true
+returns = "Permutation"
+
+[[entries]]
+kind = "method"
+name = "array"
+record = "Permutation"
+const = true
+returns = "vector const&"
+
+[[entries]]
+kind = "method"
+name = "operator*="
+record = "Permutation"
+returns = "Permutation&"
+args = ["Permutation const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "Permutation"
+const = true
+returns = "bool"
+args = ["Permutation const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "Permutation"
+const = true
+returns = "bool"
+args = ["Permutation const& rhs"]
+
+[[entries]]
+kind = "function"
+name = "size"
+returns = "int64_t"
+args = ["Permutation const& p"]
+
+[[entries]]
+kind = "function"
+name = "multiply"
+returns = "Permutation"
+args = ["Permutation const& p1", "Permutation const& p2"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "Permutation"
+args = ["Permutation const& p1", "Permutation const& p2"]
+
+[[entries]]
+kind = "function"
+name = "inv"
+returns = "Permutation"
+args = ["Permutation const& p"]
+
+[[entries]]
+kind = "function"
+name = "pow"
+returns = "Permutation"
+args = ["Permutation const& p", "int64_t power"]
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "Permutation const& perm"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["Permutation const& perm"]
+
+
+# ============================================================
+# xdiag/symmetries/permutation_group.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "PermutationGroup"
+
+[[entries]]
+kind = "constructor"
+name = "PermutationGroup"
+record = "PermutationGroup"
+
+[[entries]]
+kind = "constructor"
+name = "PermutationGroup"
+record = "PermutationGroup"
+args = ["vector const& permutations"]
+
+[[entries]]
+kind = "constructor"
+name = "PermutationGroup"
+record = "PermutationGroup"
+args = ["arma::imat const& matrix"]
+
+[[entries]]
+kind = "constructor"
+name = "PermutationGroup"
+record = "PermutationGroup"
+args = ["int64_t* ptr", "int64_t n_permutations", "int64_t nsites"]
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "PermutationGroup"
+const = true
+returns = "bool"
+args = ["PermutationGroup const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "PermutationGroup"
+const = true
+returns = "bool"
+args = ["PermutationGroup const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "size"
+record = "PermutationGroup"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "nsites"
+record = "PermutationGroup"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "operator[]"
+record = "PermutationGroup"
+const = true
+returns = "Permutation"
+args = ["int64_t sym"]
+
+[[entries]]
+kind = "method"
+name = "ptr"
+record = "PermutationGroup"
+const = true
+returns = "int64_t*"
+args = ["int64_t sym"]
+
+[[entries]]
+kind = "method"
+name = "inv"
+record = "PermutationGroup"
+const = true
+returns = "int64_t"
+args = ["int64_t sym"]
+
+[[entries]]
+kind = "method"
+name = "multiply"
+record = "PermutationGroup"
+const = true
+returns = "int64_t"
+args = ["int64_t s1", "int64_t s2"]
+
+[[entries]]
+kind = "method"
+name = "begin"
+record = "PermutationGroup"
+const = true
+returns = "iterator"
+
+[[entries]]
+kind = "method"
+name = "end"
+record = "PermutationGroup"
+const = true
+returns = "iterator"
+
+[[entries]]
+kind = "function"
+name = "nsites"
+returns = "int64_t"
+args = ["PermutationGroup const& group"]
+
+[[entries]]
+kind = "function"
+name = "size"
+returns = "int64_t"
+args = ["PermutationGroup const& group"]
+
+[[entries]]
+kind = "function"
+name = "subgroup"
+returns = "PermutationGroup"
+args = ["PermutationGroup const& group", "vector const& symmetries"]
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "PermutationGroup const& group"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["PermutationGroup const& group"]
+
+
+# ============================================================
+# xdiag/symmetries/representation.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "Representation"
+
+[[entries]]
+kind = "constructor"
+name = "Representation"
+record = "Representation"
+
+[[entries]]
+kind = "constructor"
+name = "Representation"
+record = "Representation"
+args = ["PermutationGroup const& group"]
+
+[[entries]]
+kind = "constructor"
+name = "Representation"
+record = "Representation"
+args = ["PermutationGroup const& group", "arma::vec const& characters"]
+
+[[entries]]
+kind = "constructor"
+name = "Representation"
+record = "Representation"
+args = ["PermutationGroup const& group", "arma::cx_vec const& characters"]
+
+[[entries]]
+kind = "constructor"
+name = "Representation"
+record = "Representation"
+args = ["std::string type", "int64_t charge"]
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "Representation"
+const = true
+returns = "bool"
+args = ["Representation const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "Representation"
+const = true
+returns = "bool"
+args = ["Representation const& rhs"]
+
+[[entries]]
+kind = "method"
+name = "is_permutation"
+record = "Representation"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "is_charge"
+record = "Representation"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "isreal"
+record = "Representation"
+const = true
+returns = "bool"
+
+[[entries]]
+kind = "method"
+name = "type"
+record = "Representation"
+const = true
+returns = "std::string"
+
+[[entries]]
+kind = "method"
+name = "group"
+record = "Representation"
+const = true
+returns = "PermutationGroup"
+
+[[entries]]
+kind = "method"
+name = "charge"
+record = "Representation"
+const = true
+returns = "int64_t"
+
+[[entries]]
+kind = "method"
+name = "characters"
+record = "Representation"
+const = true
+returns = "Vector"
+
+[[entries]]
+kind = "function"
+name = "isreal"
+returns = "bool"
+args = ["Representation const& irrep"]
+
+[[entries]]
+kind = "function"
+name = "isapprox"
+returns = "bool"
+args = ["Representation const& r1", "Representation const& r2", "double tol = 1e-12"]
+
+[[entries]]
+kind = "function"
+name = "multiply"
+returns = "Representation"
+args = ["Representation const& r1", "Representation const& r2"]
+
+[[entries]]
+kind = "function"
+name = "operator*"
+returns = "Representation"
+args = ["Representation const& r1", "Representation const& r2"]
+
+[[entries]]
+kind = "function"
+name = "operator<<"
+returns = "basic_ostream&"
+args = ["basic_ostream& out", "Representation const& irrep"]
+
+[[entries]]
+kind = "function"
+name = "to_string"
+returns = "std::string"
+args = ["Representation const& irrep"]
+
+
+# ============================================================
+# xdiag/symmetries/cyclic_group.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "cyclic_group"
+returns = "PermutationGroup"
+args = ["int64_t n"]
+
+[[entries]]
+kind = "function"
+name = "cyclic_group_irrep"
+returns = "Representation"
+args = ["int64_t n", "int64_t k"]

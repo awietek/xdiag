@@ -4,12 +4,7 @@ title: Op
 
 Object describing a single linear operator acting on a Hilbert space.
 
-**Sources**<br>
-[op.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.hpp)<br>
-[op.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.cpp)<br>
-[op.jl](https://github.com/awietek/XDiag.jl/blob/main/src/operators/op.jl)
-
----
+**Sources:** [op.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.hpp) · [op.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/operators/op.cpp)
 
 Every operator is defined by up to three paramaters:
 
@@ -19,20 +14,9 @@ Every operator is defined by up to three paramaters:
 
 3. For special interactions, it can be necessary to additionally specify a numerical **matrix**, which can either be real or complex. An example is the operator type `Matrix` defining generic spin interactions.
 
----
 
 ## Constructors
 
-=== "C++"	
-	```c++
-	Op(std::string type);
-	Op(std::string type, int64_t site);
-	Op(std::string type, std::vector<int64_t> const &sites);
-	Op(std::string type, int64_t site, arma::mat const &matrix);
-	Op(std::string type, std::vector<int64_t> const &sites, arma::mat const &matrix);
-	Op(std::string type, int64_t site, arma::cx_mat const &matrix);
-	Op(std::string type, std::vector<int64_t> const &sites, arma::cx_mat const &matrix);
-	```
 === "Julia"
 	```julia
 	Op(type::String)
@@ -42,6 +26,16 @@ Every operator is defined by up to three paramaters:
 	Op(type::String, sites::Vector{Int64}, matrix::Matrix{Float64})
 	Op(type::String, site::Int64, matrix::Matrix{ComplexF64})
 	Op(type::String, sites::Vector{Int64}, matrix::Matrix{ComplexF64})
+	```
+=== "C++"	
+	```c++
+	Op(std::string type);
+	Op(std::string type, int64_t site);
+	Op(std::string type, std::vector<int64_t> const &sites);
+	Op(std::string type, int64_t site, arma::mat const &matrix);
+	Op(std::string type, std::vector<int64_t> const &sites, arma::mat const &matrix);
+	Op(std::string type, int64_t site, arma::cx_mat const &matrix);
+	Op(std::string type, std::vector<int64_t> const &sites, arma::cx_mat const &matrix);
 	```
 
 | Parameter | Description                                                   |          |
@@ -54,7 +48,6 @@ Every operator is defined by up to three paramaters:
 
 	To enumerate the sites of an Op, we start counting at 1 in Julia and 0 in C++.
 
---- 
 
 ## Methods
 
@@ -62,56 +55,37 @@ Every operator is defined by up to three paramaters:
 
 Returns whether an [Op](op.md) is a real operator.
 
+=== "Julia"
+	```julia
+    isreal(op::Op)::Bool
+	```
 === "C++"
 	```c++
     bool isreal(Op const &op);
 	```
 
-=== "Julia"
-	```julia
-    isreal(op::Op)::Bool
-	```
----
-
-#### isapprox
-
-Returns whether two Ops are approximately equal.
-	
-=== "C++"	
-	```c++
-	bool isapprox(Op const &op1, OpSum const &op2, double rtol = 1e-12,
-	              double atol = 1e-12);
-	```
-
-=== "Julia"
-	```julia
-	isapprox(op1::Op, op2::Op, rtol::Float64=1e-12, atol::Float64=1e-12)::Bool
-	```
----
-
 #### to_string (operator<<)
 
 Converts the Op to a readable string representation.
-	
+
+=== "Julia"
+	```julia
+	to_string(op::Op)::String
+	```
 === "C++"	
 	```c++
 	std::string to_string(Op const &op);
 	std::ostream &operator<<(std::ostream &out, Op const &op);
 	```
 
-=== "Julia"
-	```julia
-	to_string(op::Op)::String
-	```
----
 ## Usage Example
 
+=== "Julia"
+	```julia
+	--8<-- "examples/usage_examples/main.jl:Op"
+	```
 === "C++"
 	```c++
 	--8<-- "examples/usage_examples/main.cpp:Op"
 	```
 
-=== "Julia"
-	```c++
-	--8<-- "examples/usage_examples/main.jl:Op"
-	```

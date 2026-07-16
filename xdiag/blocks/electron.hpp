@@ -1,82 +1,74 @@
-// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+// SPDX-FileCopyrightText: 2026 Alexander Wietek <awietek@pks.mpg.de>
 //
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
 
-#include <optional>
+#include <cstdint>
+#include <memory>
+#include <string>
 
-#include <xdiag/common.hpp>
-
-#include <xdiag/basis/electron/basis_electron.hpp>
+#include <xdiag/basis/basis.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/symmetries/representation.hpp>
+#include <xdiag/symmetries/representation_set.hpp>
+#include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
 
 class ElectronIterator;
 
-class Electron {
+class XDIAG_API Electron {
 public:
-  using basis_t = basis::BasisElectron;
   using iterator_t = ElectronIterator;
 
-  XDIAG_API Electron() = default;
-  XDIAG_API Electron(int64_t nsites, std::string backend = "auto");
-  XDIAG_API Electron(int64_t nsites, int64_t nup, int64_t ndn,
-                     std::string backend = "auto");
-  XDIAG_API Electron(int64_t nsites, Representation const &irrep,
-                     std::string backend = "auto");
-  XDIAG_API Electron(int64_t nsites, int64_t nup, int64_t ndn,
-                     Representation const &irrep, std::string backend = "auto");
+  Electron() = default;
 
-  XDIAG_API iterator_t begin() const;
-  XDIAG_API iterator_t end() const;
-  XDIAG_API int64_t index(ProductState const &pstate) const;
-  XDIAG_API int64_t dim() const;
-  XDIAG_API int64_t size() const;
+  // Generic constructor
+  Electron(int64_t sites, RepresentationSet const &irreps);
 
-  XDIAG_API bool operator==(Electron const &rhs) const;
-  XDIAG_API bool operator!=(Electron const &rhs) const;
+  // Convenience constructors
+  Electron(int64_t nsites);
+  Electron(int64_t nsites, int64_t nup, int64_t ndn);
+  Electron(int64_t nsites, Representation const &irrep);
+  Electron(int64_t nsites, int64_t nup, int64_t ndn,
+           Representation const &irrep);
 
-  XDIAG_API int64_t nsites() const;
-  XDIAG_API bool isreal() const;
+  int64_t nsites() const;
+  constexpr int64_t d() const { return 4; }
+  int64_t dim() const;
+  int64_t size() const;
+  bool isreal() const;
+  int64_t index(ProductState const &pstate) const;
 
-  std::string backend() const;
-  std::optional<int64_t> nup() const;
-  std::optional<int64_t> ndn() const;
-  std::optional<Representation> const &irrep() const;
-  basis_t const &basis() const;
+  bool operator==(Electron const &rhs) const;
+  bool operator!=(Electron const &rhs) const;
+
+  iterator_t begin() const;
+  iterator_t end() const;
+
+  RepresentationSet irreps() const;
+  std::shared_ptr<basis::Basis> const &basis() const;
 
 private:
-  int64_t nsites_;
-  std::string backend_;
-  std::optional<int64_t> nup_;
-  std::optional<int64_t> ndn_;
-  std::optional<Representation> irrep_;
-  std::shared_ptr<basis_t> basis_;
-  int64_t size_;
+  RepresentationSet irreps_;
+  std::shared_ptr<basis::Basis> basis_;
 };
 
-XDIAG_API int64_t index(Electron const &block, ProductState const &pstate);
-XDIAG_API int64_t nsites(Electron const &block);
-XDIAG_API int64_t dim(Electron const &block);
-XDIAG_API int64_t size(Electron const &block);
-XDIAG_API bool isreal(Electron const &block);
 XDIAG_API std::ostream &operator<<(std::ostream &out, Electron const &block);
 XDIAG_API std::string to_string(Electron const &block);
 
-class ElectronIterator {
+class XDIAG_API ElectronIterator {
 public:
-  ElectronIterator(Electron const &block, bool begin);
-  XDIAG_API ElectronIterator &operator++();
-  XDIAG_API ProductState const &operator*() const;
-  XDIAG_API bool operator!=(ElectronIterator const &rhs) const;
+  ElectronIterator(Electron const *block, int64_t idx);
+  ElectronIterator &operator++();
+  ProductState operator*() const;
+  bool operator==(ElectronIterator const &rhs) const;
+  bool operator!=(ElectronIterator const &rhs) const;
 
 private:
-  int64_t nsites_;
-  mutable ProductState pstate_;
-  basis::BasisElectronIterator it_;
+  std::unique_ptr<basis::BasisIterator> it_;
+  int64_t idx_;
 };
 
 } // namespace xdiag

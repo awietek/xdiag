@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.19)
 
 project(
   xdiag
-  VERSION 0.4.1
+  VERSION 0.5.0
   LANGUAGES CXX
 )
 
@@ -28,7 +28,13 @@ message(STATUS "Compiler version: " ${CMAKE_CXX_COMPILER_VERSION})
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include("cmake/sources.cmake")
+include("cmake/instantiations.cmake")
 
+detect_grouped_sources(
+    "${XDIAG_SOURCES}"
+    XDIAG_GROUPED_SOURCES
+    XDIAG_NORMAL_SOURCES
+  )
 
 # Set release build as default
 if(NOT CMAKE_BUILD_TYPE)
@@ -108,6 +114,14 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   message(STATUS "Adding Sanitizers to debug build")
   target_compile_options(${XDIAG_LIBRARY} PUBLIC -fsanitize=address)
   target_link_options(${XDIAG_LIBRARY} PUBLIC -fsanitize=address)
+endif()
+
+# Add source-based coverage instrumentation (see misc/coverage/README.md)
+option(XDIAG_COVERAGE "Build with source-based coverage instrumentation" OFF)
+if (XDIAG_COVERAGE)
+  message(STATUS "Adding coverage instrumentation to ${XDIAG_LIBRARY}")
+  target_compile_options(${XDIAG_LIBRARY} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
+  target_link_options(${XDIAG_LIBRARY} PUBLIC -fprofile-instr-generate -fcoverage-mapping)
 endif()
 
 
@@ -290,8 +304,8 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/xdiag" # source directory
   PATTERN "*.hpp" # select header files
 )
 
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/xdiag/extern" # source directory
-  DESTINATION include/xdiag
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/extern" # source directory
+  DESTINATION include
   FILES_MATCHING # install only matched files
   PATTERN "*" # select header files
 )
@@ -314,8 +328,8 @@ install(TARGETS ${XDIAG_LIBRARY} EXPORT ${XDIAG_LIBRARY}_Targets
 if (BUILD_SHARED_LIBS)
   set(type shared)
   install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/include/${XDIAG_LIBRARY}/export.hpp
-    DESTINATION include/${XDIAG_LIBRARY}
+    ${CMAKE_CURRENT_BINARY_DIR}/include/xdiag/export.hpp
+    DESTINATION include/xdiag
   )
 else ()
     set(type static)

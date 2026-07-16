@@ -4,6 +4,8 @@
 
 #include "random_state.hpp"
 
+#include <xdiag/utils/to_string_generic.hpp>
+
 namespace xdiag {
 
 RandomState::RandomState(int64_t seed, bool normalized)
@@ -16,7 +18,7 @@ std::ostream &operator<<(std::ostream &out, RandomState const &state) {
   return out;
 }
 std::string to_string(RandomState const &state) {
-  return to_string_generic(state);
+  return utils::to_string_generic(state);
 }
 
 } // namespace xdiag

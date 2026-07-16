@@ -1,210 +1,184 @@
-// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+// SPDX-FileCopyrightText: 2026 Alexander Wietek <awietek@pks.mpg.de>
 //
 // SPDX-License-Identifier: Apache-2.0
 
 #include "tj.hpp"
 
-#include <xdiag/random/hash.hpp>
+#include <optional>
+
+#include <xdiag/basis/basis_tj.hpp>
+#include <xdiag/basis/basis_tj_symmetric.hpp>
+#include <xdiag/bits/bitset.hpp>
+#include <xdiag/blocks/print_block.hpp>
+#include <xdiag/combinatorics/combinations/combinations.hpp>
+#include <xdiag/combinatorics/combinations/lin_table.hpp>
+#include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/math/vector.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+#include <xdiag/utils/to_string_generic.hpp>
 
 namespace xdiag {
 
-using namespace basis;
+tJ::tJ(int64_t nsites, RepresentationSet const &irreps) try : irreps_(irreps) {
+  using namespace basis;
+  using namespace combinatorics;
+  using namespace bits;
 
-tJ::tJ(int64_t nsites, int64_t nup, int64_t ndn, std::string backend) try
-    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn),
-      irrep_(std::nullopt) {
-  // Safety checks
   if (nsites < 0) {
     XDIAG_THROW("Invalid argument: nsites < 0");
-  } else if ((nup < 0) || (ndn < 0)) {
-    XDIAG_THROW("Invalid argument: (nup < 0) or (ndn < 0)");
-  } else if ((nup + ndn) > nsites) {
-    XDIAG_THROW("Invalid argument: nup + ndn > nsites");
   }
 
-  // Choose basis implementation
-  if (backend == "auto") {
-    if (nsites < 32) {
-      basis_ =
-          std::make_shared<basis_t>(tj::BasisNp<uint32_t>(nsites, nup, ndn));
-    } else if (nsites < 64) {
-      basis_ =
-          std::make_shared<basis_t>(tj::BasisNp<uint64_t>(nsites, nup, ndn));
-    } else {
-      XDIAG_THROW("blocks with more than 64 sites currently not implemented");
-    }
-  } else if (backend == "32bit") {
-    basis_ = std::make_shared<basis_t>(tj::BasisNp<uint32_t>(nsites, nup, ndn));
-  } else if (backend == "64bit") {
-    basis_ = std::make_shared<basis_t>(tj::BasisNp<uint64_t>(nsites, nup, ndn));
-  } else {
-    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
+  std::optional<int64_t> nup = irreps.charge("nup");
+  std::optional<int64_t> ndn = irreps.charge("ndn");
+  if (nup && ((*nup < 0) || (*nup > nsites))) {
+    XDIAG_THROW("Invalid argument: nup out of range [0, nsites]");
   }
-  size_ = basis::size(*basis_);
-  check_dimension_works_with_blas_int_size(size_);
-}
-XDIAG_CATCH
-
-tJ::tJ(int64_t nsites, int64_t nup, int64_t ndn, Representation const &irrep,
-       std::string backend) try
-    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn), irrep_(irrep) {
-  // Safety checks
-  if (nsites < 0) {
-    XDIAG_THROW("Invalid argument: nsites < 0");
-  } else if ((nup < 0) || (ndn < 0)) {
-    XDIAG_THROW("Invalid argument: (nup < 0) or (ndn < 0)");
-  } else if ((nup + ndn) > nsites) {
-    XDIAG_THROW("Invalid argument: nup + ndn > nsites");
-  } else if (nsites != irrep.group().nsites()) {
-    XDIAG_THROW("nsites does not match the nsites in PermutationGroup");
+  if (ndn && ((*ndn < 0) || (*ndn > nsites))) {
+    XDIAG_THROW("Invalid argument: ndn out of range [0, nsites]");
+  }
+  if (nup && ndn && ((*nup + *ndn) > nsites)) {
+    XDIAG_THROW("Invalid argument: nup + ndn > nsites (no double occupancy)");
   }
 
-  // Choose basis implementation
-  if (backend == "auto") {
-    if (nsites < 32) {
-      if (irrep.isreal()) {
-        auto characters = irrep.characters().as<arma::vec>();
-        basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint32_t>(
-            nsites, nup, ndn, irrep.group(), characters));
+  std::optional<PermutationGroup> group = irreps.group("SitePermutation");
+  std::optional<Vector> characters = irreps.characters("SitePermutation");
+
+  if (group) {
+    // permutation symmetry -> BasistJSymmetric. Unlike the non-symmetric block
+    // (compressed dn on nsites-nup sites), the symmetric basis stores FULL-nsites
+    // dn, so enum_dn is built on (nsites, ndn) -- not (nsites-nup, ndn).
+    auto build = [&](auto &&enum_up, auto &&enum_dn) {
+      using enum_t = std::decay_t<decltype(enum_up)>;
+      basis_ = std::make_shared<BasistJSymmetric<enum_t>>(enum_up, enum_dn,
+                                                          *group, *characters);
+    };
+    if (nup && ndn) {
+      int64_t n = nsites, ku = *nup, kd = *ndn;
+      if (nsites <= 32) {
+        build(LinTable<uint32_t>(n, ku), LinTable<uint32_t>(n, kd));
+      } else if (nsites <= 42) {
+        build(LinTable<uint64_t>(n, ku), LinTable<uint64_t>(n, kd));
+      } else if (nsites <= 64) {
+        build(Combinations<uint64_t>(n, ku), Combinations<uint64_t>(n, kd));
       } else {
-        auto characters = irrep.characters().as<arma::cx_vec>();
-        basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint32_t>(
-            nsites, nup, ndn, irrep.group(), characters));
+        build(Combinations<BitsetDynamic>(n, ku),
+              Combinations<BitsetDynamic>(n, kd));
       }
-
-    } else if (nsites < 64) {
-      if (irrep.isreal()) {
-        auto characters = irrep.characters().as<arma::vec>();
-        basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint64_t>(
-            nsites, nup, ndn, irrep.group(), characters));
+    } else if (!nup && !ndn) {
+      if (nsites <= 32) {
+        build(Subsets<uint32_t>(nsites), Subsets<uint32_t>(nsites));
+      } else if (nsites <= 64) {
+        build(Subsets<uint64_t>(nsites), Subsets<uint64_t>(nsites));
       } else {
-        auto characters = irrep.characters().as<arma::cx_vec>();
-        basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint64_t>(
-            nsites, nup, ndn, irrep.group(), characters));
+        XDIAG_THROW("Unsupported nsites > 64 for non-number conserving "
+                    "symmetric tJ block");
       }
     } else {
-      XDIAG_THROW("blocks with more than 64 sites currently not implemented");
+      XDIAG_THROW("tJ block requires both nup and ndn to be set, or neither");
     }
-  } else if (backend == "32bit") {
-    if (irrep.isreal()) {
-      auto characters = irrep.characters().as<arma::vec>();
-      basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint32_t>(
-          nsites, nup, ndn, irrep.group(), characters));
+  } else if (nup && ndn) { // number-conserving: ups on (nsites,nup), compressed
+                           // dn on (nsites-nup, ndn)
+    int64_t n = nsites, ku = *nup, kd = *ndn, nc = nsites - *nup;
+    auto build = [&](auto &&enum_up, auto &&enum_dncs) {
+      using enum_t = std::decay_t<decltype(enum_up)>;
+      basis_ = std::make_shared<BasistJ<enum_t>>(enum_up, enum_dncs);
+    };
+    if (nsites <= 32) {
+      build(LinTable<uint32_t>(n, ku), LinTable<uint32_t>(nc, kd));
+    } else if (nsites <= 42) {
+      build(LinTable<uint64_t>(n, ku), LinTable<uint64_t>(nc, kd));
+    } else if (nsites <= 64) {
+      build(Combinations<uint64_t>(n, ku), Combinations<uint64_t>(nc, kd));
     } else {
-      auto characters = irrep.characters().as<arma::cx_vec>();
-      basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint32_t>(
-          nsites, nup, ndn, irrep.group(), characters));
+      // Store the compressed-dn states (enumerated over nc = nsites-nup sites)
+      // in nsites-wide bitsets so their dynamic-Bitset chunk count matches the
+      // ups states and the nsites-wide masks used by the tJ kernels.
+      build(Combinations<BitsetDynamic>(n, ku),
+            Combinations<BitsetDynamic>(nc, kd, n));
     }
-  } else if (backend == "64bit") {
-    if (irrep.isreal()) {
-      auto characters = irrep.characters().as<arma::vec>();
-      basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint64_t>(
-          nsites, nup, ndn, irrep.group(), characters));
+  } else if (!nup && !ndn) { // no number conservation (small nsites only)
+    auto build = [&](auto &&enum_up) {
+      using enum_t = std::decay_t<decltype(enum_up)>;
+      basis_ = std::make_shared<BasistJ<enum_t>>(enum_up);
+    };
+    if (nsites <= 32) {
+      build(Subsets<uint32_t>(nsites));
+    } else if (nsites <= 64) {
+      build(Subsets<uint64_t>(nsites));
     } else {
-      auto characters = irrep.characters().as<arma::cx_vec>();
-      basis_ = std::make_shared<basis_t>(tj::BasisSymmetricNp<uint64_t>(
-          nsites, nup, ndn, irrep.group(), characters));
+      XDIAG_THROW("Unsupported nsites > 64 for non-number conserving tJ block");
     }
   } else {
-    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
+    XDIAG_THROW("tJ block requires both nup and ndn to be set, or neither");
   }
-  size_ = basis::size(*basis_);
-  check_dimension_works_with_blas_int_size(size_);
+
+  check_dimension_reasonable(size());
+  check_dimension_works_with_blas_int_size(size());
 }
 XDIAG_CATCH
 
-tJ::iterator_t tJ::begin() const { return iterator_t(*this, true); }
-tJ::iterator_t tJ::end() const { return iterator_t(*this, false); }
-int64_t tJ::index(ProductState const &pstate) const try {
-  return std::visit(
-      [&](auto &&basis) {
-        using basis_t = typename std::decay<decltype(basis)>::type;
-        using bit_t = typename basis_t::bit_t;
-        auto [ups, dns] = to_bits_tj<bit_t>(pstate);
-        return basis.index(ups, dns);
-      },
-      *basis_);
-}
+tJ::tJ(int64_t nsites) try : tJ(nsites, RepresentationSet{}) {}
 XDIAG_CATCH
+
+tJ::tJ(int64_t nsites, int64_t nup, int64_t ndn) try
+    : tJ(nsites, RepresentationSet{Representation("nup", nup),
+                                   Representation("ndn", ndn)}) {}
+XDIAG_CATCH
+
+tJ::tJ(int64_t nsites, Representation const &irrep) try
+    : tJ(nsites, RepresentationSet{irrep}) {}
+XDIAG_CATCH
+
+tJ::tJ(int64_t nsites, int64_t nup, int64_t ndn, Representation const &irrep) try
+    : tJ(nsites, RepresentationSet{Representation("nup", nup),
+                                   Representation("ndn", ndn), irrep}) {}
+XDIAG_CATCH
+
+int64_t tJ::nsites() const { return basis_->nsites(); }
+int64_t tJ::index(ProductState const &pstate) const {
+  return basis_->index(pstate);
+}
+int64_t tJ::dim() const { return size(); }
+int64_t tJ::size() const { return basis_->size(); }
+bool tJ::isreal() const { return irreps_.isreal(); }
+
+tJIterator tJ::begin() const { return {this, 0}; }
+tJIterator tJ::end() const { return {this, size()}; }
 
 bool tJ::operator==(tJ const &rhs) const {
-  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_) &&
-         (irrep_ == rhs.irrep_);
+  return (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);
 }
 bool tJ::operator!=(tJ const &rhs) const { return !operator==(rhs); }
-int64_t tJ::dim() const { return size_; }
-int64_t tJ::size() const { return size_; }
 
-int64_t tJ::nsites() const { return nsites_; }
-std::string tJ::backend() const { return backend_; }
-std::optional<int64_t> tJ::nup() const { return nup_; }
-std::optional<int64_t> tJ::ndn() const { return ndn_; }
-std::optional<Representation> const &tJ::irrep() const { return irrep_; }
-
-bool tJ::isreal() const { return irrep_ ? irrep_->isreal() : true; }
-tJ::basis_t const &tJ::basis() const { return *basis_; }
-
-int64_t index(tJ const &block, ProductState const &pstate) {
-  return block.index(pstate);
-}
-int64_t nsites(tJ const &block) { return block.nsites(); }
-int64_t dim(tJ const &block) { return block.dim(); }
-int64_t size(tJ const &block) { return block.size(); }
-bool isreal(tJ const &block) { return block.isreal(); }
+RepresentationSet tJ::irreps() const { return irreps_; }
+std::shared_ptr<basis::Basis> const &tJ::basis() const { return basis_; }
 
 std::ostream &operator<<(std::ostream &out, tJ const &block) {
-  out << "tJ:\n";
-  out << "  nsites   : " << block.nsites() << "\n";
-  if (block.nup()) {
-    out << "  nup      : " << *block.nup() << "\n";
-  } else {
-    out << "  nup      : not conserved\n";
-  }
-
-  if (block.ndn()) {
-    out << "  ndn      : " << *block.ndn() << "\n";
-  } else {
-    out << "  ndn      : not conserved\n";
-  }
-  if (block.irrep()) {
-    out << "  irrep    : defined with ID " << std::hex
-        << random::hash(*block.irrep()) << std::dec << "\n";
-  }
-  std::stringstream ss;
-  ss.imbue(std::locale("en_US.UTF-8"));
-  ss << block.size();
-  out << "  dimension: " << ss.str() << "\n";
-  out << "  ID       : " << std::hex << random::hash(block) << std::dec << "\n";
+  print_block(out, block);
   return out;
 }
-std::string to_string(tJ const &block) { return to_string_generic(block); }
+std::string to_string(tJ const &block) { return utils::to_string_generic(block); }
 
-tJIterator::tJIterator(tJ const &block, bool begin)
-    : nsites_(block.nsites()), pstate_(nsites_),
-      it_(std::visit(
-          [&](auto const &basis) {
-            basis::BasistJIterator it = begin ? basis.begin() : basis.end();
-            return it;
-          },
-          block.basis())) {}
+tJIterator::tJIterator(tJ const *block, int64_t idx) : idx_(idx) {
+  if (idx_ < block->size()) {
+    it_ = block->basis()->product_state_iterator();
+  }
+}
 
 tJIterator &tJIterator::operator++() {
-  std::visit([](auto &&it) { ++it; }, it_);
+  it_->advance();
+  ++idx_;
   return *this;
 }
 
-ProductState const &tJIterator::operator*() const {
-  std::visit(
-      [&](auto &&it) {
-        auto [ups, dns] = *it;
-        to_product_state_tj(ups, dns, pstate_);
-      },
-      it_);
-  return pstate_;
-}
+ProductState tJIterator::operator*() const { return it_->product_state(); }
 
+bool tJIterator::operator==(tJIterator const &rhs) const {
+  return idx_ == rhs.idx_;
+}
 bool tJIterator::operator!=(tJIterator const &rhs) const {
-  return it_ != rhs.it_;
+  return idx_ != rhs.idx_;
 }
 
 } // namespace xdiag

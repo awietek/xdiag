@@ -2,10 +2,17 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
-#include <xdiag/all.hpp>
+#include <tests/catch.hpp>
 
-using namespace std::complex_literals;
+#include <xdiag/armadillo.hpp>
+#include <xdiag/config.hpp>
+#include <xdiag/io/file_toml.hpp>
+#include <xdiag/math/complex.hpp>
+#include <xdiag/math/isapprox.hpp>
+#include <xdiag/operators/op.hpp>
+#include <xdiag/operators/opsum.hpp>
+#include <xdiag/symmetries/permutation.hpp>
+#include <xdiag/utils/error.hpp>
 
 template <typename T> void test_write_read(T val) {
   using namespace xdiag;
@@ -29,6 +36,7 @@ template <typename T> void test_write_read(T val) {
 TEST_CASE("file_toml", "[io]") try {
   using namespace xdiag;
   using namespace arma;
+  using namespace std::complex_literals;
 
   // Just try to parse everything in the example toml file
   std::string filename = XDIAG_DIRECTORY "/misc/data/toml/read.toml";
@@ -77,6 +85,7 @@ TEST_CASE("file_toml", "[io]") try {
     REQUIRE(fl[n].as<complex>() == std::complex<double>(2.3122, 0.1237));
   } catch (Error const &e) {
     error_trace(e);
+    throw;
   }
   n = "vectors.ints";
   // for (auto i : fl[n].as<std::vector<int>>()) {
@@ -99,8 +108,8 @@ TEST_CASE("file_toml", "[io]") try {
   // }
   REQUIRE(fl.defined(n));
   REQUIRE(fl[n].as<std::vector<complex>>() ==
-          std::vector<complex>{2.3122 + 0.1237i, -12.3122 + 20.1237i,
-                               32.3122 - 40.1237i});
+          std::vector<complex>{
+              {2.3122, 0.1237}, {-12.3122, 20.1237}, {32.3122, -40.1237}});
 
   n = "clients.hosts";
   // for (auto i : fl[n].as<std::vector<std::string>>()) {
@@ -120,7 +129,8 @@ TEST_CASE("file_toml", "[io]") try {
   // XDIAG_SHOW(sx);
 
   auto sy = fl["pauli.sy"].as<cx_mat>();
-  cx_mat syy{{0. + 0.i, 0. - 0.5i}, {0. + 0.5i, 0.0}};
+  cx_mat syy{{complex{0., 0}, complex{0., -0.5}},
+             {complex{0., 0.5}, complex{0.0}}};
   // XDIAG_SHOW(sy);
   // XDIAG_SHOW(syy);
 
@@ -131,7 +141,8 @@ TEST_CASE("file_toml", "[io]") try {
   // XDIAG_SHOW(sz);
 
   auto szc = fl["pauli.sz"].as<cx_mat>();
-  REQUIRE(isapprox(szc, cx_mat{{0.5 + 0i, 0. + 0i}, {0. + 0i, -0.5 + 0i}}));
+  REQUIRE(isapprox(
+      szc, cx_mat{{complex{0.5}, complex{0.}}, {complex{0.}, complex{-0.5}}}));
   // XDIAG_SHOW(szc);
 
   auto other = fl["pauli.other"].as<mat>();
@@ -140,7 +151,7 @@ TEST_CASE("file_toml", "[io]") try {
 
   int a = 42;
   double b = 1.234;
-  complex c = 1.234 + 4.321i;
+  complex c = {1.234, 4.321};
   std::vector<int> d{1, 5, 4, 3, 9, 123};
   std::vector<double> e{1.23, 5.43, 4.54, 3.65, 9.76, 12.3};
   std::vector<complex> f{1.23 + 5.43i, 4.54 + 3.65i, 9.76 + 12.3i};
@@ -265,4 +276,5 @@ TEST_CASE("file_toml", "[io]") try {
 
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

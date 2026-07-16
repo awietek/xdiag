@@ -4,9 +4,11 @@
 
 #include "value.hpp"
 
-#include <xdiag/common.hpp>
 #include <xdiag/io/toml/std_vector.hpp>
-#include <xdiag/utils/type_string.hpp>
+#include <xdiag/math/complex.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+#include <xdiag/utils/type_name.hpp>
 
 namespace xdiag::io {
 
@@ -16,7 +18,7 @@ template <typename T> T value(toml::node const &node) try {
     return T(*val);
   } else {
     XDIAG_THROW(fmt::format("TOML node cannot be converted to type \"{}\"",
-                            utils::type_string<T>()));
+                            utils::get_type_name<T>()));
   }
 }
 XDIAG_CATCH
@@ -31,7 +33,7 @@ template <> complex value<complex>(toml::node const &node) try {
     return complex{real_imag[0], real_imag[1]};
   } else {
     XDIAG_THROW(fmt::format("TOML node cannot be converted to type \"{}\"",
-                            utils::type_string<complex>()));
+                            utils::get_type_name<complex>()));
   }
 }
 XDIAG_CATCH

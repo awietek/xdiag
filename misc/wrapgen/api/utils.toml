@@ -1,0 +1,111 @@
+module = "utils"
+
+
+# ============================================================
+# xdiag/utils/error.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "Error"
+
+[[entries]]
+kind = "constructor"
+name = "Error"
+record = "Error"
+args = ["std::string message", "std::string original_message = \"\""]
+
+[[entries]]
+kind = "constructor"
+name = "Error"
+record = "Error"
+args = ["Error const& error", "std::string message"]
+
+[[entries]]
+kind = "method"
+name = "messages"
+record = "Error"
+const = true
+returns = "vector const&"
+
+[[entries]]
+kind = "method"
+name = "original_message"
+record = "Error"
+const = true
+returns = "std::string"
+
+[[entries]]
+kind = "method"
+name = "what"
+record = "Error"
+const = true
+returns = "char*"
+
+[[entries]]
+kind = "function"
+name = "throw_error"
+args = ["std::string message", "char* file", "char* func", "int line"]
+
+[[entries]]
+kind = "function"
+name = "rethrow_error"
+args = ["Error const& error", "char* file", "char* func", "int line"]
+
+[[entries]]
+kind = "function"
+name = "error_trace"
+args = ["Error const& error"]
+
+
+# ============================================================
+# xdiag/utils/logger.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "set_verbosity"
+args = ["int64_t level"]
+
+
+# ============================================================
+# xdiag/utils/say_hello.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "version_string"
+returns = "std::string"
+
+[[entries]]
+kind = "function"
+name = "say_hello"
+
+[[entries]]
+kind = "function"
+name = "print_version"
+
+
+# ============================================================
+# xdiag/utils/timing.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "rightnow"
+returns = "time_point"
+
+[[entries]]
+kind = "function"
+name = "timing"
+args = ["time_point const& t0", "time_point const& t1", "std::string msg = \"\"", "int verbosity = 0"]
+
+[[entries]]
+kind = "function"
+name = "tic"
+args = ["bool begin = true", "std::string msg = \"\"", "int verbosity = 0"]
+
+[[entries]]
+kind = "function"
+name = "toc"
+args = ["std::string msg = \"\"", "int verbosity = 0"]

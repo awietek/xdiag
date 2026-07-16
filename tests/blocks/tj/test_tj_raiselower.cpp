@@ -2,15 +2,15 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../../catch.hpp"
+#include <tests/blocks/tj/testcases_tj.hpp>
+#include <tests/catch.hpp>
 
-#include "testcases_tj.hpp"
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/apply.hpp>
-#include <xdiag/algebra/isapprox.hpp>
-#include <xdiag/algebra/matrix.hpp>
+#include <xdiag/math/isapprox.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/matrix.hpp>
+#include <xdiag/states/apply.hpp>
 #include <xdiag/states/fill.hpp>
-
+#include <xdiag/states/norm.hpp>
 #include <xdiag/utils/logger.hpp>
 
 TEST_CASE("tj_raise_lower", "[tj]") try {
@@ -32,10 +32,10 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
           std::vector<int> up_positions;
           std::vector<int> dn_positions;
           for (int i = 0; i < nsites; ++i) {
-            if ((pstate[i] == "Up") || (pstate[i] == "UpDn")) {
+            if (pstate[i] == 1) { // up (tJ local index: 0 empty, 1 up, 2 dn)
               up_positions.push_back(i);
             }
-            if ((pstate[i] == "Dn") || (pstate[i] == "UpDn")) {
+            if (pstate[i] == 2) { // dn
               dn_positions.push_back(i);
             }
           }
@@ -270,4 +270,5 @@ TEST_CASE("tj_raise_lower", "[tj]") try {
   // }
 } catch (xdiag::Error const &e) {
   error_trace(e);
+  throw;
 }

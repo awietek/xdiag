@@ -4,7 +4,9 @@
 
 #include "read.hpp"
 
-#include <xdiag/utils/vector.hpp>
+#include <xdiag/math/vector.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
 
 namespace xdiag {
 Permutation read_permutation(FileToml file, std::string tag) try {
@@ -59,9 +61,17 @@ Representation read_representation(FileToml file, std::string irrep_tag,
                   "number of elements");
     }
     auto sgroup = subgroup(group, allowed_syms);
-    return Representation(sgroup, characters);
+    if (isreal(characters)) {
+      return Representation(sgroup, characters.as<arma::vec>());
+    } else {
+      return Representation(sgroup, characters.as<arma::cx_vec>());
+    }
   } else {
-    return Representation(group, characters);
+    if (isreal(characters)) {
+      return Representation(group, characters.as<arma::vec>());
+    } else {
+      return Representation(group, characters.as<arma::cx_vec>());
+    }
   }
 }
 XDIAG_CATCH

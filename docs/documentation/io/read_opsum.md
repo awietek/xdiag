@@ -6,31 +6,23 @@ Reads an [OpSum](../operators/opsum.md) object from a TOML file.
 
 **Sources** [read.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/io/read.hpp), [read.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/io/read.cpp)
 
----
-
 ## Definition
 
-
+=== "Julia"
+	```julia
+	read_opsum(file::FileToml, tag::String)::OpSum
+	```
 === "C++"
 	```c++
 	OpSum read_opsum(FileToml file, std::string tag);
 	```
 	
-=== "Julia"
-	```julia
-	read_opsum(file::FileToml, tag::String)::OpSum
-	```
-
----
-
 ## Parameters
 
 | Name | Description                                                                           |   |
 |:-----|:--------------------------------------------------------------------------------------|---|
 | file | [FileToml](file_toml.md) object from which the [OpSum](../operators/opsum.md) is read |   |
 | tag  | tag which holds the information in the TOML file about the OpSum                      |   |
-
----
 
 ## Data format
 
@@ -51,17 +43,16 @@ Interactions = [
 ]
 ```
 
----
-
 ## Usage Example
-
-=== "C++"
-	```c++
-	--8<-- "examples/usage_examples/main.cpp:read_opsum"
-	```
 
 === "Julia"
 	```julia
 	--8<-- "examples/usage_examples/main.jl:read_opsum"
 	```
+=== "C++"
+	```c++
+	--8<-- "examples/usage_examples/main.cpp:read_opsum"
+	```
+
+
 

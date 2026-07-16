@@ -1,0 +1,156 @@
+module = "io"
+
+
+# ============================================================
+# xdiag/io/toml/file_toml_handler.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "FileTomlHandler"
+
+[[entries]]
+kind = "constructor"
+name = "FileTomlHandler"
+record = "FileTomlHandler"
+args = ["std::string key", "table& file"]
+
+[[entries]]
+kind = "constructor"
+name = "FileTomlHandler"
+record = "FileTomlHandler"
+deleted = true
+args = ["FileTomlHandler const& "]
+
+[[entries]]
+kind = "method"
+name = "operator="
+record = "FileTomlHandler"
+deleted = true
+returns = "FileTomlHandler&"
+args = ["FileTomlHandler const& "]
+
+
+# ============================================================
+# xdiag/io/file_toml.hpp
+# ============================================================
+
+[[entries]]
+kind = "class"
+name = "FileToml"
+
+[[entries]]
+kind = "constructor"
+name = "FileToml"
+record = "FileToml"
+
+[[entries]]
+kind = "constructor"
+name = "FileToml"
+record = "FileToml"
+args = ["char* filename"]
+
+[[entries]]
+kind = "constructor"
+name = "FileToml"
+record = "FileToml"
+args = ["std::string filename"]
+
+[[entries]]
+kind = "constructor"
+name = "FileToml"
+record = "FileToml"
+args = ["basic_istream& is"]
+
+[[entries]]
+kind = "method"
+name = "defined"
+record = "FileToml"
+const = true
+returns = "bool"
+args = ["std::string key"]
+
+[[entries]]
+kind = "method"
+name = "operator[]"
+record = "FileToml"
+returns = "FileTomlHandler"
+args = ["std::string key"]
+
+[[entries]]
+kind = "method"
+name = "write"
+record = "FileToml"
+const = true
+args = ["std::string filename", "std::string mode = \"w\""]
+
+[[entries]]
+kind = "method"
+name = "operator=="
+record = "FileToml"
+const = true
+returns = "bool"
+args = ["FileToml const& other"]
+
+[[entries]]
+kind = "method"
+name = "operator!="
+record = "FileToml"
+const = true
+returns = "bool"
+args = ["FileToml const& other"]
+
+[[entries]]
+kind = "method"
+name = "keys"
+record = "FileToml"
+const = true
+returns = "vector"
+
+[[entries]]
+kind = "method"
+name = "table"
+record = "FileToml"
+const = true
+returns = "table"
+
+[[entries]]
+kind = "function"
+name = "defined"
+returns = "bool"
+args = ["FileToml const& fl", "std::string key"]
+
+
+# ============================================================
+# xdiag/io/read.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "read_permutation"
+returns = "Permutation"
+args = ["FileToml file", "std::string tag"]
+
+[[entries]]
+kind = "function"
+name = "read_permutation_group"
+returns = "PermutationGroup"
+args = ["FileToml file", "std::string tag"]
+
+[[entries]]
+kind = "function"
+name = "read_representation"
+returns = "Representation"
+args = ["FileToml file", "std::string irrep_tag", "std::string group_tag = \"Symmetries\""]
+
+[[entries]]
+kind = "function"
+name = "read_op"
+returns = "Op"
+args = ["FileToml file", "std::string tag"]
+
+[[entries]]
+kind = "function"
+name = "read_opsum"
+returns = "OpSum"
+args = ["FileToml file", "std::string tag"]

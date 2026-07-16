@@ -5,7 +5,6 @@
 #pragma once
 
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
@@ -45,11 +44,9 @@ OpSum square2x2(double t, double J);
 
 OpSum square3x3(double t, double J);
 
-
 bool valid_nup_ndn(int nup, int ndn, int nsites);
 bool valid_nup_ndn(std::string op_str, int nup, int ndn, int nsites);
 bool valid_nup_ndn(std::string op_str1, std::string op_str2, int nup, int ndn,
                    int nsites);
 
-  
 } // namespace xdiag::testcases::electron

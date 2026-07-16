@@ -2,21 +2,18 @@
 
 **Sources** [logger.hpp](https://github.com/awietek/xdiag/blob/master/xdiag/utils/logger.hpp), [logger.cpp](https://github.com/awietek/xdiag/blob/master/xdiag/utils/logger.cpp)
 
----
-
 ## Setting the verbosity
 
 Algorithms implemented in XDiag do not output anything during their execution by default. However, it is typically useful to get some information on how the code is performing and even intermediary results at runtime. For this, the verbosity of the internal XDiag logging can be set using the function `set_verbosity`, which is defined as 
 
-=== "C++"
-	```c++ 
-    void set_verbosity(int64_t level);
-	```
-	
 === "Julia"
 
 	```julia 
 	set_verbosity(level::Integer);
+	```
+=== "C++"
+	```c++ 
+    void set_verbosity(int64_t level);
 	```
 
 There are several levels of verbosity, defining how much information is shown.
@@ -27,22 +24,19 @@ There are several levels of verbosity, defining how much information is shown.
 | 1     | some information     |
 | 2     | detailed information |
 
-For example, when computing a ground state energy using the [eigval0](../algorithms/eigval0.md) function, we can set a higher verbosity level using
+For example, when computing a ground state energy using the [eigval0](../linalg/eigval0.md) function, we can set a higher verbosity level using
 
-=== "C++"
-	```c++ 
-    set_verbosity(2);
-	double e0 = eigval0(bonds, block);
-	```
-	
 === "Julia"
 
 	```julia 
     set_verbosity(2);
     e0 = eigval0(bonds, block);
 	```
-
-
+=== "C++"
+	```c++ 
+    set_verbosity(2);
+	double e0 = eigval0(bonds, block);
+	```
 
 This will print detailed information, which can look like this
 
@@ -63,8 +57,6 @@ alpha: -1.2772539678430306
 beta: 2.6627870395174456
 eigs: -3.7522788386927637 -0.6474957945455240 2.1352094709026579
 ```
-
----
 
 ## Log mechanism (C++ only)
 Producing nicely formatted output is unfortunately a bit cumbersome in standard C++. For this, the `Log` mechanism in XDiag can help. To simply write out a line of information you can call,

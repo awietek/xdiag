@@ -1,0 +1,263 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+
+#include "evolve_lanczos.hpp"
+
+#include <xdiag/algebra/ishermitian.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/sparse/apply.hpp>
+#include <xdiag/linalg/lanczos/lanczos.hpp>
+#include <xdiag/linalg/lanczos/lanczos_convergence.hpp>
+#include <xdiag/linalg/time_evolution/exp_sym_v.hpp>
+#include <xdiag/math/dot.hpp>
+#include <xdiag/states/norm.hpp>
+#include <xdiag/utils/timing.hpp>
+
+namespace xdiag {
+
+// Sets up the multiply/dot callbacks for a given coefficient type and applies
+// exp(tau * H) to the vector v via the Krylov routine exp_sym_v. Shared by the
+// real (coeff_t = double) and complex (coeff_t = complex) code paths.
+template <typename coeff_t, typename op_t>
+static EvolveLanczosInplaceResult
+run_exp_sym_v(op_t const &H, Block const &block, arma::Col<coeff_t> &v,
+              coeff_t tau, double precision, double shift, bool normalize,
+              int64_t max_iterations, double deflation_tol) {
+  int64_t iter = 1;
+  auto mult = [&iter, &H, &block](arma::Col<coeff_t> const &v,
+                                  arma::Col<coeff_t> &w) {
+    auto ta = rightnow();
+    apply(H, block, v, block, w);
+    Log(2, "Lanczos iteration {}", iter);
+    timing(ta, rightnow(), "MVM", 1);
+    ++iter;
+  };
+  auto dot_f = [&block](arma::Col<coeff_t> const &v,
+                        arma::Col<coeff_t> const &w) {
+    return math::dot(block, v, w);
+  };
+  exp_sym_v_result_t r = exp_sym_v(mult, dot_f, v, tau, precision, shift,
+                                   normalize, max_iterations, deflation_tol);
+  return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion};
+}
+
+template <typename op_t>
+static EvolveLanczosResult
+evolve_lanczos(op_t const &H, State psi, double tau, double precision,
+               double shift, bool normalize, int64_t max_iterations,
+               double deflation_tol) try {
+  auto r = evolve_lanczos_inplace(H, psi, tau, precision, shift, normalize,
+                                  max_iterations, deflation_tol);
+  return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion, psi};
+}
+XDIAG_CATCH
+
+EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, double tau,
+                                   double precision, double shift,
+                                   bool normalize, int64_t max_iterations,
+                                   double deflation_tol) try {
+
+  return evolve_lanczos<OpSum>(H, psi, tau, precision, shift, normalize,
+                               max_iterations, deflation_tol);
+}
+XDIAG_CATCH
+
+template <typename idx_t, typename coeff_t>
+EvolveLanczosResult
+evolve_lanczos(CSRMatrix<idx_t, coeff_t> const &H, State psi, double tau,
+               double precision, double shift, bool normalize,
+               int64_t max_iterations, double deflation_tol) try {
+
+  return evolve_lanczos<CSRMatrix<idx_t, coeff_t>>(
+      H, psi, tau, precision, shift, normalize, max_iterations, deflation_tol);
+}
+XDIAG_CATCH
+
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template EvolveLanczosResult evolve_lanczos(CSRMatrix<IDX, COEFF> const &,   \
+                                              State, double, double, double,   \
+                                              bool, int64_t, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
+
+template <typename op_t>
+static EvolveLanczosResult
+evolve_lanczos(op_t const &H, State psi, complex tau, double precision,
+               double shift, bool normalize, int64_t max_iterations,
+               double deflation_tol) try {
+  auto r = evolve_lanczos_inplace(H, psi, tau, precision, shift, normalize,
+                                  max_iterations, deflation_tol);
+  return {r.alphas, r.betas, r.eigenvalues, r.niterations, r.criterion, psi};
+}
+XDIAG_CATCH
+
+EvolveLanczosResult evolve_lanczos(OpSum const &H, State psi, complex tau,
+                                   double precision, double shift,
+                                   bool normalize, int64_t max_iterations,
+                                   double deflation_tol) try {
+  return evolve_lanczos<OpSum>(H, psi, tau, precision, shift, normalize,
+                               max_iterations, deflation_tol);
+}
+XDIAG_CATCH
+
+template <typename idx_t, typename coeff_t>
+EvolveLanczosResult
+evolve_lanczos(CSRMatrix<idx_t, coeff_t> const &H, State psi, complex tau,
+               double precision, double shift, bool normalize,
+               int64_t max_iterations, double deflation_tol) try {
+  return evolve_lanczos<CSRMatrix<idx_t, coeff_t>>(
+      H, psi, tau, precision, shift, normalize, max_iterations, deflation_tol);
+}
+XDIAG_CATCH
+
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template EvolveLanczosResult evolve_lanczos(CSRMatrix<IDX, COEFF> const &,   \
+                                              State, complex, double, double,  \
+                                              bool, int64_t, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
+
+template <typename op_t>
+static EvolveLanczosInplaceResult
+evolve_lanczos_inplace(op_t const &H, State &psi, double tau, double precision,
+                       double shift, bool normalize, int64_t max_iterations,
+                       double deflation_tol) try {
+  if (dim(psi) == 0) {
+    Log.warn(
+        "Warning: initial state zero dimensional in evolve_lanczos_inplace");
+    return EvolveLanczosInplaceResult();
+  }
+
+  if (!ishermitian(H, psi.block())) {
+    XDIAG_THROW("Input operator is not hermitian. Evolution using the Lanczos "
+                "algorithm requires the operator to be hermitian.");
+  }
+
+  if (!isvalid(psi)) {
+    XDIAG_THROW("Initial state must be a valid state (i.e. not default "
+                "constructed by e.g. an annihilation operator)");
+  }
+
+  if (norm(psi) == 0.) {
+    XDIAG_THROW("Initial state has zero norm");
+  }
+
+  auto const &block = psi.block();
+
+  // Real time evolution is possible
+  if (psi.isreal() && isreal(H)) {
+    arma::vec v = psi.vector(0, false);
+    return run_exp_sym_v(H, block, v, tau, precision, shift, normalize,
+                         max_iterations, deflation_tol);
+  } else { // Refer to complex time evolution
+    return evolve_lanczos_inplace(H, psi, complex(tau), precision, shift,
+                                  normalize, max_iterations, deflation_tol);
+  }
+}
+XDIAG_CATCH
+
+EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
+                                                  double tau, double precision,
+                                                  double shift, bool normalize,
+                                                  int64_t max_iterations,
+                                                  double deflation_tol) try {
+  return evolve_lanczos_inplace<OpSum>(H, psi, tau, precision, shift, normalize,
+                                       max_iterations, deflation_tol);
+}
+XDIAG_CATCH
+
+template <typename idx_t, typename coeff_t>
+EvolveLanczosInplaceResult
+evolve_lanczos_inplace(CSRMatrix<idx_t, coeff_t> const &H, State &psi,
+                       double tau, double precision, double shift,
+                       bool normalize, int64_t max_iterations,
+                       double deflation_tol) try {
+  return evolve_lanczos_inplace<CSRMatrix<idx_t, coeff_t>>(
+      H, psi, tau, precision, shift, normalize, max_iterations, deflation_tol);
+}
+XDIAG_CATCH
+
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template EvolveLanczosInplaceResult evolve_lanczos_inplace(                  \
+      CSRMatrix<IDX, COEFF> const &, State &, double, double, double, bool,    \
+      int64_t, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
+
+template <typename op_t>
+static EvolveLanczosInplaceResult
+evolve_lanczos_inplace(op_t const &H, State &psi, complex tau, double precision,
+                       double shift, bool normalize, int64_t max_iterations,
+                       double deflation_tol) try {
+  if (dim(psi) == 0) {
+    Log.warn(
+        "Warning: initial state zero dimensional in evolve_lanczos_inplace");
+    return EvolveLanczosInplaceResult();
+  }
+
+  if (!ishermitian(H, psi.block())) {
+    XDIAG_THROW("Input operator is not hermitian. Evolution using the Lanczos "
+                "algorithm requires the operator to be hermitian.");
+  }
+  if (!isvalid(psi)) {
+    XDIAG_THROW("Initial state must be a valid state (i.e. not default "
+                "constructed by e.g. an annihilation operator)");
+  }
+
+  if (norm(psi) == 0.) {
+    XDIAG_THROW("Initial state has zero norm");
+  }
+
+  if (psi.isreal()) {
+    psi.make_complex();
+  }
+  auto const &block = psi.block();
+
+  arma::cx_vec v = psi.vectorC(0, false);
+  return run_exp_sym_v(H, block, v, tau, precision, shift, normalize,
+                       max_iterations, deflation_tol);
+}
+XDIAG_CATCH
+
+EvolveLanczosInplaceResult evolve_lanczos_inplace(OpSum const &H, State &psi,
+                                                  complex tau, double precision,
+                                                  double shift, bool normalize,
+                                                  int64_t max_iterations,
+                                                  double deflation_tol) try {
+  return evolve_lanczos_inplace<OpSum>(H, psi, tau, precision, shift, normalize,
+                                       max_iterations, deflation_tol);
+}
+XDIAG_CATCH
+
+template <typename idx_t, typename coeff_t>
+EvolveLanczosInplaceResult
+evolve_lanczos_inplace(CSRMatrix<idx_t, coeff_t> const &H, State &psi,
+                       complex tau, double precision, double shift,
+                       bool normalize, int64_t max_iterations,
+                       double deflation_tol) try {
+  return evolve_lanczos_inplace<CSRMatrix<idx_t, coeff_t>>(
+      H, psi, tau, precision, shift, normalize, max_iterations, deflation_tol);
+}
+XDIAG_CATCH
+
+#define XDIAG_INST(IDX, COEFF)                                                 \
+  template EvolveLanczosInplaceResult evolve_lanczos_inplace(                  \
+      CSRMatrix<IDX, COEFF> const &, State &, complex, double, double, bool,   \
+      int64_t, double);
+XDIAG_INST(int32_t, double)
+XDIAG_INST(int32_t, complex)
+XDIAG_INST(int64_t, double)
+XDIAG_INST(int64_t, complex)
+#undef XDIAG_INST
+
+} // namespace xdiag

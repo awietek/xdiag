@@ -4,8 +4,10 @@
 
 #pragma once
 
-#include <xdiag/common.hpp>
-#include <xdiag/extern/armadillo/armadillo>
+#include <cstdint>
+
+#include <xdiag/armadillo.hpp>
+#include <xdiag/math/complex.hpp>
 #include <xdiag/states/product_state.hpp>
 
 namespace xdiag {

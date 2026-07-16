@@ -5,7 +5,9 @@
 #include "state.hpp"
 
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/utils/arma_to_cx.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+#include <xdiag/utils/to_string_generic.hpp>
 
 namespace xdiag {
 
@@ -71,7 +73,7 @@ State::State(Block const &block, arma::vec const &vector) try
   if (xdiag::isreal(block)) {
     initcopy(vector.memptr(), vector.size(), 1); // real init
   } else {
-    arma::cx_vec vectorc = utils::to_cx_vec(vector);
+    arma::cx_vec vectorc = arma::conv_to<arma::cx_vec>::from(vector);
     initcopy(vectorc.memptr(), vector.size(), 1); // cplx init
   }
 }
@@ -96,7 +98,7 @@ State::State(Block const &block, arma::mat const &matrix) try
   if (xdiag::isreal(block)) {
     initcopy(matrix.memptr(), matrix.n_rows, matrix.n_cols); // real init
   } else {
-    arma::cx_mat matrixc = utils::to_cx_mat(matrix);
+    arma::cx_mat matrixc = arma::conv_to<arma::cx_mat>::from(matrix);
     initcopy(matrixc.memptr(), matrix.n_rows, matrix.n_cols); // cplx init
   }
 }
@@ -253,7 +255,7 @@ complex *State::colptrC(int64_t col) {
 bool isvalid(State const &s) { return s.isvalid(); }
 int64_t nsites(State const &s) { return s.nsites(); }
 bool isapprox(State const &v, State const &w, double rtol, double atol) try {
-  if (v.block() == w.block()) {
+  if (isapprox(v.block(), w.block())) {
     if (isreal(v) && isreal(w)) {
       return arma::approx_equal(v.matrix(false), w.matrix(false), "both", atol,
                                 rtol);
@@ -295,6 +297,7 @@ std::ostream &operator<<(std::ostream &out, State const &state) {
     } else {
       out << "COMPLEX State\n";
     }
+    out << "ncols: " << state.ncols() << "\n"; 
     out << "Block:\n";
     out << state.block();
   } else {
@@ -302,7 +305,9 @@ std::ostream &operator<<(std::ostream &out, State const &state) {
   }
   return out;
 }
-std::string to_string(State const &state) { return to_string_generic(state); }
+std::string to_string(State const &state) {
+  return utils::to_string_generic(state);
+}
 
 State &operator*=(State &X, double alpha) try {
   if (isreal(X)) {
@@ -381,7 +386,7 @@ State operator/(State const &X, complex alpha) try {
 XDIAG_CATCH
 
 State &operator+=(State &v, State const &w) try {
-  if (v.block() != w.block()) {
+  if (!isapprox(v.block(), w.block())) {
     XDIAG_THROW("Cannot add two states from different blocks");
   }
   if (v.ncols() != w.ncols()) {
@@ -406,7 +411,7 @@ State &operator+=(State &v, State const &w) try {
 XDIAG_CATCH
 
 State &operator-=(State &v, State const &w) try {
-  if (v.block() != w.block()) {
+  if (!isapprox(v.block(), w.block())) {
     XDIAG_THROW("Cannot subtract two states from different blocks");
   }
   if (v.ncols() != w.ncols()) {

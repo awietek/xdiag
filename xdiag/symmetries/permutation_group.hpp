@@ -8,37 +8,51 @@
 #include <string>
 #include <vector>
 
-#include <xdiag/extern/armadillo/armadillo>
+#include <xdiag/armadillo.hpp>
 #include <xdiag/symmetries/permutation.hpp>
+#include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
 
-class PermutationGroup {
+// Finite group of site permutations with precomputed inverse and multiplication
+// table. Permutations are stored column-major in a (nsites x size) matrix so
+// that each permutation's entries are contiguous in memory.
+class XDIAG_API PermutationGroup {
 public:
-  using iterator_t = std::vector<Permutation>::const_iterator;
+  PermutationGroup() = default;
+  explicit PermutationGroup(std::vector<Permutation> const &permutations);
+  explicit PermutationGroup(
+      arma::Mat<int64_t> const &matrix); // nsites x n_permutations, cols=perms
+  PermutationGroup(int64_t *ptr, int64_t n_permutations, int64_t nsites);
 
-  XDIAG_API PermutationGroup() = default;
-  XDIAG_API explicit PermutationGroup(
-      std::vector<Permutation> const &permutations);
-  XDIAG_API explicit PermutationGroup(arma::Mat<int64_t> const &matrix);
-  XDIAG_API PermutationGroup(int64_t *ptr, int64_t n_permutations,
-                             int64_t nsites);
+  bool operator==(PermutationGroup const &rhs) const;
+  bool operator!=(PermutationGroup const &rhs) const;
 
-  XDIAG_API bool operator==(PermutationGroup const &rhs) const;
-  XDIAG_API bool operator!=(PermutationGroup const &rhs) const;
+  int64_t size() const;
+  int64_t nsites() const;
 
-  XDIAG_API int64_t size() const;
-  XDIAG_API int64_t nsites() const;
+  Permutation operator[](int64_t sym) const;
+  int64_t const *ptr(int64_t sym) const; // pointer to sym-th column
+  int64_t inv(int64_t sym) const;
+  int64_t multiply(int64_t s1, int64_t s2) const;
 
-  XDIAG_API Permutation const &operator[](int64_t sym) const;
-  XDIAG_API int64_t inv(int64_t sym) const;
-  XDIAG_API int64_t multiply(int64_t s1, int64_t s2) const;
+  class iterator {
+  public:
+    iterator(PermutationGroup const *group, int64_t idx);
+    Permutation operator*() const;
+    iterator &operator++();
+    bool operator!=(iterator const &rhs) const;
 
-  XDIAG_API iterator_t begin() const;
-  XDIAG_API iterator_t end() const;
+  private:
+    PermutationGroup const *group_;
+    int64_t idx_;
+  };
+
+  iterator begin() const;
+  iterator end() const;
 
 private:
-  std::vector<Permutation> permutations_;
+  arma::Mat<int64_t> permutations_; // nsites x n_permutations
   std::vector<int64_t> inv_;
   arma::Mat<int64_t> multiply_;
 };

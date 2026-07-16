@@ -6,15 +6,12 @@ A file handler for [hdf5](https://www.hdfgroup.org/solutions/hdf5/) files. The p
 
 **Sources** [file_h5.hpp](https://github.com/awietek/xdiag/blob/main/xdiag/io/file_h5.hpp), [file_h5.cpp](https://github.com/awietek/xdiag/blob/main/xdiag/io/file_h5.cpp)
 
----
-
 ## Constructors
 
 === "C++"	
 	```c++
 	FileH5(std::string filename, std::string iomode = "w");
 	```
-
 	
 | Name     | Description                      | Default |
 |:---------|:---------------------------------|---------|
@@ -27,8 +24,6 @@ There are four possible values of `iomode`
 2. `w`: secure write mode, new file is created if it does not exist
 3. `w!`: forced write mode, existing file will be overwritten
 4. `a`: append mode, new datasets in an existing file can be created
-
----
 
 ## Methods
 

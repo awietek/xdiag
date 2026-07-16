@@ -4,9 +4,11 @@
 
 #include "arma_vector.hpp"
 
-#include <xdiag/common.hpp>
 #include <xdiag/io/toml/std_vector.hpp>
-#include <xdiag/utils/type_string.hpp>
+#include <xdiag/math/complex.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+#include <xdiag/utils/type_name.hpp>
 
 namespace xdiag::io {
 

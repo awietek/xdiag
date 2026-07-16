@@ -1,0 +1,5 @@
+Boson         -3.98990907896486
+Fermion       -3.9885633480006
+Spinhalf      12.0059269353772
+tJ           
+Electron

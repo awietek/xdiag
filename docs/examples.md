@@ -2,7 +2,7 @@
 title: Examples
 ---
 
-While we present core functionality in the [User Guide](user_guide.md), we here provide several examples along with XDiag to demonstrate how we can build more advanced applications from these basic building blocks. The examples are provided in the directory `examples` in the C++ source code directory, and can be compiled using CMake.
+While we present core functionality in the [User Guide](user_guide/index.md), we here provide several examples along with XDiag to demonstrate how we can build more advanced applications from these basic building blocks. The examples are provided in the directory `examples` in the C++ source code directory, and can be compiled using CMake.
 
 ```bash
 cmake -S . -B build -D BUILD_EXAMPLES=On

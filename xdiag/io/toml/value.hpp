@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <xdiag/extern/toml++/toml.hpp>
+#include <extern/toml++/toml.hpp>
 
 namespace xdiag::io {
 

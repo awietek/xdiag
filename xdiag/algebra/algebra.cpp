@@ -1,358 +1,275 @@
-// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+// SPDX-FileCopyrightText: 2026 Alexander Wietek <awietek@pks.mpg.de>
 //
 // SPDX-License-Identifier: Apache-2.0
 
 #include "algebra.hpp"
 
-#include <xdiag/algebra/apply.hpp>
-#include <xdiag/operators/logic/real.hpp>
-#include <xdiag/utils/arma_to_cx.hpp>
+#include <variant>
 
-#ifdef XDIAG_USE_MPI
-#include <xdiag/parallel/mpi/allreduce.hpp>
-#include <xdiag/parallel/mpi/cdot_distributed.hpp>
+#include <xdiag/algebra/rewrite/electron_rules.hpp>
+#include <xdiag/algebra/rewrite/fermion_rules.hpp>
+#include <xdiag/algebra/rewrite/matrix_rules.hpp>
+#include <xdiag/algebra/rewrite/spin_rules.hpp>
+#include <xdiag/algebra/rewrite/tj_rules.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/variants.hpp>
+
+namespace xdiag::algebra {
+
+// ---------------------------------------------------------------------------
+// Concrete algebras. Each one only fills in the data of the Algebra struct: the
+// allowed input types, the operators kept named for a matrix kernel, and the
+// two plain rewrite functions (defined in rewrite/<block>_rules.cpp).
+// ---------------------------------------------------------------------------
+
+Algebra spin_algebra(int64_t nsites) {
+  Algebra a;
+  a.name = "spin-1/2";
+  a.nsites = nsites;
+  a.d = 2;
+  a.allowed_types = {"Exchange",        "ExchangeAsym", "Id",   "S+",
+                     "S-",              "ScalarChirality", "SdotS", "Sx",
+                     "Sy",              "Sz",           "SzSz", "TotalSz"};
+  a.expand = spin_expand;
+  a.simplify = spin_simplify;
+  return a;
+}
+
+Algebra matrix_algebra(int64_t nsites, int64_t d) {
+  Algebra a;
+  a.name = "matrix";
+  a.nsites = nsites;
+  a.d = d;
+  a.allowed_types = {"A",      "Adag",  "Exchange", "ExchangeAsym",
+                     "Hop",    "HopAsym", "HubbardU", "Id",
+                     "Matrix", "N",     "S+",       "S-",
+                     "ScalarChirality", "SdotS", "Sx", "Sy",
+                     "Sz",     "SzSz",  "TotalN"};
+  // Nothing is kept named: every operator is converted to an explicit Matrix.
+  a.expand = boson_expand;
+  a.simplify = matrix_simplify;
+  return a;
+}
+
+Algebra fermion_algebra(int64_t nsites) {
+  Algebra a;
+  a.name = "fermion";
+  a.nsites = nsites;
+  a.d = 2;
+  a.fermionic_types = {"C", "Cdag"};
+  a.allowed_types = {"C", "Cdag", "Hop", "HopAsym", "Id", "N", "NN", "TotalN"};
+  // Empty kept set: everything expands to elementary C / Cdag.
+  a.expand = fermion_expand;
+  a.simplify = fermion_simplify;
+  return a;
+}
+
+Algebra fermion_implementation_algebra(int64_t nsites) {
+  Algebra a = fermion_algebra(nsites);
+  a.name = "fermion_implementation";
+  a.kept_named = {"Hop", "HopAsym", "N", "NN", "TotalN"};
+  return a;
+}
+
+Algebra electron_algebra(int64_t nsites) {
+  Algebra a;
+  a.name = "electron";
+  a.nsites = nsites;
+  a.d = 4;
+  a.fermionic_types = {"Cdagup", "Cup", "Cdagdn", "Cdn"};
+  a.allowed_types = {"Cdagdn",   "Cdagup", "Cdn",      "Cup",
+                     "Exchange", "ExchangeAsym", "Hop",  "HopAsym",
+                     "Hopdn",    "HopdnAsym", "Hopup",   "HopupAsym",
+                     "HubbardU", "Id",     "Ndn",      "NdnNdn",
+                     "NdnNup",   "Ntot",   "NtotNtot", "Nup",
+                     "NupNdn",   "NupNup", "Nupdn",    "NupdnNupdn",
+                     "S+",       "S-",     "SdotS",    "Sx",
+                     "Sy",       "Sz",     "SzSz",     "TotalN",
+                     "TotalNup", "TotalNdn", "TotalSz"};
+  a.expand = electron_expand;
+  a.simplify = electron_simplify_symmetry;
+  return a;
+}
+
+Algebra electron_implementation_algebra(int64_t nsites) {
+  Algebra a = electron_algebra(nsites);
+  a.name = "electron_implementation";
+  a.kept_named = {"Cdagup", "Cup",        "Cdagdn",   "Cdn",    "Hopup",
+                  "Hopdn",  "HopupAsym",  "HopdnAsym", "Nup",   "Ndn",
+                  "Nupdn",  "NupdnNupdn", "NtotNtot",  "NupNdn", "NupNup",
+                  "NdnNdn", "NdnNup",     "SzSz",      "HubbardU"};
+  a.simplify = electron_simplify; // creation-major
+  return a;
+}
+
+Algebra electron_distributed_implementation_algebra(int64_t nsites) {
+  Algebra a = electron_implementation_algebra(nsites);
+  a.name = "electron_distributed_implementation";
+  // The distributed block has no Cdag/C string kernel, so Exchange and its
+  // antisymmetric variant must survive normal-ordering as single named
+  // operators and be applied by the dedicated distributed exchange kernel.
+  // (Hopup/Hopdn and their Asym variants are already kept by the electron
+  // implementation algebra.)
+  a.kept_named.insert("Exchange");
+  a.kept_named.insert("ExchangeAsym");
+  return a;
+}
+
+Algebra tj_algebra(int64_t nsites) {
+  Algebra a;
+  a.name = "tJ";
+  a.nsites = nsites;
+  a.d = 3;
+  a.fermionic_types = {"Cdagup", "Cup", "Cdagdn", "Cdn"};
+  a.allowed_types = {"Cdagdn",   "Cdagup", "Cdn",      "Cup",
+                     "Exchange", "ExchangeAsym", "Hop",  "HopAsym",
+                     "Hopdn",    "HopdnAsym", "Hopup",   "HopupAsym",
+                     "Id",       "Ndn",    "NdnNdn",   "NdnNup",
+                     "Ntot",     "NtotNtot", "Nup",    "NupNdn",
+                     "NupNup",   "S+",     "S-",       "SdotS",
+                     "SzSz",     "Sx",     "Sy",       "Sz",
+                     "TotalN",   "TotalNup", "TotalNdn", "TotalSz",
+                     "tJSdotS",  "tJSzSz"};
+  a.expand = tj_expand;
+  a.simplify = tj_simplify_symmetry;
+  return a;
+}
+
+Algebra tj_implementation_algebra(int64_t nsites, bool exchange_as_kernel) {
+  Algebra a = tj_algebra(nsites);
+  a.name = "tj_implementation";
+  a.kept_named = {"Cdagup", "Cup",    "Cdagdn",   "Cdn",    "Hopup",
+                  "Hopdn",  "Nup",    "Ndn",      "NupNup", "NdnNdn",
+                  "NupNdn", "NdnNup", "NtotNtot", "SzSz",   "tJSzSz"};
+  if (exchange_as_kernel) {
+    a.kept_named.insert("Exchange");
+  }
+  a.simplify = tj_simplify; // creation-major, projected
+  return a;
+}
+
+Algebra tj_distributed_implementation_algebra(int64_t nsites) {
+  Algebra a = tj_implementation_algebra(nsites);
+  a.name = "tj_distributed_implementation";
+  // The distributed block has no Cdag/C string kernel, so the antisymmetric
+  // hops/exchange must survive normal-ordering as single named operators and
+  // be applied by their dedicated distributed kernels.
+  a.kept_named.insert("HopupAsym");
+  a.kept_named.insert("HopdnAsym");
+  a.kept_named.insert("ExchangeAsym");
+  return a;
+}
+
+Algebra spinhalf_implementation_algebra(int64_t nsites) {
+  Algebra a;
+  a.name = "spinhalf_implementation";
+  a.nsites = nsites;
+  a.d = 2;
+  a.allowed_types = {"Exchange", "ExchangeAsym", "Id", "Matrix", "S+", "S-",
+                     "ScalarChirality", "SdotS", "Sx", "Sy", "Sz", "SzSz",
+                     "TotalSz"};
+  // Named operators with a dedicated spin-1/2 kernel; the rest are converted to
+  // local Matrix operators.
+  a.kept_named = {"Exchange", "ExchangeAsym", "S+",  "S-",
+                  "ScalarChirality", "Sz",    "SzSz"};
+  a.expand = spinhalf_expand;
+  a.simplify = matrix_simplify;
+  return a;
+}
+
+// ---------------------------------------------------------------------------
+// Per-block dispatch.
+// ---------------------------------------------------------------------------
+
+Algebra implementation_algebra(Spinhalf const &block) try {
+  return spinhalf_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+
+Algebra implementation_algebra(Boson const &block) try {
+  return matrix_algebra(block.nsites(), block.d());
+}
+XDIAG_CATCH
+
+Algebra implementation_algebra(Fermion const &block) try {
+  return fermion_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+
+Algebra implementation_algebra(Electron const &block) try {
+  return electron_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+
+Algebra implementation_algebra(tJ const &block) try {
+  return tj_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+
+#ifdef XDIAG_DISTRIBUTED
+Algebra implementation_algebra(SpinhalfDistributed const &block) try {
+  return spinhalf_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+Algebra implementation_algebra(tJDistributed const &block) try {
+  return tj_distributed_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
+Algebra implementation_algebra(ElectronDistributed const &block) try {
+  return electron_distributed_implementation_algebra(block.nsites());
+}
+XDIAG_CATCH
 #endif
 
-namespace xdiag {
-
-double norm(State const &v) try {
-  if (!isvalid(v)) {
-    return 0.;
-  }
-
-  if (v.ncols() > 1) {
-    XDIAG_THROW("Cannot compute norm of state with more than one column");
-    return 0;
-  } else {
-    if (isreal(v)) {
-      return norm(v.block(), v.vector(0, false));
-    } else {
-      return norm(v.block(), v.vectorC(0, false));
-    }
-  }
+Algebra implementation_algebra(Block const &block) try {
+  return std::visit([](auto const &b) { return implementation_algebra(b); },
+                    block);
 }
 XDIAG_CATCH
 
-double norm1(State const &v) try {
-  if (!isvalid(v)) {
-    return 0.;
-  }
-
-  if (v.ncols() > 1) {
-    XDIAG_THROW("Cannot compute norm of state with more than one column");
-    return 0;
-  } else {
-    if (isreal(v)) {
-      return norm1(v.block(), v.vector(0, false));
-    } else {
-      return norm1(v.block(), v.vectorC(0, false));
-    }
-  }
+Algebra symmetry_algebra(Spinhalf const &block) try {
+  return matrix_algebra(block.nsites(), 2);
 }
 XDIAG_CATCH
 
-double norminf(State const &v) try {
-  if (!isvalid(v)) {
-    return 0.;
-  }
-
-  if (v.ncols() > 1) {
-    XDIAG_THROW("Cannot compute norm of state with more than one column");
-    return 0;
-  } else {
-    if (isreal(v)) {
-      return norminf(v.block(), v.vector(0, false));
-    } else {
-      return norminf(v.block(), v.vectorC(0, false));
-    }
-  }
+Algebra symmetry_algebra(Boson const &block) try {
+  return matrix_algebra(block.nsites(), block.d());
 }
 XDIAG_CATCH
 
-double dot(State const &v, State const &w) try {
-  if ((!isvalid(v)) || (!isvalid(w))) {
-    return 0.;
-  }
-
-  if (v.block() != w.block()) {
-    XDIAG_THROW("Cannot form dot product for states on different blocks");
-    return 0;
-  }
-
-  if ((v.ncols() > 1) || (w.ncols() > 1)) {
-    XDIAG_THROW("Cannot compute dot product of state with more than one "
-                "column. Consider using matrix_dot instead.");
-  }
-
-  if ((isreal(v)) && (isreal(w))) {
-    return dot(v.block(), v.vector(0, false), w.vector(0, false));
-  } else {
-    XDIAG_THROW("Unable to compute real dot product of a complex "
-                "state. Consider using dotC instead.");
-  }
+Algebra symmetry_algebra(Fermion const &block) try {
+  return fermion_algebra(block.nsites());
 }
 XDIAG_CATCH
 
-complex dotC(State const &v, State const &w) try {
-  if ((!isvalid(v)) || (!isvalid(w))) {
-    return complex(0.);
-  }
-
-  if (v.block() != w.block()) {
-    XDIAG_THROW("Cannot form dot product for states on different blocks");
-  }
-
-  if ((v.ncols() > 1) || (w.ncols() > 1)) {
-    XDIAG_THROW("Cannot compute dotC product of state with more than one "
-                "column. Consider using matrix_dotC instead.");
-  }
-  if ((isreal(v)) && (isreal(w))) {
-    return dot(v.block(), v.vector(0, false), w.vector(0, false));
-  } else if ((isreal(v)) && (!isreal(w))) {
-    State v2;
-    try {
-      v2 = v;
-      v2.make_complex();
-    } catch (...) {
-      XDIAG_THROW("Unable to create intermediate complex State");
-    }
-    return dot(v.block(), v2.vectorC(0, false), w.vectorC(0, false));
-  } else if ((isreal(w)) && (!isreal(v))) {
-    State w2;
-    try {
-      w2 = w;
-      w2.make_complex();
-    } catch (...) {
-      XDIAG_THROW("Unable to create intermediate complex State");
-    }
-    return dot(v.block(), v.vectorC(0, false), w2.vectorC(0, false));
-  } else {
-    return dot(v.block(), v.vectorC(0, false), w.vectorC(0, false));
-  }
+Algebra symmetry_algebra(Electron const &block) try {
+  return electron_algebra(block.nsites());
 }
 XDIAG_CATCH
 
-arma::mat matrix_dot(State const &v, State const &w) try {
-  if ((!isvalid(v)) || (!isvalid(w))) {
-    return arma::mat();
-  }
-
-  if (v.block() != w.block()) {
-    XDIAG_THROW(
-        "Cannot form matrix_dot product for states on different blocks");
-    return 0;
-  }
-
-  if ((isreal(v)) && (isreal(w))) {
-    return matrix_dot(v.block(), v.matrix(false), w.matrix(false));
-  } else {
-    XDIAG_THROW("Unable to compute real matrix_dot product of a complex "
-                "state. Consider using matrix_dotC instead.");
-  }
+Algebra symmetry_algebra(tJ const &block) try {
+  return tj_algebra(block.nsites());
 }
 XDIAG_CATCH
 
-arma::cx_mat matrix_dotC(State const &v, State const &w) try {
-  if ((!isvalid(v)) || (!isvalid(w))) {
-    return arma::cx_mat();
-  }
-
-  if (v.block() != w.block()) {
-    XDIAG_THROW(
-        "Cannot form matrix_dot product for states on different blocks");
-    return 0;
-  }
-
-  if (isreal(v) && isreal(w)) {
-    return utils::to_cx_mat(
-        matrix_dot(v.block(), v.matrix(false), w.matrix(false)));
-  } else if ((isreal(v)) && (!isreal(w))) {
-    State v2;
-    try {
-      v2 = v;
-      v2.make_complex();
-    } catch (...) {
-      XDIAG_THROW("Unable to create intermediate complex State");
-    }
-    return matrix_dot(v.block(), v2.matrixC(false), w.matrixC(false));
-  } else if ((isreal(w)) && (!isreal(v))) {
-    State w2;
-    try {
-      w2 = w;
-      w2.make_complex();
-    } catch (...) {
-      XDIAG_THROW("Unable to create intermediate complex State");
-    }
-    return matrix_dot(v.block(), v.matrixC(false), w2.matrixC(false));
-  } else {
-    return matrix_dot(v.block(), v.matrixC(false), w.matrixC(false));
-  }
+#ifdef XDIAG_DISTRIBUTED
+Algebra symmetry_algebra(SpinhalfDistributed const &block) try {
+  return matrix_algebra(block.nsites(), 2);
 }
 XDIAG_CATCH
-
-double inner(OpSum const &ops, State const &v) try {
-  if (!isvalid(v)) {
-    return 0.;
-  }
-
-  if (isreal(v) && isreal(ops)) {
-    auto w = v;
-    apply(ops, v, w);
-    return dot(w, v);
-  } else {
-    XDIAG_THROW("\"inner\" function computing product <psi | O | psi> can only "
-                "be called if both the state and the Ops are real. Maybe use "
-                "innerC(...) instead.");
-  }
+Algebra symmetry_algebra(tJDistributed const &block) try {
+  return tj_algebra(block.nsites());
 }
 XDIAG_CATCH
-
-double inner(Op const &op, State const &v) try {
-  if (!isvalid(v)) {
-    return 0.;
-  }
-
-  return inner(OpSum(op), v);
+Algebra symmetry_algebra(ElectronDistributed const &block) try {
+  return electron_algebra(block.nsites());
 }
 XDIAG_CATCH
-
-complex innerC(OpSum const &ops, State const &v) try {
-  if (!isvalid(v)) {
-    return complex(0.);
-  }
-
-  if (isreal(v) && isreal(ops)) {
-    auto w = v;
-    apply(ops, v, w);
-    return (complex)dot(w, v);
-  } else if (isreal(v) && !isreal(ops)) {
-    auto v2 = v;
-    auto w = v2;
-    v2.make_complex();
-    apply(ops, v2, w);
-    return dotC(w, v);
-  } else {
-    auto w = v;
-    apply(ops, v, w);
-    return dotC(w, v);
-  }
-}
-XDIAG_CATCH
-
-complex innerC(Op const &op, State const &v) try {
-  if (!isvalid(v)) {
-    return complex(0.);
-  }
-  return innerC(OpSum(op), v);
-}
-XDIAG_CATCH
-
-double dot(Block const &block, arma::vec const &v, arma::vec const &w) try {
-#ifdef XDIAG_USE_MPI
-  if (isdistributed(block)) {
-    return cdot_distributed(v, w);
-  } else {
-#else
-  (void)block;
 #endif
-    return arma::dot(v, w);
-#ifdef XDIAG_USE_MPI
-  }
-#endif
+
+Algebra symmetry_algebra(Block const &block) try {
+  return std::visit([](auto const &b) { return symmetry_algebra(b); }, block);
 }
 XDIAG_CATCH
 
-complex dot(Block const &block, arma::cx_vec const &v,
-            arma::cx_vec const &w) try {
-#ifdef XDIAG_USE_MPI
-  if (isdistributed(block)) {
-    return cdot_distributed(v, w);
-  } else {
-#else
-  (void)block;
-#endif
-    return arma::cdot(v, w);
-#ifdef XDIAG_USE_MPI
-  }
-#endif
-}
-XDIAG_CATCH
-
-template <typename coeff_t>
-arma::Mat<coeff_t> matrix_dot(Block const &block, arma::Mat<coeff_t> const &V,
-                              arma::Mat<coeff_t> const &W) try {
-  if (V.n_rows != V.n_rows) {
-    XDIAG_THROW("Input matrices do not have the same number of rows");
-  }
-#ifdef XDIAG_USE_MPI
-  if (isdistributed(block)) {
-    int64_t L = V.n_rows;
-    int64_t m = V.n_cols;
-    int64_t n = W.n_cols;
-    arma::Mat<coeff_t> result(m, n, arma::fill::zeros);
-    for (int64_t i = 0; i < m; ++i) {
-      for (int64_t j = 0; j < n; ++j) {
-        arma::Col<coeff_t> cv(const_cast<coeff_t *>(V.colptr(i)), L, false,
-                              true);
-        arma::Col<coeff_t> cw(const_cast<coeff_t *>(W.colptr(j)), L, false,
-                              true);
-        result(i, j) = cdot_distributed(cv, cw);
-      }
-    }
-    return result;
-  } else {
-#else
-  (void)block;
-#endif
-    return V.t() * W;
-#ifdef XDIAG_USE_MPI
-  }
-#endif
-}
-XDIAG_CATCH
-
-template arma::mat matrix_dot(Block const &, arma::mat const &,
-                              arma::mat const &);
-template arma::cx_mat matrix_dot(Block const &, arma::cx_mat const &,
-                                 arma::cx_mat const &);
-
-template <typename coeff_t>
-double norm(Block const &block, arma::Col<coeff_t> const &v) try {
-  return std::sqrt(xdiag::real(dot(block, v, v)));
-}
-XDIAG_CATCH
-
-template double norm(Block const &, arma::Col<double> const &);
-template double norm(Block const &, arma::Col<complex> const &);
-
-template <typename coeff_t>
-double norm1(Block const &block, arma::Col<coeff_t> const &v) try {
-  double nrm = arma::norm(v, 1);
-#ifdef XDIAG_USE_MPI
-  if (isdistributed(block)) {
-    mpi::Allreduce((double *)MPI_IN_PLACE, &nrm, 1, MPI_SUM, MPI_COMM_WORLD);
-  }
-#endif
-  return nrm;
-}
-XDIAG_CATCH
-
-template double norm1(Block const &, arma::Col<double> const &);
-template double norm1(Block const &, arma::Col<complex> const &);
-
-template <typename coeff_t>
-double norminf(Block const &block, arma::Col<coeff_t> const &v) try {
-  double nrm = arma::norm(v, "inf");
-#ifdef XDIAG_USE_MPI
-  if (isdistributed(block)) {
-    mpi::Allreduce((double *)MPI_IN_PLACE, &nrm, 1, MPI_MAX, MPI_COMM_WORLD);
-  }
-#endif
-  return nrm;
-}
-XDIAG_CATCH
-
-template double norminf(Block const &, arma::Col<double> const &);
-template double norminf(Block const &, arma::Col<complex> const &);
-
-} // namespace xdiag
+} // namespace xdiag::algebra

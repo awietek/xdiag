@@ -4,24 +4,29 @@
 
 #pragma once
 
-#include <xdiag/common.hpp>
-#include <xdiag/extern/armadillo/armadillo>
+#include <optional>
+
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/operators/op.hpp>
+#include <xdiag/operators/opsum.hpp>
 
 namespace xdiag {
 
-XDIAG_API bool isapprox(double x, double y, double rtol = 1e-12,
-                        double atol = 1e-12);
-XDIAG_API bool isapprox(complex x, complex y, double rtol = 1e-12,
-                        double atol = 1e-12);
+bool isapprox(Op const &op1, Op const &op2, double rtol = 1e-12,
+              double atol = 1e-12);
 
-XDIAG_API bool isapprox(arma::vec const &v, arma::vec const &w,
-                        double rtol = 1e-12, double atol = 1e-12);
-XDIAG_API bool isapprox(arma::cx_vec const &v, arma::cx_vec const &w,
-                        double rtol = 1e-12, double atol = 1e-12);
+// Brings both OpSums into normal order with respect to the given algebra and
+// then compares the normal-ordered forms.
+bool isapprox(OpSum const &ops1, OpSum const &ops2,
+              algebra::Algebra const &algebra, double rtol = 1e-12,
+              double atol = 1e-12);
 
-XDIAG_API bool isapprox(arma::mat const &A, arma::mat const &B,
-                        double rtol = 1e-12, double atol = 1e-12);
-XDIAG_API bool isapprox(arma::cx_mat const &A, arma::cx_mat const &B,
-                        double rtol = 1e-12, double atol = 1e-12);
+// Brings both OpSums into normal order with respect to the given algebra and
+// returns lambda such that ops1 = lambda * ops2, or std::nullopt if no such
+// scalar exists.
+std::optional<Scalar> isapprox_multiple(OpSum const &ops1, OpSum const &ops2,
+                                        algebra::Algebra const &algebra,
+                                        double rtol = 1e-12,
+                                        double atol = 1e-12);
 
 } // namespace xdiag

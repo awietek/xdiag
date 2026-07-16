@@ -1,49 +1,104 @@
-// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+// SPDX-FileCopyrightText: 2026 Alexander Wietek <awietek@pks.mpg.de>
 //
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
 
+#include <cstdint>
+#include <functional>
+#include <optional>
+#include <set>
+#include <string>
+
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/common.hpp>
+#include <xdiag/blocks/boson.hpp>
+#include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/fermion.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/tj.hpp>
+#include <xdiag/operators/monomial.hpp>
+#include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/states/state.hpp>
 
-namespace xdiag {
+namespace xdiag::algebra {
 
-// Various norms
-XDIAG_API double norm(State const &v);
-XDIAG_API double norm1(State const &v);
-XDIAG_API double norminf(State const &v);
+// Algebra describes how to bring an OpSum into normal order for a physical
+// system. A block is rewritten by two plain functions (no std::function in the
+// rules themselves -- only simple if/else):
+//
+//   expand(op, algebra)   one step of expanding a compound operator into
+//                         simpler / elementary ones; nullopt if `op` is
+//                         elementary or kept (see kept_named).
+//   simplify(mono, alg)   one same-site / sorting / matrix-conversion step
+//                         bringing a product into normal order; nullopt if it
+//                         is already normal.
+//
+// normal_order() applies `expand` to a fixed point (skipping a size-1 operator
+// whose type is in kept_named, so it survives for its dedicated matrix kernel),
+// then `simplify` to a fixed point. The two rule bodies live in
+// xdiag/algebra/rewrite/<block>_rules.{hpp,cpp}.
+struct Algebra {
+  std::string name; // human-readable name for errors
+  int64_t nsites;   // number of sites
+  int64_t d;        // local Hilbert space dimension per site
+  std::set<std::string> fermionic_types; // anticommute at different sites
+  std::set<std::string> allowed_types;   // valid input types (checked first)
+  std::set<std::string> kept_named;      // size-1 ops kept named (kernels)
+  std::function<std::optional<OpSum>(Op const &, Algebra const &)> expand;
+  std::function<std::optional<OpSum>(Monomial const &, Algebra const &)>
+      simplify;
+};
 
-// dot
-XDIAG_API double dot(State const &v, State const &w);
-XDIAG_API complex dotC(State const &v, State const &w);
+// Concrete algebras (assembled in algebra.cpp). The "symmetry" variants reduce
+// every operator to elementary generators in a site-major normal order (for the
+// permutation-symmetry analysis); the "implementation" variants keep the named
+// operators that have a dedicated matrix kernel and use the creation-major /
+// matrix normal order the kernels expect.
+Algebra spin_algebra(int64_t nsites);
+Algebra matrix_algebra(int64_t nsites, int64_t d);
+Algebra fermion_algebra(int64_t nsites);
+Algebra electron_algebra(int64_t nsites);
+Algebra tj_algebra(int64_t nsites);
 
-// matrix_dot
-XDIAG_API arma::mat matrix_dot(State const &v, State const &w);
-XDIAG_API arma::cx_mat matrix_dotC(State const &v, State const &w);
+Algebra fermion_implementation_algebra(int64_t nsites);
+Algebra electron_implementation_algebra(int64_t nsites);
+// The distributed electron block applies Exchange / ExchangeAsym directly as
+// kernels (it only supports single-operator monomials), so it additionally
+// keeps these named on top of the electron implementation algebra.
+Algebra electron_distributed_implementation_algebra(int64_t nsites);
+Algebra spinhalf_implementation_algebra(int64_t nsites);
+// exchange_as_kernel = false drops Exchange from the kept (kernel) types so it
+// expands to Cdag/C strings (used by the symmetric tJ block, which has no
+// Exchange kernel).
+Algebra tj_implementation_algebra(int64_t nsites, bool exchange_as_kernel = true);
+// The distributed tJ block applies the antisymmetric hops/exchange directly as
+// kernels (it only supports single-operator monomials), so it additionally
+// keeps HopupAsym / HopdnAsym / ExchangeAsym named.
+Algebra tj_distributed_implementation_algebra(int64_t nsites);
 
-XDIAG_API double inner(OpSum const &ops, State const &v);
-XDIAG_API double inner(Op const &op, State const &v);
-XDIAG_API complex innerC(OpSum const &ops, State const &v);
-XDIAG_API complex innerC(Op const &op, State const &v);
+// Per-block dispatch.
+Algebra implementation_algebra(Boson const &block);
+Algebra implementation_algebra(Spinhalf const &block);
+Algebra implementation_algebra(Fermion const &block);
+Algebra implementation_algebra(Electron const &block);
+Algebra implementation_algebra(tJ const &block);
+#ifdef XDIAG_DISTRIBUTED
+Algebra implementation_algebra(SpinhalfDistributed const &block);
+Algebra implementation_algebra(tJDistributed const &block);
+Algebra implementation_algebra(ElectronDistributed const &block);
+#endif
+Algebra implementation_algebra(Block const &block);
 
-// Internal routines
-double dot(Block const &block, arma::vec const &v, arma::vec const &w);
-complex dot(Block const &block, arma::cx_vec const &v, arma::cx_vec const &w);
+Algebra symmetry_algebra(Boson const &block);
+Algebra symmetry_algebra(Spinhalf const &block);
+Algebra symmetry_algebra(Fermion const &block);
+Algebra symmetry_algebra(Electron const &block);
+Algebra symmetry_algebra(tJ const &block);
+#ifdef XDIAG_DISTRIBUTED
+Algebra symmetry_algebra(SpinhalfDistributed const &block);
+Algebra symmetry_algebra(tJDistributed const &block);
+Algebra symmetry_algebra(ElectronDistributed const &block);
+#endif
+Algebra symmetry_algebra(Block const &block);
 
-template <typename coeff_t>
-arma::Mat<coeff_t> matrix_dot(Block const &block, arma::Mat<coeff_t> const &V,
-                              arma::Mat<coeff_t> const &W);
-
-template <typename coeff_t>
-double norm(Block const &block, arma::Col<coeff_t> const &v);
-
-template <typename coeff_t>
-double norm1(Block const &block, arma::Col<coeff_t> const &v);
-
-template <typename coeff_t>
-double norminf(Block const &block, arma::Col<coeff_t> const &v);
-
-} // namespace xdiag
+} // namespace xdiag::algebra

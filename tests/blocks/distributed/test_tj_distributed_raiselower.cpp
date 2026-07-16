@@ -1,0 +1,174 @@
+// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+//
+// SPDX-License-Identifier: Apache-2.0
+#include <mpi.h>
+
+#include <tests/blocks/tj/testcases_tj.hpp>
+#include <tests/catch.hpp>
+
+#include <xdiag/algebra/algebra.hpp>
+#include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/blocks/distributed/tj_distributed.hpp>
+#include <xdiag/blocks/tj.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
+#include <xdiag/kernels/apply.hpp>
+#include <xdiag/kernels/matrix.hpp>
+#include <xdiag/states/apply.hpp>
+#include <xdiag/states/fill.hpp>
+#include <xdiag/states/create_state.hpp>
+#include <xdiag/states/dot.hpp>
+#include <xdiag/states/norm.hpp>
+#include <xdiag/states/inner.hpp>
+#include <xdiag/utils/logger.hpp>
+
+using namespace xdiag;
+
+TEST_CASE("tj_distributed_raise_lower", "[tj_distributed]") try {
+  using namespace testcases::tj;
+  using block_t = tJDistributed;
+  // using block_t = tJ;
+
+  // Test normal ordering
+  Log("test tJDistributed normal ordering");
+  for (int nsites = 2; nsites < 6; ++nsites) {
+    auto block0 = tJDistributed(nsites, 0, 0);
+    auto psi0 = product_state(block0, std::vector<int64_t>(nsites, 0));
+
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
+
+        auto block = tJDistributed(nsites, nup, ndn);
+        auto blockserial = tJ(nsites, nup, ndn);
+
+        for (auto pstate : blockserial) {
+          std::vector<int> up_positions;
+          std::vector<int> dn_positions;
+          for (int i = 0; i < nsites; ++i) {
+            if ((pstate[i] == 1) || (pstate[i] == 3)) {
+              up_positions.push_back(i);
+            }
+            if ((pstate[i] == 2) || (pstate[i] == 3)) {
+              dn_positions.push_back(i);
+            }
+          }
+
+          // Create state from product state
+          auto psi = State(block);
+          fill(psi, pstate);
+
+          auto psi2 = psi0;
+
+          std::reverse(dn_positions.begin(), dn_positions.end());
+          for (int i : dn_positions) {
+            psi2 = apply(Op("Cdagdn", i), psi2);
+          }
+
+          std::reverse(up_positions.begin(), up_positions.end());
+          for (int i : up_positions) {
+            psi2 = apply(Op("Cdagup", i), psi2);
+          }
+          REQUIRE(norm(psi2 - psi) < 1e-12);
+        }
+      }
+    }
+  }
+
+  using namespace arma;
+
+  std::vector<std::string> op_strs = {"Cdagup", "Cdagdn", "Cup", "Cdn"};
+  // std::vector<std::string> op_strs = {"Cup", "Cdn"};
+
+  for (int nsites = 2; nsites < 6; ++nsites) {
+    Log("testing tj anticommutation relations: N={}", nsites);
+
+    for (int nup = 0; nup <= nsites; ++nup) {
+      for (int ndn = 0; ndn <= nsites - nup; ++ndn) {
+
+        auto block = block_t(nsites, nup, ndn);
+
+        for (int i = 0; i < nsites; ++i) {
+          for (int j = 0; j < nsites; ++j) {
+
+            for (auto op_i_str : op_strs) {
+              for (auto op_j_str : op_strs) {
+                // Log("nsites: {}, nup: {}, ndn: {}, i: {}, j: {}, op_i: {}, "
+                //     "op_j: {} ",
+                //     nsites, nup, ndn, i, j, op_i_str, op_j_str);
+
+                if (!valid_nup_ndn(op_i_str, op_j_str, nup, ndn, nsites)) {
+                  continue;
+                }
+                if (!valid_nup_ndn(op_i_str, nup, ndn, nsites)) {
+                  continue;
+                }
+                if (!valid_nup_ndn(op_j_str, nup, ndn, nsites)) {
+                  continue;
+                }
+
+                auto op_i = Op(op_i_str, i);
+                auto op_j = Op(op_j_str, j);
+
+                auto r = random_state(block);
+                auto anti_comm =
+                    apply(op_i, apply(op_j, r)) + apply(op_j, apply(op_i, r));
+
+                // check the non-fermionic commutation relations of the t-J
+                // model
+                // see arxiv.org/abs/0706,4236 (tJ model then and now ... Jozef
+                // Spalek)
+                if (i != j) {
+                  REQUIRE(norm(anti_comm) < 1e-12);
+                } else {
+                  if (((op_i_str == "Cdagup") && (op_j_str == "Cdagup")) ||
+                      ((op_i_str == "Cdagup") && (op_j_str == "Cdagdn")) ||
+                      ((op_i_str == "Cdagdn") && (op_j_str == "Cdagup")) ||
+                      ((op_i_str == "Cdagdn") && (op_j_str == "Cdagdn")) ||
+                      ((op_i_str == "Cup") && (op_j_str == "Cup")) ||
+                      ((op_i_str == "Cup") && (op_j_str == "Cdn")) ||
+                      ((op_i_str == "Cdn") && (op_j_str == "Cup")) ||
+                      ((op_i_str == "Cdn") && (op_j_str == "Cdn"))) {
+                    REQUIRE(norm(anti_comm) < 1e-12);
+                  } else if (((op_i_str == "Cdagup") && (op_j_str == "Cup")) ||
+                             ((op_i_str == "Cup") && (op_j_str == "Cdagup"))) {
+                    auto ndn_op = Op("Ndn", i);
+                    REQUIRE(norm(anti_comm + apply(ndn_op, r) - r) < 1e-12);
+                  } else if (((op_i_str == "Cdagdn") && (op_j_str == "Cdn")) ||
+                             ((op_i_str == "Cdn") && (op_j_str == "Cdagdn"))) {
+                    auto nup_op = Op("Nup", i);
+                    REQUIRE(norm(anti_comm + apply(nup_op, r) - r) < 1e-12);
+                  } else if ((op_i_str == "Cdagup") && (op_j_str == "Cdn")) {
+                    REQUIRE(norm(anti_comm - apply(Op(op_i_str, i),
+                                                   apply(Op(op_j_str, j), r))) <
+                            1e-12);
+                  } else if ((op_i_str == "Cdn") && (op_j_str == "Cdagup")) {
+                    REQUIRE(norm(anti_comm - apply(Op(op_j_str, j),
+                                                   apply(Op(op_i_str, i), r))) <
+                            1e-12);
+                  } else if ((op_i_str == "Cdagdn") && (op_j_str == "Cup")) {
+                    REQUIRE(norm(anti_comm - apply(Op(op_i_str, i),
+                                                   apply(Op(op_j_str, j), r))) <
+                            1e-12);
+
+                  } else if ((op_i_str == "Cup") && (op_j_str == "Cdagdn")) {
+                    REQUIRE(norm(anti_comm - apply(Op(op_j_str, j),
+                                                   apply(Op(op_i_str, i), r))) <
+                            1e-12);
+                  } else {
+                    Log("unchecked"); // shouldn't happen
+                  }
+                }
+
+              } // loop op_i_str
+            } // loop op_j_str
+
+          } // loop i
+        } // loop j
+
+      } // loop nup
+    } // loop ndn
+
+  } // loop nsites
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}

@@ -4,24 +4,17 @@
 
 #pragma once
 
-#include <exception>
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
 #include <string>
 #include <vector>
 
-#include <xdiag/config.hpp>
 #include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
 
-class Error // : public std::exception
-{
+class Error {
 public:
   explicit Error(std::string message, std::string original_message = "");
   Error(Error const &error, std::string message);
-  // virtual XDIAG_API ~Error();
   std::vector<std::string> const &messages() const;
   std::string original_message() const;
   XDIAG_API const char *what() const noexcept;
@@ -40,6 +33,7 @@ XDIAG_API void error_trace(Error const &error);
 std::string cut_file(const char *file);
 
 // common error checks
+void check_dimension_reasonable(int64_t dim);
 void check_dimension_works_with_blas_int_size(int64_t dim);
 template <typename bit_t> void check_nsites_work_with_bits(int64_t nsites);
 

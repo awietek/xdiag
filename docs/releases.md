@@ -2,6 +2,36 @@
 title: Releases
 ---
 
+## v0.5.0
+
+**Jul. 14, 2026**
+
+Major release introducing a full operator algebra, two new Hilbert space types, a block eigensolver, and improved memory efficiency.
+
+This release marks a significant step forward in both the expressiveness and the performance of XDiag. Operators are now first-class algebraic objects that can be multiplied and conjugated freely, two entirely new families of degrees of freedom — spinless fermions and bosons (including general spin-$S$) — are supported, and excited states can be computed reliably with a dedicated block eigensolver. At the same time, the memory footprint of every block type has been substantially reduced.
+
+### New features
+
+* **Arbitrary operators and a full operator algebra.**
+  [OpSum](documentation/operators/opsum.md) objects can now not only be added, subtracted, and scaled, but also **multiplied** with one another, forming the (generally non-commutative) product of two operators. Together with the hermitian conjugation [hc](documentation/operators/hc.md), which acts as an involution, the OpSums now realize the mathematical structure of an **involutive algebra** ($*$-algebra). This makes it straightforward to build arbitrary composite operators — for example generic multi-point correlation functions such as $S^x_i S^y_j$ — directly from elementary building blocks. New convenience routines [expect](documentation/states/expect.md) and [correlation_matrix](documentation/states/correlation_matrix.md) evaluate local expectation values and two-point correlations across a whole lattice in a single call.
+
+* **New Fermion and Boson blocks.**
+  Two new Hilbert space types have been added: the [Fermion](documentation/blocks/fermion.md) block for spinless fermions, and the [Boson](documentation/blocks/boson.md) block for bosons with a configurable local dimension $d$. Since a $d$-level local degree of freedom equally describes a spin $S = (d-1)/2$, the Boson block (also available under the alias `Spin`) additionally provides general spin-$S$ physics, complete with the corresponding spin operators.
+
+* **LOBPCG block eigensolver.**
+  A new implementation of the **LOBPCG** algorithm (*Locally Optimal Block Preconditioned Conjugate Gradient*) has been added, exposed through the [eigvals](documentation/linalg/eigvals.md), [eigs](documentation/linalg/eigs.md), and [eigs_lobpcg](documentation/linalg/eigs_lobpcg.md) functions. As a block eigensolver, it reliably resolves several of the lowest eigenstates at once — including their degeneracies — which the Lanczos algorithm handles less robustly.
+
+* **Improved memory efficiency throughout all blocks.**
+  The internal representation of all block types has been reworked, substantially reducing the memory required to store and iterate over the basis states. This allows larger system sizes to be reached within the same memory budget.
+
+### Breaking changes
+
+* **Complex couplings on `Hop` and `Exchange` are no longer hermitian.**
+  Previously, hopping (`Hop`, `Hopup`, `Hopdn`) and exchange (`Exchange`) terms were defined to remain hermitian even with a complex coupling. A complex coupling is now a plain prefactor that is complex-conjugated under [hc](documentation/operators/hc.md), which is required for the OpSums to form an algebra. To obtain the antisymmetric (non-hermitian) variants, the dedicated operator types `HopAsym`, `HopupAsym`, `HopdnAsym`, and `ExchangeAsym` have been introduced. See [Complex couplings](documentation/operators/opsum.md#complex-couplings) for details.
+
+* **`ProductState` is now a vector of integers instead of strings.**
+  The local configurations of a [ProductState](documentation/states/product_state.md) are now represented by integer local quantum numbers (e.g. `0` = $\downarrow$, `1` = $\uparrow$ for [Spinhalf](documentation/blocks/spinhalf.md)) rather than strings such as `"Up"`/`"Dn"`. Accordingly, `product_state` is constructed from an integer vector, and `to_string(pstate)` prints these integers; use `to_string(pstate, block)` to obtain the human-readable configuration. The integer encoding for each block type is documented on the respective block page.
+
 ## v0.4.1
 
 **Dec. 4, 2025**

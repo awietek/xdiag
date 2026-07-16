@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include <xdiag/common.hpp>
+#include <cstdint>
+
 #include <xdiag/states/gpwf.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/random_state.hpp>

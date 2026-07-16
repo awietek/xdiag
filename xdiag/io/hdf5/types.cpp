@@ -7,7 +7,7 @@
 
 #include <complex>
 #include <cstdint>
-#include <xdiag/extern/armadillo/armadillo>
+#include <xdiag/armadillo.hpp>
 
 namespace xdiag::hdf5 {
 

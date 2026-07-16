@@ -4,9 +4,8 @@
 
 #pragma once
 
-#include <xdiag/common.hpp>
-
 #include <string>
+#include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
 

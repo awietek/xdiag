@@ -1,0 +1,41 @@
+module = "algebra"
+
+
+# ============================================================
+# xdiag/algebra/ishermitian.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "ishermitian"
+returns = "bool"
+args = ["OpSum const& ops", "Block const& block", "double tol = 1e-12"]
+
+
+# ============================================================
+# xdiag/algebra/symmetrize.hpp
+# ============================================================
+
+[[entries]]
+kind = "function"
+name = "symmetrize"
+returns = "OpSum"
+args = ["Op const& op", "PermutationGroup const& group"]
+
+[[entries]]
+kind = "function"
+name = "symmetrize"
+returns = "OpSum"
+args = ["Op const& op", "Representation const& irrep"]
+
+[[entries]]
+kind = "function"
+name = "symmetrize"
+returns = "OpSum"
+args = ["OpSum const& ops", "PermutationGroup const& group"]
+
+[[entries]]
+kind = "function"
+name = "symmetrize"
+returns = "OpSum"
+args = ["OpSum const& ops", "Representation const& irrep"]

@@ -1,255 +1,169 @@
-// SPDX-FileCopyrightText: 2025 Alexander Wietek <awietek@pks.mpg.de>
+// SPDX-FileCopyrightText: 2026 Alexander Wietek <awietek@pks.mpg.de>
 //
 // SPDX-License-Identifier: Apache-2.0
 
 #include "electron.hpp"
+
+#include <regex>
+
+#include <xdiag/basis/basis_electron.hpp>
+#include <xdiag/basis/basis_electron_symmetric.hpp>
+#include <xdiag/bits/bitset.hpp>
+#include <xdiag/combinatorics/combinations/combinations.hpp>
+#include <xdiag/combinatorics/combinations/lin_table.hpp>
+#include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/blocks/print_block.hpp>
 #include <xdiag/random/hash.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+#include <xdiag/utils/to_string_generic.hpp>
 
 namespace xdiag {
 
-using namespace basis;
-
-Electron::Electron(int64_t nsites, std::string backend) try
-    : nsites_(nsites), backend_(backend), nup_(std::nullopt),
-      ndn_(std::nullopt), irrep_(std::nullopt) {
-  // Safety checks
-  if (nsites < 0) {
-    XDIAG_THROW("Invalid argument: nsites < 0");
-  }
-
-  // Choose basis implementation
-  if (backend == "auto") {
-    if (nsites < 32) {
-      basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(nsites));
-    } else if (nsites < 64) {
-      basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(nsites));
+// Builds the up and dn enumerations (same type) and calls f(enum_up, enum_dn).
+// Number conservation requires both nup and ndn to be fixed, or neither.
+template <typename F>
+static void dispatch_enumeration(int64_t nsites, std::optional<int64_t> nup,
+                                 std::optional<int64_t> ndn, F &&f) {
+  using namespace bits;
+  using namespace combinatorics;
+  if (nup && ndn) { // fixed nup and ndn; LinTable for fast lookup up to 42 sites
+    int64_t n = nsites;
+    int64_t ku = *nup;
+    int64_t kd = *ndn;
+    if (nsites <= 32) {
+      f(LinTable<uint32_t>(n, ku), LinTable<uint32_t>(n, kd));
+    } else if (nsites <= 42) {
+      f(LinTable<uint64_t>(n, ku), LinTable<uint64_t>(n, kd));
+    } else if (nsites <= 64) {
+      f(Combinations<uint64_t>(n, ku), Combinations<uint64_t>(n, kd));
+    } else {
+      f(Combinations<BitsetDynamic>(n, ku), Combinations<BitsetDynamic>(n, kd));
+    }
+  } else if (!nup && !ndn) { // no number conservation
+    if (nsites <= 32) {
+      f(Subsets<uint32_t>(nsites), Subsets<uint32_t>(nsites));
+    } else if (nsites <= 64) {
+      f(Subsets<uint64_t>(nsites), Subsets<uint64_t>(nsites));
     } else {
       XDIAG_THROW(
-          "Spinhalf blocks with more than 64 sites currently not implemented");
+          "Unsupported nsites > 64 for non-number conserving Electron block");
     }
-  } else if (backend == "32bit") {
-    basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint32_t>(nsites));
-  } else if (backend == "64bit") {
-    basis_ = std::make_shared<basis_t>(electron::BasisNoNp<uint64_t>(nsites));
   } else {
-    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
+    XDIAG_THROW(
+        "Electron block requires both nup and ndn to be set, or neither");
   }
-  size_ = basis::size(*basis_);
-  check_dimension_works_with_blas_int_size(size_);
 }
+
+Electron::Electron(int64_t nsites, RepresentationSet const &irreps) try
+    : irreps_(irreps) {
+  using namespace basis;
+
+  if (nsites < 0) {
+    XDIAG_THROW("Invalid argument: nsites < 0");
+  }
+
+  std::optional<int64_t> nup = irreps.charge("nup");
+  std::optional<int64_t> ndn = irreps.charge("ndn");
+  if (nup && ((*nup < 0) || (*nup > nsites))) {
+    XDIAG_THROW("Invalid argument: nup out of range [0, nsites]");
+  }
+  if (ndn && ((*ndn < 0) || (*ndn > nsites))) {
+    XDIAG_THROW("Invalid argument: ndn out of range [0, nsites]");
+  }
+
+  std::optional<PermutationGroup> group = irreps.group("SitePermutation");
+  std::optional<Vector> characters = irreps.characters("SitePermutation");
+
+  if (group) { // permutation symmetry -> BasisElectronSymmetric
+    dispatch_enumeration(nsites, nup, ndn, [&](auto &&enum_up, auto &&enum_dn) {
+      using enum_t = std::decay_t<decltype(enum_up)>;
+      basis_ = std::make_shared<BasisElectronSymmetric<enum_t>>(
+          enum_up, enum_dn, *group, *characters);
+    });
+  } else { // no permutation symmetry -> BasisElectron
+    dispatch_enumeration(nsites, nup, ndn, [&](auto &&enum_up, auto &&enum_dn) {
+      using enum_t = std::decay_t<decltype(enum_up)>;
+      basis_ = std::make_shared<BasisElectron<enum_t>>(enum_up, enum_dn);
+    });
+  }
+
+  check_dimension_reasonable(size());
+  check_dimension_works_with_blas_int_size(size());
+}
+XDIAG_CATCH
+
+Electron::Electron(int64_t nsites) try
+    : Electron(nsites, RepresentationSet{}) {}
+XDIAG_CATCH
+
+Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn) try
+    : Electron(nsites, RepresentationSet{Representation("nup", nup),
+                                         Representation("ndn", ndn)}) {}
+XDIAG_CATCH
+
+Electron::Electron(int64_t nsites, Representation const &irrep) try
+    : Electron(nsites, RepresentationSet{irrep}) {}
 XDIAG_CATCH
 
 Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn,
-                   std::string backend) try
-    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn),
-      irrep_(std::nullopt) {
-
-  // Safety checks
-  if (nsites < 0) {
-    XDIAG_THROW("Invalid argument: nsites < 0");
-  } else if ((nup < 0) || (nup > nsites)) {
-    XDIAG_THROW("Invalid argument: (nup < 0) or (nup > nsites)");
-  } else if ((ndn < 0) || (ndn > nsites)) {
-    XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > nsites)");
-  }
-
-  // Choose basis implementation
-  if (backend == "auto") {
-    if (nsites < 32) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisNp<uint32_t>(nsites, nup, ndn));
-    } else if (nsites < 64) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisNp<uint64_t>(nsites, nup, ndn));
-    } else {
-      XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
-    }
-  } else if (backend == "32bit") {
-    basis_ = std::make_shared<basis_t>(
-        electron::BasisNp<uint32_t>(nsites, nup, ndn));
-  } else if (backend == "64bit") {
-    basis_ = std::make_shared<basis_t>(
-        electron::BasisNp<uint64_t>(nsites, nup, ndn));
-  } else {
-    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
-  }
-  size_ = basis::size(*basis_);
-  check_dimension_works_with_blas_int_size(size_);
-}
+                   Representation const &irrep) try
+    : Electron(nsites, RepresentationSet{Representation("nup", nup),
+                                         Representation("ndn", ndn), irrep}) {}
 XDIAG_CATCH
 
-Electron::Electron(int64_t nsites, Representation const &irrep,
-                   std::string backend) try
-    : nsites_(nsites), backend_(backend), nup_(std::nullopt),
-      ndn_(std::nullopt), irrep_(irrep) {
-  // Safety checks
-  if (nsites < 0) {
-    XDIAG_THROW("Invalid argument: nsites < 0");
-  } else if (nsites != irrep.group().nsites()) {
-    XDIAG_THROW("nsites does not match the nsites in PermutationGroup");
-  }
-
-  // Choose basis implementation
-  if (backend == "auto") {
-    if (nsites < 32) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNoNp<uint32_t>(nsites, irrep));
-    } else if (nsites < 64) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNoNp<uint64_t>(nsites, irrep));
-    } else {
-      XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
-    }
-  } else if (backend == "32bit") {
-    basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNoNp<uint32_t>(nsites, irrep));
-  } else if (backend == "64bit") {
-    basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNoNp<uint64_t>(nsites, irrep));
-  } else {
-    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
-  }
-  size_ = basis::size(*basis_);
-  check_dimension_works_with_blas_int_size(size_);
+int64_t Electron::nsites() const { return basis_->nsites(); }
+int64_t Electron::index(ProductState const &pstate) const {
+  return basis_->index(pstate);
 }
-XDIAG_CATCH
+int64_t Electron::dim() const { return size(); }
+int64_t Electron::size() const { return basis_->size(); }
+bool Electron::isreal() const { return irreps_.isreal(); }
 
-Electron::Electron(int64_t nsites, int64_t nup, int64_t ndn,
-                   Representation const &irrep, std::string backend) try
-    : nsites_(nsites), backend_(backend), nup_(nup), ndn_(ndn), irrep_(irrep) {
-  // Safety checks
-  if (nsites < 0) {
-    XDIAG_THROW("Invalid argument: nsites < 0");
-  } else if ((nup < 0) || (nup > nsites)) {
-    XDIAG_THROW("Invalid argument: (nup < 0) or (nup > nsites)");
-  } else if ((ndn < 0) || (ndn > nsites)) {
-    XDIAG_THROW("Invalid argument: (ndn < 0) or (ndn > nsites)");
-  } else if (nsites != irrep.group().nsites()) {
-    XDIAG_THROW("nsites does not match the nsites in PermutationGroup");
-  }
-
-  // Choose basis implementation
-  if (backend == "auto") {
-    if (nsites < 32) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNp<uint32_t>(nsites, nup, ndn, irrep));
-    } else if (nsites < 64) {
-      basis_ = std::make_shared<basis_t>(
-          electron::BasisSymmetricNp<uint64_t>(nsites, nup, ndn, irrep));
-    } else {
-      XDIAG_THROW("Blocks with more than 64 sites currently not implemented");
-    }
-  } else if (backend == "32bit") {
-    basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNp<uint32_t>(nsites, nup, ndn, irrep));
-  } else if (backend == "64bit") {
-    basis_ = std::make_shared<basis_t>(
-        electron::BasisSymmetricNp<uint64_t>(nsites, nup, ndn, irrep));
-  } else {
-    XDIAG_THROW(fmt::format("Unknown backend: \"{}\"", backend));
-  }
-  size_ = basis::size(*basis_);
-  check_dimension_works_with_blas_int_size(size_);
-}
-XDIAG_CATCH
-
-Electron::iterator_t Electron::begin() const { return iterator_t(*this, true); }
-Electron::iterator_t Electron::end() const { return iterator_t(*this, false); }
-int64_t Electron::index(ProductState const &pstate) const try {
-  return std::visit(
-      [&](auto &&basis) {
-        using basis_t = typename std::decay<decltype(basis)>::type;
-        using bit_t = typename basis_t::bit_t;
-        auto [ups, dns] = to_bits_electron<bit_t>(pstate);
-        return basis.index(ups, dns);
-      },
-      *basis_);
-}
-XDIAG_CATCH
+ElectronIterator Electron::begin() const { return {this, 0}; }
+ElectronIterator Electron::end() const { return {this, size()}; }
 
 bool Electron::operator==(Electron const &rhs) const {
-  return (nsites_ == rhs.nsites_) && (nup_ == rhs.nup_) && (ndn_ == rhs.ndn_) &&
-         (irrep_ == rhs.irrep_);
+  return (irreps_ == rhs.irreps_) && (basis_ == rhs.basis_);
 }
+
 bool Electron::operator!=(Electron const &rhs) const {
   return !operator==(rhs);
 }
-int64_t Electron::dim() const { return size_; }
-int64_t Electron::size() const { return size_; }
 
-int64_t Electron::nsites() const { return nsites_; }
-std::string Electron::backend() const { return backend_; }
-std::optional<int64_t> Electron::nup() const { return nup_; }
-std::optional<int64_t> Electron::ndn() const { return ndn_; }
-std::optional<Representation> const &Electron::irrep() const { return irrep_; }
-bool Electron::isreal() const { return irrep_ ? irrep_->isreal() : true; }
-Electron::basis_t const &Electron::basis() const { return *basis_; }
+RepresentationSet Electron::irreps() const { return irreps_; }
+std::shared_ptr<basis::Basis> const &Electron::basis() const { return basis_; }
 
-int64_t index(Electron const &block, ProductState const &pstate) {
-  return block.index(pstate);
-}
-int64_t nsites(Electron const &block) { return block.nsites(); }
-int64_t dim(Electron const &block) { return block.dim(); }
-int64_t size(Electron const &block) { return block.size(); }
-bool isreal(Electron const &block) { return block.isreal(); }
 std::ostream &operator<<(std::ostream &out, Electron const &block) {
-  out << "Electron:\n";
-  out << "  nsites   : " << block.nsites() << "\n";
-
-  if (block.nup()) {
-    out << "  nup      : " << *block.nup() << "\n";
-  } else {
-    out << "  nup      : not conserved\n";
-  }
-
-  if (block.ndn()) {
-    out << "  ndn      : " << *block.ndn() << "\n";
-  } else {
-    out << "  ndn      : not conserved\n";
-  }
-
-  if (block.irrep()) {
-    out << "  irrep    : defined with ID " << std::hex
-        << random::hash(*block.irrep()) << std::dec << "\n";
-  }
-  std::stringstream ss;
-  ss.imbue(std::locale("en_US.UTF-8"));
-  ss << block.size();
-  out << "  dimension: " << ss.str() << "\n";
-  out << "  ID       : " << std::hex << random::hash(block) << std::dec << "\n";
+  print_block(out, block);
   return out;
 }
 std::string to_string(Electron const &block) {
-  return to_string_generic(block);
+  return utils::to_string_generic(block);
 }
 
-ElectronIterator::ElectronIterator(Electron const &block, bool begin)
-    : nsites_(block.nsites()), pstate_(nsites_),
-      it_(std::visit(
-          [&](auto const &basis) {
-            basis::BasisElectronIterator it =
-                begin ? basis.begin() : basis.end();
-            return it;
-          },
-          block.basis())) {}
+ElectronIterator::ElectronIterator(Electron const *block, int64_t idx)
+    : idx_(idx) {
+  if (idx_ < block->size()) {
+    it_ = block->basis()->product_state_iterator();
+  }
+}
 
 ElectronIterator &ElectronIterator::operator++() {
-  std::visit([](auto &&it) { ++it; }, it_);
+  it_->advance();
+  ++idx_;
   return *this;
 }
 
-ProductState const &ElectronIterator::operator*() const {
-  std::visit(
-      [&](auto &&it) {
-        auto [ups, dns] = *it;
-        to_product_state_electron(ups, dns, pstate_);
-      },
-      it_);
-  return pstate_;
+ProductState ElectronIterator::operator*() const {
+  return it_->product_state();
 }
 
+bool ElectronIterator::operator==(ElectronIterator const &rhs) const {
+  return idx_ == rhs.idx_;
+}
 bool ElectronIterator::operator!=(ElectronIterator const &rhs) const {
-  return it_ != rhs.it_;
+  return idx_ != rhs.idx_;
 }
 
 } // namespace xdiag

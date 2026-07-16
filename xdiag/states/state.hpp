@@ -4,51 +4,49 @@
 
 #pragma once
 
+#include <xdiag/armadillo.hpp>
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/common.hpp>
-#include <xdiag/extern/armadillo/armadillo>
 
 namespace xdiag {
 
-class State {
+class XDIAG_API State {
 public:
-  XDIAG_API State() = default;
-  XDIAG_API explicit State(Block const &block, bool real = true,
-                           int64_t ncols = 1);
-  XDIAG_API State(Block const &block, arma::vec const &vector);
-  XDIAG_API State(Block const &block, arma::cx_vec const &vector);
-  XDIAG_API State(Block const &block, arma::mat const &matrix);
-  XDIAG_API State(Block const &block, arma::cx_mat const &matrix);
+  State() = default;
+  explicit State(Block const &block, bool real = true, int64_t ncols = 1);
+  State(Block const &block, arma::vec const &vector);
+  State(Block const &block, arma::cx_vec const &vector);
+  State(Block const &block, arma::mat const &matrix);
+  State(Block const &block, arma::cx_mat const &matrix);
 
-  XDIAG_API bool isvalid() const;
-  XDIAG_API int64_t nsites() const;
-  XDIAG_API bool isreal() const;
-  XDIAG_API State real() const;
-  XDIAG_API State imag() const;
-  XDIAG_API void make_complex();
-  XDIAG_API int64_t dim() const;
-  XDIAG_API int64_t size() const;
-  XDIAG_API int64_t nrows() const;
-  XDIAG_API int64_t ncols() const;
+  bool isvalid() const;
+  int64_t nsites() const;
+  bool isreal() const;
+  State real() const;
+  State imag() const;
+  void make_complex();
+  int64_t dim() const;
+  int64_t size() const;
+  int64_t nrows() const;
+  int64_t ncols() const;
 
-  XDIAG_API State col(int64_t n, bool copy = true) const;
-  XDIAG_API arma::vec vector(int64_t n = 0, bool copy = true) const;
-  XDIAG_API arma::mat matrix(bool copy = true) const;
-  XDIAG_API arma::cx_vec vectorC(int64_t n = 0, bool copy = true) const;
-  XDIAG_API arma::cx_mat matrixC(bool copy = true) const;
+  State col(int64_t n, bool copy = true) const;
+  arma::vec vector(int64_t n = 0, bool copy = true) const;
+  arma::mat matrix(bool copy = true) const;
+  arma::cx_vec vectorC(int64_t n = 0, bool copy = true) const;
+  arma::cx_mat matrixC(bool copy = true) const;
 
   // Developer section
-  XDIAG_API State(Block const &block, double const *ptr, int64_t ncols,
-                  int64_t stride = 1);
-  XDIAG_API State(Block const &block, complex const *ptr, int64_t ncols);
-  XDIAG_API double *memptr();
-  XDIAG_API complex *memptrC();
-  XDIAG_API double *colptr(int64_t col);
-  XDIAG_API complex *colptrC(int64_t col);
+  State(Block const &block, double const *ptr, int64_t ncols,
+        int64_t stride = 1);
+  State(Block const &block, complex const *ptr, int64_t ncols);
+  double *memptr();
+  complex *memptrC();
+  double *colptr(int64_t col);
+  complex *colptrC(int64_t col);
   Block block() const;
 
 private:
-  bool valid_;
+  bool valid_ = false;
   Block block_;
   bool real_;
   int64_t nrows_;

@@ -4,9 +4,11 @@
 
 #include "std_vector.hpp"
 
-#include <xdiag/common.hpp>
 #include <xdiag/io/toml/value.hpp>
-#include <xdiag/utils/type_string.hpp>
+#include <xdiag/math/complex.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+#include <xdiag/utils/type_name.hpp>
 
 namespace xdiag::io {
 
@@ -23,7 +25,7 @@ template <typename T> std::vector<T> std_vector(toml::node const &node) try {
   } else {
     XDIAG_THROW(fmt::format(
         "TOML node cannot be converted to \"{}\". Node is not an array.",
-        utils::type_string<std::vector<T>>()));
+        utils::get_type_name<std::vector<T>>()));
   }
 }
 XDIAG_CATCH

@@ -6,14 +6,13 @@
 
 #include <string>
 
-#include <xdiag/common.hpp>
-
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/symmetries/permutation.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
+#include <xdiag/utils/xdiag_api.hpp>
 
 namespace xdiag {
 

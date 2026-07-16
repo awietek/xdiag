@@ -6,9 +6,10 @@
 
 #include <numeric>
 
-#include <xdiag/symmetries/operations/symmetry_operations.hpp>
 #include <xdiag/utils/error.hpp>
-#include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/format.hpp>
+#include <xdiag/utils/to_string_generic.hpp>
+#include <xdiag/utils/xdiag_offset.hpp>
 
 namespace xdiag {
 
@@ -19,15 +20,16 @@ static void check_valid_permutation(std::vector<int64_t> const &array) try {
                   "index from 0 to size-1 is present exactly once.");
     }
   }
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 Permutation::Permutation(int64_t size) : array_(size, 0) {
   std::iota(array_.begin(), array_.end(), 0);
 }
 
 Permutation::Permutation(std::initializer_list<int64_t> list) try
-    : Permutation(std::vector<int64_t>(list)) {
-} XDIAG_CATCH
+    : Permutation(std::vector<int64_t>(list)) {}
+XDIAG_CATCH
 
 Permutation::Permutation(std::vector<int32_t> const &array) try
     : array_(array.size()) {
@@ -37,34 +39,26 @@ Permutation::Permutation(std::vector<int32_t> const &array) try
     ++idx;
   }
   check_valid_permutation(array_);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 Permutation::Permutation(std::vector<int64_t> const &array) try
     : array_(array) {
   check_valid_permutation(array_);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 Permutation::Permutation(arma::Col<int64_t> const &array) try
     : array_(array.memptr(), array.memptr() + array.size()) {
   check_valid_permutation(array_);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
-Permutation::Permutation(int64_t *ptr, int64_t size) try
+Permutation::Permutation(int64_t const *ptr, int64_t size) try
     : array_(ptr, ptr + size) {
   check_valid_permutation(array_);
-} XDIAG_CATCH
-
-template <typename bit_t> bit_t Permutation::apply(bit_t state) const {
-  bit_t tstate = 0;
-  for (int64_t site = 0; site < array_.size(); ++site) {
-    tstate |= ((state >> site) & 1) << array_[site];
-  }
-  return tstate;
 }
-
-template uint16_t Permutation::apply<uint16_t>(uint16_t state) const;
-template uint32_t Permutation::apply<uint32_t>(uint32_t state) const;
-template uint64_t Permutation::apply<uint64_t>(uint64_t state) const;
+XDIAG_CATCH
 
 Permutation Permutation::inv() const try {
   std::vector<int64_t> perm_inv(array_.size(), 0);
@@ -74,7 +68,8 @@ Permutation Permutation::inv() const try {
     ++idx;
   }
   return Permutation(perm_inv);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 Permutation &Permutation::operator*=(Permutation const &rhs) try {
   if (array_.size() != rhs.size()) {
@@ -90,7 +85,8 @@ Permutation &Permutation::operator*=(Permutation const &rhs) try {
   }
   std::swap(array_, array);
   return *this;
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 int64_t Permutation::size() const { return array_.size(); }
 int64_t Permutation::operator[](int64_t i) const { return array_[i]; }
@@ -108,11 +104,13 @@ Permutation multiply(Permutation const &p1, Permutation const &p2) try {
   Permutation p = p1;
   p *= p2;
   return p;
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 Permutation operator*(Permutation const &p1, Permutation const &p2) try {
   return multiply(p1, p2);
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 Permutation inv(Permutation const &p) { return p.inv(); }
 Permutation pow(Permutation const &p, int64_t power) try {
@@ -128,7 +126,8 @@ Permutation pow(Permutation const &p, int64_t power) try {
     }
   }
   return pp;
-} XDIAG_CATCH
+}
+XDIAG_CATCH
 
 std::ostream &operator<<(std::ostream &out, Permutation const &p) {
   for (int64_t i = 0; i < p.size(); ++i) {
@@ -137,7 +136,7 @@ std::ostream &operator<<(std::ostream &out, Permutation const &p) {
   return out;
 }
 std::string to_string(Permutation const &perm) {
-  return to_string_generic(perm);
+  return utils::to_string_generic(perm);
 }
 
 } // namespace xdiag

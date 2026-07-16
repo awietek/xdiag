@@ -2,13 +2,15 @@
 //
 // SPDX-License-Identifier: Apache-2.0
 
-#include "../catch.hpp"
+#include <tests/catch.hpp>
 
 #include <random>
 
-#include <xdiag/utils/timing.hpp>
+#include <xdiag/bits/extract_deposit.hpp>
+#include <xdiag/bits/get_set.hpp>
+#include <xdiag/bits/popcount.hpp>
 #include <xdiag/utils/logger.hpp>
-#include <xdiag/bits/bitops.hpp>
+#include <xdiag/utils/timing.hpp>
 
 using namespace xdiag;
 using namespace xdiag::bits;
@@ -30,27 +32,27 @@ template <typename bit_t> void test_bitops() {
     v2[i] = gen();
   }
 
-  // Compare popcnts
+  // Compare popcounts
   {
-    std::vector<int> popcnts1(N);
-    std::vector<int> popcnts2(N);
+    std::vector<int> popcounts1(N);
+    std::vector<int> popcounts2(N);
 
     auto time = rightnow();
     for (int i = 0; i < N; ++i) {
-      popcnts1[i] = swar_popcnt(v1[i]);
+      popcounts1[i] = swar_popcount(v1[i]);
     }
     if (do_timing)
-      timing(time, rightnow(), "popcnt (slow)", 1);
+      timing(time, rightnow(), "popcount (slow)", 1);
 
     time = rightnow();
     for (int i = 0; i < N; ++i) {
-      popcnts2[i] = popcnt(v1[i]);
+      popcounts2[i] = popcount(v1[i]);
     }
     if (do_timing)
-      timing(time, rightnow(), "popcnt (fast)", 1);
+      timing(time, rightnow(), "popcount (fast)", 1);
 
     for (int i = 0; i < N; ++i) {
-      REQUIRE(popcnts1[i] == popcnts2[i]);
+      REQUIRE(popcounts1[i] == popcounts2[i]);
     }
   }
 
@@ -118,7 +120,7 @@ template <typename bit_t> void test_bitops() {
 
     time = rightnow();
     for (int i = 0; i < N; ++i) {
-      gbits2[i] = gbit(v1[i], n);
+      gbits2[i] = get(v1[i], n);
     }
     if (do_timing)
       timing(time, rightnow(), "gbit (fast)", 1);
@@ -145,7 +147,7 @@ template <typename bit_t> void test_bitops() {
 
     time = rightnow();
     for (int i = 0; i < N; ++i) {
-      gbitss2[i] = gbits(v1[i], n, l);
+      gbitss2[i] = get_range(v1[i], n, l);
     }
     if (do_timing)
       timing(time, rightnow(), "gbitss (fast)", 1);
@@ -157,10 +159,10 @@ template <typename bit_t> void test_bitops() {
 }
 
 TEST_CASE("bitops", "[bitops]") {
-  Log.out("Testing bitops");
   Log.set_verbosity(1);
-  test_bitops<uint16_t>();
+  Log("Testing bitops<uint32_t>");
   test_bitops<uint32_t>();
+  Log("Testing bitops<uint64_t>");
   test_bitops<uint64_t>();
   Log.set_verbosity(0);
 }

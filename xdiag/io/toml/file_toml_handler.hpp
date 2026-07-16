@@ -6,11 +6,12 @@
 
 #include <string>
 
-#include <xdiag/extern/toml++/toml.hpp>
+#include <extern/toml++/toml.hpp>
+#include <xdiag/utils/xdiag_api.hpp>
 
-namespace xdiag::io {
+namespace xdiag {
 
-class FileTomlHandler {
+class XDIAG_API FileTomlHandler {
 public:
   FileTomlHandler(std::string key, toml::table &file);
   FileTomlHandler(FileTomlHandler const &) = delete;
@@ -24,4 +25,4 @@ private:
   toml::table &table_;
 };
 
-} // namespace xdiag::io
+} // namespace xdiag
