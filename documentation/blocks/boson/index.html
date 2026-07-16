@@ -1,0 +1,1342 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.16">
+    
+    
+      
+        <title>Boson - XDiag Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css">
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="black" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#constructors" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="XDiag Documentation" class="md-header__button md-logo" aria-label="XDiag Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            XDiag Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Boson
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="XDiag Documentation" class="md-nav__button md-logo" aria-label="XDiag Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    XDiag Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../quick_start/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick Start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../user_guide/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    User Guide
+    
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/01-installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/02-application/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Writing code
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/03-hilbert-spaces/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Hilbert spaces
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/04-operators/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Operators
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/05-states/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    States
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/06-dense/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Dense matrices
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/07-diagonalization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Diagonalization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/08-time-evolution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Time evolution
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/09-measurements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Measurements
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/10-io/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Input/Output
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/11-symmetries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Symmetries
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/12-sparse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Sparse matrices
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user_guide/13-distributed/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Distributed computing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../examples/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../benchmarks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Benchmarks
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../publications/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Publications
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Contributing
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../releases/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Releases
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../citation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Citation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../about/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    About
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#constructors" class="md-nav__link">
+    <span class="md-ellipsis">
+      Constructors
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#local-configurations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Local configurations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operators
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#iteration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Iteration
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Methods
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#index" class="md-nav__link">
+    <span class="md-ellipsis">
+      index
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nsites" class="md-nav__link">
+    <span class="md-ellipsis">
+      nsites
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#d" class="md-nav__link">
+    <span class="md-ellipsis">
+      d
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#size" class="md-nav__link">
+    <span class="md-ellipsis">
+      size
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dim" class="md-nav__link">
+    <span class="md-ellipsis">
+      dim
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isreal" class="md-nav__link">
+    <span class="md-ellipsis">
+      isreal
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Usage Example
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>Boson</h1>
+
+<p>A block in a Hilbert space of bosons with a fixed local dimension <span class="arithmatex">\(d\)</span>, i.e. each site can be occupied by <span class="arithmatex">\(0, 1, \ldots, d-1\)</span> particles.</p>
+<p>Since a <span class="arithmatex">\(d\)</span>-level local degree of freedom equally describes a spin <span class="arithmatex">\(S = (d-1)/2\)</span>, the same block also represents general spin-<span class="arithmatex">\(S\)</span> systems. For this reason <code>Boson</code> is also available under the alias <code>Spin</code>, and both the bosonic ladder operators and the spin-<span class="arithmatex">\(S\)</span> operators are defined on it (see <a href="#operators">Operators</a> below).</p>
+<p><strong>Sources:</strong> <a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/boson.hpp">boson.hpp</a> · <a href="https://github.com/awietek/xdiag/blob/main/xdiag/blocks/boson.cpp">boson.cpp</a></p>
+<h2 id="constructors">Constructors</h2>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">Julia</label><label for="__tabbed_1_2">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">Boson</span><span class="p">(</span><span class="n">nsites</span><span class="o">::</span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="o">::</span><span class="kt">Int64</span><span class="p">)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="n">Boson</span><span class="p">(</span><span class="n">nsites</span><span class="o">::</span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="o">::</span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="n">number</span><span class="o">::</span><span class="kt">Int64</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="n">Boson</span><span class="p">(</span><span class="n">nsites</span><span class="o">::</span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="o">::</span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="n">irrep</span><span class="o">::</span><span class="kt">Representation</span><span class="p">)</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="n">Boson</span><span class="p">(</span><span class="n">nsites</span><span class="o">::</span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="o">::</span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="n">number</span><span class="o">::</span><span class="kt">Int64</span><span class="p">,</span><span class="w"> </span><span class="n">irrep</span><span class="o">::</span><span class="kt">Representation</span><span class="p">)</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">Boson</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="n">nsites</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="n">Boson</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="n">nsites</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">number</span><span class="p">);</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="n">Boson</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="n">nsites</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">Representation</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">irrep</span><span class="p">);</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="n">Boson</span><span class="p">(</span><span class="kt">int64_t</span><span class="w"> </span><span class="n">nsites</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="kt">int64_t</span><span class="w"> </span><span class="n">number</span><span class="p">,</span><span class="w"> </span><span class="n">Representation</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">irrep</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">nsites</td>
+<td style="text-align: left;">number of sites (integer)</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: left;">d</td>
+<td style="text-align: left;">local dimension, i.e. number of local states <span class="arithmatex">\(0,\ldots,d-1\)</span> (<span class="arithmatex">\(2 \le d \le 256\)</span>)</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: left;">number</td>
+<td style="text-align: left;">total number of bosons (integer)</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align: left;">irrep</td>
+<td style="text-align: left;">Irreducible <a href="../../symmetries/representation/">Representation</a>  of the symmetry group</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>If the <code>number</code> argument is omitted, the block contains all boson numbers. The spin-<span class="arithmatex">\(S\)</span> degree of freedom corresponds to a local dimension <span class="arithmatex">\(d = 2S + 1\)</span>; the <code>Spin</code> alias can be used interchangeably with <code>Boson</code>.</p>
+<h2 id="local-configurations">Local configurations</h2>
+<p>Each site of a Boson block carries a local dimension <span class="arithmatex">\(d\)</span>. In a <a href="../../states/product_state/">ProductState</a>, the local configuration of a site is simply the <strong>occupation number</strong>, i.e. an integer in <span class="arithmatex">\(0, 1, \ldots, d-1\)</span>. In the spin-<span class="arithmatex">\(S\)</span> interpretation, an occupation <span class="arithmatex">\(n\)</span> corresponds to the magnetic quantum number <span class="arithmatex">\(m = n - S\)</span> with <span class="arithmatex">\(S = (d-1)/2\)</span>.</p>
+<h2 id="operators">Operators</h2>
+<p>Two families of operators are defined on a Boson block. The bosonic ladder operators act on the occupation numbers, with <span class="arithmatex">\(a_i |n\rangle = \sqrt{n}\,|n-1\rangle\)</span>, <span class="arithmatex">\(a^\dagger_i |n\rangle = \sqrt{n+1}\,|n+1\rangle\)</span> (truncated at <span class="arithmatex">\(n = d-1\)</span>), and <span class="arithmatex">\(n_i = a^\dagger_i a_i\)</span>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Formula</th>
+<th style="text-align: center;">No. of sites</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Adag</code></td>
+<td style="text-align: left;">bosonic creation operator</td>
+<td style="text-align: left;"><span class="arithmatex">\(a^\dagger_i\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>A</code></td>
+<td style="text-align: left;">bosonic annihilation operator</td>
+<td style="text-align: left;"><span class="arithmatex">\(a_i\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>N</code></td>
+<td style="text-align: left;">number operator</td>
+<td style="text-align: left;"><span class="arithmatex">\(n_i = a^\dagger_i a_i\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Hop</code></td>
+<td style="text-align: left;">hopping term</td>
+<td style="text-align: left;"><span class="arithmatex">\(-(a^\dagger_i a_j + a^\dagger_j a_i)\)</span></td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>HopAsym</code></td>
+<td style="text-align: left;">antisymmetric hopping term</td>
+<td style="text-align: left;"><span class="arithmatex">\(-(a^\dagger_i a_j - a^\dagger_j a_i)\)</span></td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>HubbardU</code></td>
+<td style="text-align: left;">on-site interaction</td>
+<td style="text-align: left;"><span class="arithmatex">\(\frac{1}{2}\sum_i n_i (n_i - 1)\)</span></td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>TotalN</code></td>
+<td style="text-align: left;">total number of bosons</td>
+<td style="text-align: left;"><span class="arithmatex">\(\sum_i n_i\)</span></td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table>
+<p>The spin-<span class="arithmatex">\(S\)</span> operators (with <span class="arithmatex">\(S = (d-1)/2\)</span>) act on the same local states. Here <span class="arithmatex">\(\mathbf{S}_i = (S^x_i, S^y_i, S^z_i)\)</span> and <span class="arithmatex">\(S^\pm_i = S^x_i \pm i S^y_i\)</span>.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Formula</th>
+<th style="text-align: center;">No. of sites</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Sz</code></td>
+<td style="text-align: left;">local magnetic moment (<span class="arithmatex">\(z\)</span>)</td>
+<td style="text-align: left;"><span class="arithmatex">\(S^z_i\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Sx</code></td>
+<td style="text-align: left;">local magnetic moment (<span class="arithmatex">\(x\)</span>)</td>
+<td style="text-align: left;"><span class="arithmatex">\(S^x_i\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Sy</code></td>
+<td style="text-align: left;">local magnetic moment (<span class="arithmatex">\(y\)</span>)</td>
+<td style="text-align: left;"><span class="arithmatex">\(S^y_i\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>S+</code></td>
+<td style="text-align: left;">spin raising operator</td>
+<td style="text-align: left;"><span class="arithmatex">\(S^+_i\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>S-</code></td>
+<td style="text-align: left;">spin lowering operator</td>
+<td style="text-align: left;"><span class="arithmatex">\(S^-_i\)</span></td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SdotS</code></td>
+<td style="text-align: left;">Heisenberg interaction</td>
+<td style="text-align: left;"><span class="arithmatex">\(\mathbf{S}_i \cdot \mathbf{S}_j\)</span></td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>SzSz</code></td>
+<td style="text-align: left;">Ising interaction</td>
+<td style="text-align: left;"><span class="arithmatex">\(S^z_i S^z_j\)</span></td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Exchange</code></td>
+<td style="text-align: left;">spin exchange interaction</td>
+<td style="text-align: left;"><span class="arithmatex">\(\frac{1}{2}(S^+_i S^-_j + S^-_i S^+_j)\)</span></td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ExchangeAsym</code></td>
+<td style="text-align: left;">antisymmetric exchange</td>
+<td style="text-align: left;"><span class="arithmatex">\(\frac{1}{2}(S^+_i S^-_j - S^-_i S^+_j)\)</span></td>
+<td style="text-align: center;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ScalarChirality</code></td>
+<td style="text-align: left;">scalar chirality</td>
+<td style="text-align: left;"><span class="arithmatex">\(\mathbf{S}_i \cdot (\mathbf{S}_j \times \mathbf{S}_k)\)</span></td>
+<td style="text-align: center;">3</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Matrix</code></td>
+<td style="text-align: left;">generic operator via a matrix</td>
+<td style="text-align: left;">user-defined matrix on the <span class="arithmatex">\(d^n\)</span>-dimensional local space of <span class="arithmatex">\(n\)</span> sites</td>
+<td style="text-align: center;">any</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Id</code></td>
+<td style="text-align: left;">identity</td>
+<td style="text-align: left;"><span class="arithmatex">\(\mathbb{1}\)</span></td>
+<td style="text-align: center;">0</td>
+</tr>
+</tbody>
+</table>
+<p>For a full description of all operator types, see the <a href="../../operators/operator_types/">operator types</a> page.</p>
+<h2 id="iteration">Iteration</h2>
+<p>A Boson block can be iterated over, where at each iteration a <a href="../../states/product_state/">ProductState</a> representing the corresponding basis state is returned.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="__tabbed_2_1">Julia</label><label for="__tabbed_2_2">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Boson</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="w">   </span><span class="c"># 4 sites, local dimension 3, 2 bosons</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">for</span><span class="w"> </span><span class="n">pstate</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">block</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nd">@show</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">pstate</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">),</span><span class="w"> </span><span class="n">index</span><span class="p">(</span><span class="n">block</span><span class="p">,</span><span class="w"> </span><span class="n">pstate</span><span class="p">)</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="k">end</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Boson</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">   </span><span class="c1">// 4 sites, local dimension 3, 2 bosons</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">pstate</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">block</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="n">Log</span><span class="p">(</span><span class="s">&quot;{} {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">to_string</span><span class="p">(</span><span class="n">pstate</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">),</span><span class="w"> </span><span class="n">block</span><span class="p">.</span><span class="n">index</span><span class="p">(</span><span class="n">pstate</span><span class="p">));</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="p">}</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="methods">Methods</h2>
+<h4 id="index">index</h4>
+<p>Returns the index of a given <a href="../../states/product_state/">ProductState</a> in the basis of the Boson block.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Julia</label><label for="__tabbed_3_2">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">index</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Boson</span><span class="p">,</span><span class="w"> </span><span class="n">pstate</span><span class="o">::</span><span class="kt">ProductState</span><span class="p">)</span><span class="o">::</span><span class="kt">Int64</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">Boson::index</span><span class="p">(</span><span class="n">ProductState</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pstate</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">1-indexing</p>
+<p>In the C++ version, the index count starts from "0" whereas in Julia the index count starts from "1".</p>
+</div>
+<h4 id="nsites">nsites</h4>
+<p>Returns the number of sites of the block.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Julia</label><label for="__tabbed_4_2">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">nsites</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Boson</span><span class="p">)</span><span class="o">::</span><span class="kt">Int64</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">nsites</span><span class="p">(</span><span class="n">Boson</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h4 id="d">d</h4>
+<p>Returns the local dimension of the block.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><div class="tabbed-labels"><label for="__tabbed_5_1">Julia</label><label for="__tabbed_5_2">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">d</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Boson</span><span class="p">)</span><span class="o">::</span><span class="kt">Int64</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">d</span><span class="p">(</span><span class="n">Boson</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h4 id="size">size</h4>
+<p>Returns the size of the block, i.e. its dimension.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="6:2"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><div class="tabbed-labels"><label for="__tabbed_6_1">Julia</label><label for="__tabbed_6_2">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">size</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Boson</span><span class="p">)</span><span class="o">::</span><span class="kt">Int64</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="n">Boson</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h4 id="dim">dim</h4>
+<p>Returns the dimension of the block, same as "size" for non-distributed blocks.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><div class="tabbed-labels"><label for="__tabbed_7_1">Julia</label><label for="__tabbed_7_2">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">dim</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Boson</span><span class="p">)</span><span class="o">::</span><span class="kt">Int64</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kt">int64_t</span><span class="w"> </span><span class="nf">dim</span><span class="p">(</span><span class="n">Boson</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h4 id="isreal">isreal</h4>
+<p>Returns whether the block can be used with real arithmetic. Complex arithmetic is needed when a <a href="../../symmetries/representation/">Representation</a> is genuinely complex.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="8:2"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><div class="tabbed-labels"><label for="__tabbed_8_1">Julia</label><label for="__tabbed_8_2">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">isreal</span><span class="p">(</span><span class="n">block</span><span class="o">::</span><span class="kt">Boson</span><span class="p">)</span><span class="o">::</span><span class="kt">Bool</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="kt">bool</span><span class="w"> </span><span class="nf">isreal</span><span class="p">(</span><span class="n">Boson</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">block</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="usage-example">Usage Example</h2>
+<p>A Bose-Hubbard chain with nearest-neighbor hopping and on-site interaction.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="9:2"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><input id="__tabbed_9_2" name="__tabbed_9" type="radio" /><div class="tabbed-labels"><label for="__tabbed_9_1">Julia</label><label for="__tabbed_9_2">C++</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">let</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="w">    </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="w">    </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="w">         </span><span class="c"># local dimension: up to d-1 = 3 bosons per site</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="w">    </span><span class="n">nbosons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">    </span><span class="c"># Bose-Hubbard chain: hopping + on-site interaction</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="w">    </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Boson</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">nbosons</span><span class="p">)</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="w">    </span><span class="n">ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">()</span>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="o">:</span><span class="n">N</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a><span class="w">        </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;t&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;Hop&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">mod1</span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">N</span><span class="p">)])</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a><span class="w">    </span><span class="k">end</span>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="w">    </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;U&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;HubbardU&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="w">    </span><span class="n">ops</span><span class="p">[</span><span class="s">&quot;t&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a><span class="w">    </span><span class="n">ops</span><span class="p">[</span><span class="s">&quot;U&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">4.0</span>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a><span class="w">    </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">)</span>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a><span class="w">    </span><span class="nd">@show</span><span class="w"> </span><span class="n">e0</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="k">end</span>
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kt">int</span><span class="w"> </span><span class="n">N</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">4</span><span class="p">;</span><span class="w">         </span><span class="c1">// local dimension: up to d-1 = 3 bosons per site</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="kt">int</span><span class="w"> </span><span class="n">nbosons</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">6</span><span class="p">;</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a><span class="c1">// Bose-Hubbard chain: hopping + on-site interaction</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="k">auto</span><span class="w"> </span><span class="n">block</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Boson</span><span class="p">(</span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">nbosons</span><span class="p">);</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a><span class="k">auto</span><span class="w"> </span><span class="n">ops</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OpSum</span><span class="p">();</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">N</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="w">  </span><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;t&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;Hop&quot;</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">N</span><span class="p">});</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="p">}</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="n">ops</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="s">&quot;U&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">Op</span><span class="p">(</span><span class="s">&quot;HubbardU&quot;</span><span class="p">);</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="n">ops</span><span class="p">[</span><span class="s">&quot;t&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="n">ops</span><span class="p">[</span><span class="s">&quot;U&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">4.0</span><span class="p">;</span>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a><span class="kt">double</span><span class="w"> </span><span class="n">e0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eigval0</span><span class="p">(</span><span class="n">ops</span><span class="p">,</span><span class="w"> </span><span class="n">block</span><span class="p">);</span>
+<a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a><span class="n">XDIAG_SHOW</span><span class="p">(</span><span class="n">e0</span><span class="p">);</span>
+</code></pre></div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "../../..", "features": ["content.code.copy"], "search": "../../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.50899def.min.js"></script>
+      
+        <script src="../../../javascripts/katex.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>
