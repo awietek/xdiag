@@ -51,6 +51,15 @@ end
 
 main()
 
+#=
+Expected output: -------------
+
+Ground state energy: -6.2635495335462625
+Ground state correlator: 0.09601718387180613
+State vector length = 1162
+=#
+
+
 
 
 

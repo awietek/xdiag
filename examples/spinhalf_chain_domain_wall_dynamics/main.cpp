@@ -40,7 +40,32 @@ try {
 
     // do something here with Sz_expectation (see Julia version for plotting routine)
 
+    // Have some dummy output here to check that it works
+    Log("Computation of Sz expectation value over time successful!");
+    Log("First 10 entries of Sz_expectation at the final time step:");
+    for (int i=0; i<10; i++){
+        Log("{0}: {1}", i, Sz_expectation[Nt-1][i]);
+    }
+
     return 0;
 } catch(Error e){
     error_trace(e);
 }
+
+/*
+Expected output: ----------
+
+Computation of Sz expectation value over time successful!
+First 10 entries of Sz_expectation at the final time step:
+0: 0.4432301014161501
+1: 0.3949290171366084
+2: 0.26315340423182404
+3: 0.19962207952810862
+4: 0.19857671600477483
+5: 0.1273102824169581
+6: 0.06956175013570078
+7: 0.03915075630069064
+8: -0.039150756300690724
+9: -0.06956175013570076
+*/
+

@@ -34,6 +34,18 @@ function main()
     H_i_statistics = compute_level_statistics(N, H_i)
     H_ni_statistics = compute_level_statistics(N, H_ni)
 
+    # provide some output to compare against C++ version of this example
+    println("Computation of level statistics successful!")
+    println("First 5 entries for integrable system:")
+    for i in 1:5
+        println("$(i): $(H_i_statistics[i])")
+    end
+    println("First 5 entries for non-integrable system:")
+    for i in 1:5
+        println("$(i): $(H_ni_statistics[i])")
+    end
+
+
     # optional plot of histograms (only in Julia version!)
     plot_histograms(H_i_statistics, H_ni_statistics)
 end
@@ -56,7 +68,7 @@ function compute_level_statistics(N::Int, H::OpSum) :: Vector{Float64}
 
     # find its eigenspectrum
     Hmat = matrix(H, block)
-    eigenvalues = eigvals(Hermitian(Hmat))
+    eigenvalues = LinearAlgebra.eigvals(Hermitian(Hmat))
 
     # compute level statistics (taking only inner most half of spectrum)
     N_levels = size(block)
@@ -116,6 +128,24 @@ function Poisson_func(s::Float64) :: Float64
 end
 
 
-
-
 main()
+
+
+#=
+Expected output: -------------
+
+Computation of level statistics successful!
+First 5 entries for integrable system:
+1: 1.029278007162844
+2: 0.044195304122597784
+3: 2.0614677891688875
+4: 1.1456989586253195
+5: 0.2878865686346336
+First 5 entries for non-integrable system:
+1: 0.9950431011987169
+2: 0.5971502796192641
+3: 1.6884095111147648
+4: 0.17710945887888385
+5: 1.6299537693400414
+=#
+

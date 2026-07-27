@@ -33,6 +33,13 @@ function main()
         end
     end
 
+    # have some dummy output here to check against the C++ version of the example
+    println("Computation of Sz expectation value over time successful!")
+    println("First 10 entries of Sz_expectation at the final time step:")
+    for i in 1:10
+        println("$(i-1): ", Sz_expectation[Nt, i])
+    end
+
     # plot Sz expectation value
     @show heatmap(
         Sz_expectation,
@@ -41,7 +48,27 @@ function main()
         ylabel="time step",
         title = "Sz expectation value over time")
     
+    return 0;
 end
 
 
 main()
+
+
+#=
+Expected output: ----------
+
+Computation of Sz expectation value over time successful!
+First 10 entries of Sz_expectation at the final time step:
+0: 0.4432301014161557
+1: 0.3949290171366142
+2: 0.26315340423182687
+3: 0.19962207952811017
+4: 0.19857671600477683
+5: 0.1273102824169592
+6: 0.06956175013570165
+7: 0.039150756300690974
+8: -0.039150756300690905
+9: -0.06956175013570176
+=#
+
