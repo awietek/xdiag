@@ -58,6 +58,17 @@ int main() try {
 
   Log("Ground state energy: {:.12f}", e0);
   Log("Ground state correlator: {:.12f}", corr);
+  Log("State vector length = {}", size(psi0));
+
 } catch (Error e) {
   error_trace(e);
 }
+
+/*
+Expected output: ------------
+
+Ground state energy: -6.263549533546
+Ground state correlator: 0.096017183872
+State vector length = 1162 
+*/
+

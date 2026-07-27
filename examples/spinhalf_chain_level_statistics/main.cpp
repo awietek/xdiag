@@ -95,10 +95,43 @@ int main() try {
     std::vector<double> H_ni_statistics = compute_level_statistics(N, H_ni); 
 
     // do something with H_i_statistics and H_ni_statistics here (Julia version has a plotting routine)
+    
+    
+    // provide at least some output for this example
+    Log("Computation of level statistics successful!");
+    Log("First 5 entries for integrable system:");
+    for (int i=0; i<5; i++){
+        Log("{0}: {1}", i, H_i_statistics[i]);
+    }
+    Log("First 5 entries for non-integrable system:");
+    for (int i=0; i<5; i++){
+        Log("{0}: {1}", i, H_ni_statistics[i]);
+    }
+    Log("Check out the julia version of this example for a plotting routine of the level statistics! :)");
+
     return 0;
 
 } catch(Error e) {
     error_trace(e);
 }
+
+/*
+Expected output: ------------
+
+Computation of level statistics successful!
+First 5 entries for integrable system:
+0: 1.0292780071656977
+1: 0.04419530412289801
+2: 2.061467789167692
+3: 1.145698958627123
+4: 0.287886568633884
+First 5 entries for non-integrable system:
+0: 0.9950431011993061
+1: 0.5971502796198537
+2: 1.6884095111146158
+3: 0.1771094588797689
+4: 1.62995376934063
+Check out the julia version of this example for a plotting routine of the level statistics! :)
+*/
 
 
