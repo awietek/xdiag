@@ -10,14 +10,14 @@
 #include <cassert>
 
 #include <xdiag/armadillo.hpp>
-#include <xdiag/linalg/sparse_diag.hpp>
-#include <xdiag/config.hpp>
 #include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/config.hpp>
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
-#include <xdiag/math/isapprox.hpp>
 #include <xdiag/kernels/apply.hpp>
 #include <xdiag/kernels/matrix.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
+#include <xdiag/math/isapprox.hpp>
 #include <xdiag/utils/logger.hpp>
 
 using namespace xdiag;
@@ -82,8 +82,9 @@ void test_onsite(std::string op1, std::string op12) {
   }
 }
 
-void test_kitaev_gamma(double K, double G,
-                       std::vector<std::pair<std::string, double>> irrep_names_e0) {
+void test_kitaev_gamma(
+    double K, double G,
+    std::vector<std::pair<std::string, double>> irrep_names_e0) {
   std::string lfile =
       XDIAG_DIRECTORY "/misc/data/kitaev_gamma/lattice-files/"
                       "honeycomb.8.HeisenbergKitaevGamma.fsl.toml";
@@ -137,10 +138,11 @@ void test_kitaev_gamma(double K, double G,
 }
 
 void test_spinhalf_symmetric_apply(OpSum ops, int64_t nsites,
-                                   std::vector<Representation> const &irreps) {
+                                   std::vector<Representation> const &irreps,
+                                   std::string backend) {
   for (int64_t nup = 0; nup <= nsites; ++nup) {
     for (auto irrep : irreps) {
-      auto block = Spinhalf(nsites, nup, irrep);
+      auto block = Spinhalf(nsites, nup, irrep, backend);
 
       if (block.size() > 0) {
         auto H = matrixC(ops, block, block);
@@ -180,10 +182,10 @@ void test_spinhalf_symmetric_apply(OpSum ops, int64_t nsites,
 }
 
 void test_spinhalf_symmetric_apply_no_sz(
-    OpSum ops, int64_t nsites,
-    std::vector<Representation> const &irreps) {
+    OpSum ops, int64_t nsites, std::vector<Representation> const &irreps,
+    std::string backend) {
   for (auto irrep : irreps) {
-    auto block = Spinhalf(nsites, irrep);
+    auto block = Spinhalf(nsites, irrep, backend);
 
     if (block.size() > 0) {
       auto H = matrixC(ops, block, block);
@@ -223,7 +225,8 @@ void test_spinhalf_symmetric_apply_no_sz(
 
 void test_spinhalf_symmetric_spectra(OpSum ops, int64_t nsites,
                                      std::vector<Representation> irreps,
-                                     std::vector<int64_t> multiplicities) {
+                                     std::vector<int64_t> multiplicities,
+                                     std::string backend) {
   assert(irreps.size() == multiplicities.size());
 
   for (int64_t nup = 0; nup <= nsites; ++nup) {
@@ -240,7 +243,7 @@ void test_spinhalf_symmetric_spectra(OpSum ops, int64_t nsites,
       for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
         auto irrep = irreps[k];
         int64_t multiplicity = multiplicities[k];
-        auto spinhalf = Spinhalf(nsites, nup, irrep);
+        auto spinhalf = Spinhalf(nsites, nup, irrep, backend);
 
         if (spinhalf.size() > 0) {
           auto H_sym = matrixC(ops, spinhalf, spinhalf);
@@ -268,9 +271,10 @@ void test_spinhalf_symmetric_spectra(OpSum ops, int64_t nsites,
   }
 }
 
-void test_spinhalf_symmetric_spectra_no_sz(
-    OpSum ops, int64_t nsites, std::vector<Representation> irreps,
-    std::vector<int64_t> multiplicities) {
+void test_spinhalf_symmetric_spectra_no_sz(OpSum ops, int64_t nsites,
+                                           std::vector<Representation> irreps,
+                                           std::vector<int64_t> multiplicities,
+                                           std::string backend) {
   assert(irreps.size() == multiplicities.size());
 
   auto spinhalf_nosym = Spinhalf(nsites);
@@ -286,7 +290,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
     for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
       auto irrep = irreps[k];
       int64_t multiplicity = multiplicities[k];
-      auto spinhalf = Spinhalf(nsites, irrep);
+      auto spinhalf = Spinhalf(nsites, irrep, backend);
 
       if (spinhalf.size() > 0) {
         auto H_sym = matrixC(ops, spinhalf, spinhalf);
@@ -297,7 +301,7 @@ void test_spinhalf_symmetric_spectra_no_sz(
         // cross-check: no-Sz irrep spectrum equals union of Sz-sector spectra
         auto eigs_sym_k_sz = std::vector<double>();
         for (int64_t nup = 0; nup <= nsites; ++nup) {
-          auto spinhalf_sz = Spinhalf(nsites, nup, irrep);
+          auto spinhalf_sz = Spinhalf(nsites, nup, irrep, backend);
           auto H_sym_sz = matrixC(ops, spinhalf_sz, spinhalf_sz);
           arma::vec es;
           arma::eig_sym(es, H_sym_sz);

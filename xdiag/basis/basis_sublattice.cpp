@@ -190,7 +190,7 @@ std::pair<std::vector<bit_t>, std::vector<double>> reps_norms_sz(
 }
 
 template <typename bit_t>
-ska::flat_hash_map<bit_t, gsl::span<bit_t const>>
+static ska::flat_hash_map<bit_t, gsl::span<bit_t const>>
 compute_rep_search_range(std::vector<bit_t> const &reps,
                          int64_t n_postfix_bits) {
   ska::flat_hash_map<bit_t, gsl::span<bit_t const>> rep_search_range;
@@ -232,6 +232,7 @@ BasisSublattice<bit_t, n_sublat>::BasisSublattice(PermutationGroup const &group,
     std::tie(reps_, norms_) =
         reps_norms_no_sz(action_, characters.as<arma::cx_vec>());
   }
+  rep_search_range_ = compute_rep_search_range(reps_, n_postfix_bits_);
 }
 XDIAG_CATCH
 
@@ -250,6 +251,7 @@ BasisSublattice<bit_t, n_sublat>::BasisSublattice(int64_t nup,
     std::tie(reps_, norms_) =
         reps_norms_sz(nup, action_, characters.as<arma::cx_vec>());
   }
+  rep_search_range_ = compute_rep_search_range(reps_, n_postfix_bits_);
 }
 XDIAG_CATCH
 

@@ -18,13 +18,13 @@
 #include <xdiag/config.hpp>
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
-#include <xdiag/linalg/sparse_diag.hpp>
-#include <xdiag/math/binomial.hpp>
-#include <xdiag/math/isapprox.hpp>
 #include <xdiag/kernels/matrix.hpp>
 #include <xdiag/kernels/sparse/coo_matrix.hpp>
 #include <xdiag/kernels/sparse/csc_matrix.hpp>
 #include <xdiag/kernels/sparse/csr_matrix.hpp>
+#include <xdiag/linalg/sparse_diag.hpp>
+#include <xdiag/math/binomial.hpp>
+#include <xdiag/math/isapprox.hpp>
 #include <xdiag/operators/hc.hpp>
 #include <xdiag/symmetries/cyclic_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
@@ -406,8 +406,10 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") try {
     for (auto [name, mult] : rep_name_mult) {
       irreps.push_back(read_representation(fl, name));
     }
-    test_spinhalf_symmetric_apply(ops, 9, irreps);
-    test_spinhalf_symmetric_apply_no_sz(ops, 9, irreps);
+    test_spinhalf_symmetric_apply(ops, 9, irreps, "auto");
+    test_spinhalf_symmetric_apply_no_sz(ops, 9, irreps, "auto");
+    test_spinhalf_symmetric_apply(ops, 9, irreps, "3sublattice");
+    test_spinhalf_symmetric_apply_no_sz(ops, 9, irreps, "3sublattice");
   }
 
   // Triangular J1-J2-Jchi N=12: check ground state energy per irrep
@@ -425,7 +427,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") try {
     std::vector<std::pair<std::string, double>> rep_name_e0 = {
         {"Gamma.C6.A", -6.945600070082439181},
         {"Gamma.C6.B", -5.84109124378730904},
-	// used wrong character conjugation
+        // used wrong character conjugation
         // {"Gamma.C6.E1a", -3.845414358083013795},
         // {"Gamma.C6.E1b", -3.855641724835592754},
         // {"Gamma.C6.E2a", -6.322314852895261517},
@@ -437,7 +439,7 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") try {
         {"K.C3.A", -5.91975118116224408},
         // {"K.C3.Ea", -5.204513347364086329},
         // {"K.C3.Eb", -5.028170383600089721},
-	{"K.C3.Ea", -5.028170383600089721},
+        {"K.C3.Ea", -5.028170383600089721},
         {"K.C3.Eb", -5.204513347364086329},
         {"M.C2.A", -5.756684675081961799},
         {"M.C2.B", -5.77235103255616977},
@@ -447,9 +449,16 @@ TEST_CASE("spinhalf_symmetric_apply", "[spinhalf]") try {
     int64_t nup = 6;
     for (auto [name, energy] : rep_name_e0) {
       auto irrep = read_representation(fl, name);
-      auto spinhalf = Spinhalf(nsites, nup, irrep);
-      double e0 = eigval0(ops, spinhalf);
-      REQUIRE(isapprox(e0, energy, 1e-12, 1e-10));
+      {
+        auto spinhalf = Spinhalf(nsites, nup, irrep);
+        double e0 = eigval0(ops, spinhalf);
+        REQUIRE(isapprox(e0, energy, 1e-12, 1e-10));
+      }
+      {
+        auto spinhalf = Spinhalf(nsites, nup, irrep, "4sublattice");
+        double e0 = eigval0(ops, spinhalf);
+        REQUIRE(isapprox(e0, energy, 1e-12, 1e-10));
+      }
     }
   }
 
@@ -502,8 +511,13 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
       irreps.push_back(read_representation(fl, name));
       multiplicities.push_back(mult);
     }
-    test_spinhalf_symmetric_spectra(ops, 9, irreps, multiplicities);
-    test_spinhalf_symmetric_spectra_no_sz(ops, 9, irreps, multiplicities);
+    test_spinhalf_symmetric_spectra(ops, 9, irreps, multiplicities, "auto");
+    test_spinhalf_symmetric_spectra_no_sz(ops, 9, irreps, multiplicities,
+                                          "auto");
+    test_spinhalf_symmetric_spectra(ops, 9, irreps, multiplicities,
+                                    "3sublattice");
+    test_spinhalf_symmetric_spectra_no_sz(ops, 9, irreps, multiplicities,
+                                          "3sublattice");
   }
 
   // Triangular J1-J2-Jchi N=12: verify ground state energy per irrep via full
@@ -522,7 +536,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
     std::vector<std::pair<std::string, double>> rep_name_e0 = {
         {"Gamma.C6.A", -6.945600070082439181},
         {"Gamma.C6.B", -5.84109124378730904},
-	// used wrong character conjugation
+        // used wrong character conjugation
         // {"Gamma.C6.E1a", -3.845414358083013795},
         // {"Gamma.C6.E1b", -3.855641724835592754},
         // {"Gamma.C6.E2a", -6.322314852895261517},
@@ -534,7 +548,7 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
         {"K.C3.A", -5.91975118116224408},
         // {"K.C3.Ea", -5.204513347364086329},
         // {"K.C3.Eb", -5.028170383600089721},
-	{"K.C3.Ea", -5.028170383600089721},
+        {"K.C3.Ea", -5.028170383600089721},
         {"K.C3.Eb", -5.204513347364086329},
         {"M.C2.A", -5.756684675081961799},
         {"M.C2.B", -5.77235103255616977},
@@ -544,12 +558,22 @@ TEST_CASE("spinhalf_symmetric_matrix", "[spinhalf]") try {
     int64_t nup = 6;
     for (auto [name, energy] : rep_name_e0) {
       auto irrep = read_representation(fl, name);
-      auto spinhalf = Spinhalf(nsites, nup, irrep);
-      auto H = matrixC(ops, spinhalf, spinhalf);
-      REQUIRE(arma::norm(H - H.t()) < 1e-12);
-      arma::vec eigs;
-      arma::eig_sym(eigs, H);
-      REQUIRE(isapprox(eigs(0), energy, 1e-12, 1e-10));
+      {
+        auto spinhalf = Spinhalf(nsites, nup, irrep);
+        auto H = matrixC(ops, spinhalf, spinhalf);
+        REQUIRE(arma::norm(H - H.t()) < 1e-12);
+        arma::vec eigs;
+        arma::eig_sym(eigs, H);
+        REQUIRE(isapprox(eigs(0), energy, 1e-12, 1e-10));
+      }
+      {
+        auto spinhalf = Spinhalf(nsites, nup, irrep, "4sublattice");
+        auto H = matrixC(ops, spinhalf, spinhalf);
+        REQUIRE(arma::norm(H - H.t()) < 1e-12);
+        arma::vec eigs;
+        arma::eig_sym(eigs, H);
+        REQUIRE(isapprox(eigs(0), energy, 1e-12, 1e-10));
+      }
     }
   }
 
