@@ -23,25 +23,29 @@ void test_onsite(std::string op1, std::string op12);
 
 // Check the lowest eigenvalue per irrep against a reference for the
 // Kitaev-Gamma model on the N=8 honeycomb lattice
-void test_kitaev_gamma(double K, double G,
-                       std::vector<std::pair<std::string, double>> irrep_names_e0);
+void test_kitaev_gamma(
+    double K, double G,
+    std::vector<std::pair<std::string, double>> irrep_names_e0);
 
 // Check apply agrees with matrix multiply for each (nup, irrep) sector
-void test_spinhalf_symmetric_apply(xdiag::OpSum ops, int64_t nsites,
-                                   std::vector<xdiag::Representation> const &irreps);
+void test_spinhalf_symmetric_apply(
+    xdiag::OpSum ops, int64_t nsites,
+    std::vector<xdiag::Representation> const &irreps,
+    std::string backend = "auto");
 
 // Same check without fixing nup (full Hilbert space with symmetry)
 void test_spinhalf_symmetric_apply_no_sz(
     xdiag::OpSum ops, int64_t nsites,
-    std::vector<xdiag::Representation> const &irreps);
+    std::vector<xdiag::Representation> const &irreps,
+    std::string backend = "auto");
 
 // Verify that symmetry-resolved spectra reconstruct the full spectrum
 void test_spinhalf_symmetric_spectra(xdiag::OpSum ops, int64_t nsites,
                                      std::vector<xdiag::Representation> irreps,
-                                     std::vector<int64_t> multiplicities);
+                                     std::vector<int64_t> multiplicities,
+                                     std::string backend = "auto");
 
 // Same verification without fixing nup
 void test_spinhalf_symmetric_spectra_no_sz(
-    xdiag::OpSum ops, int64_t nsites,
-    std::vector<xdiag::Representation> irreps,
-    std::vector<int64_t> multiplicities);
+    xdiag::OpSum ops, int64_t nsites, std::vector<xdiag::Representation> irreps,
+    std::vector<int64_t> multiplicities, std::string backend = "auto");

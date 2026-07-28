@@ -10,10 +10,11 @@
 #include <xdiag/basis/basis_symmetric.hpp>
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
+#include <xdiag/config.hpp>
 #include <xdiag/io/file_toml.hpp>
 #include <xdiag/io/read.hpp>
+#include <xdiag/symmetries/action/norm.hpp>
 #include <xdiag/utils/logger.hpp>
-#include <xdiag/config.hpp>
 
 using namespace xdiag;
 
@@ -22,22 +23,31 @@ template <typename bit_t, int n_sublat>
 void check_state(bit_t state,
                  basis::BasisSublattice<bit_t, n_sublat> const &basis) {
   auto const &action = basis.action();
+  auto const &characters = basis.characters();
   int64_t idx = basis.index(state);
-  if (idx == -1)
-    return;
+  if (idx == -1) {
+    // check if norm is zero
+    if (characters.isreal()) {
+      double nrm = norm(state, action, characters.template as<arma::vec>());
+      REQUIRE(isapprox(0, nrm, 1e-6, 1e-6));
+    } else {
+      double nrm = norm(state, action, characters.template as<arma::cx_vec>());
+      REQUIRE(isapprox(0, nrm, 1e-6, 1e-6));
+    }
+  } else {
+    bit_t rep = basis.representative(state);
+    REQUIRE(basis[idx] == rep);
 
-  bit_t rep = basis.representative(state);
-  REQUIRE(basis[idx] == rep);
+    auto [idx_sym, sym] = basis.index_sym(state);
+    REQUIRE(idx_sym == idx);
+    REQUIRE(action.apply(sym, state) == rep);
 
-  auto [idx_sym, sym] = basis.index_sym(state);
-  REQUIRE(idx_sym == idx);
-  REQUIRE(action.apply(sym, state) == rep);
-
-  auto [idx_syms, syms] = basis.index_syms(state);
-  REQUIRE(idx_syms == idx);
-  REQUIRE(syms.size() > 0);
-  for (auto s : syms) {
-    REQUIRE(action.apply(s, state) == rep);
+    auto [idx_syms, syms] = basis.index_syms(state);
+    REQUIRE(idx_syms == idx);
+    REQUIRE(syms.size() > 0);
+    for (auto s : syms) {
+      REQUIRE(action.apply(s, state) == rep);
+    }
   }
 }
 
@@ -61,15 +71,24 @@ void test_sublattice_no_sz(Representation const &irrep) {
 
   auto basis_sl =
       BasisSublattice<bit_t, n_sublat>(irrep.group(), irrep.characters());
-  auto basis_ref = BasisSymmetric<Subsets<bit_t>>(
-      Subsets<bit_t>(irrep.group().nsites()), irrep.group(),
-      irrep.characters());
+  auto basis_ref =
+      BasisSymmetric<Subsets<bit_t>>(Subsets<bit_t>(irrep.group().nsites()),
+                                     irrep.group(), irrep.characters());
 
   compare_with_reference(basis_sl, basis_ref);
 
   int64_t nsites = basis_sl.nsites();
   for (auto state : Subsets<bit_t>(nsites)) {
     check_state(state, basis_sl);
+  }
+
+  int64_t idx = 0;
+  for (auto state : basis_sl) {
+    auto [raw_idx, sym, norm] = basis_sl.representative_data(state);
+    REQUIRE(raw_idx == idx + 1);
+    REQUIRE(sym >= 0);
+    REQUIRE(norm > 0);
+    ++idx;
   }
 }
 
@@ -78,8 +97,8 @@ void test_sublattice_sz(int64_t nup, Representation const &irrep) {
   using namespace basis;
   using namespace combinatorics;
 
-  auto basis_sl = BasisSublattice<bit_t, n_sublat>(nup, irrep.group(),
-                                                   irrep.characters());
+  auto basis_sl =
+      BasisSublattice<bit_t, n_sublat>(nup, irrep.group(), irrep.characters());
   auto basis_ref = BasisSymmetric<Combinations<bit_t>>(
       Combinations<bit_t>(irrep.group().nsites(), nup), irrep.group(),
       irrep.characters());
@@ -89,6 +108,15 @@ void test_sublattice_sz(int64_t nup, Representation const &irrep) {
   int64_t nsites = basis_sl.nsites();
   for (auto state : Combinations<bit_t>(nsites, nup)) {
     check_state(state, basis_sl);
+  }
+
+  int64_t idx = 0;
+  for (auto state : basis_sl) {
+    auto [raw_idx, sym, norm] = basis_sl.representative_data(state);
+    REQUIRE(raw_idx == idx + 1);
+    REQUIRE(sym >= 0);
+    REQUIRE(norm > 0);
+    ++idx;
   }
 }
 

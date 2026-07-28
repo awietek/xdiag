@@ -10,7 +10,6 @@
 #include <xdiag/operators/valid.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
-#include <xdiag/utils/logger.hpp>
 
 #include <xdiag/kernels/blocks/spinhalf/terms/term_exchange.hpp>
 #include <xdiag/kernels/blocks/spinhalf/terms/term_exchange_asym.hpp>

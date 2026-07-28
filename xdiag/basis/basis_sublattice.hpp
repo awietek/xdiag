@@ -8,12 +8,11 @@
 #include <extern/gsl/span>
 
 #include <xdiag/basis/basis.hpp>
-#include <xdiag/utils/likely.hpp>
-#include <xdiag/utils/type_name.hpp>
-
 #include <xdiag/symmetries/action/site_permutation_sublattice.hpp>
 #include <xdiag/symmetries/permutation_group.hpp>
 #include <xdiag/symmetries/representation.hpp>
+#include <xdiag/utils/likely.hpp>
+#include <xdiag/utils/type_name.hpp>
 
 namespace xdiag::basis {
 
@@ -37,8 +36,8 @@ public:
   int64_t nsites() const override;
   int64_t size() const override;
   int64_t d() const; // Local Hilbert space dimension per site
-  Vector const& characters() const;
-  symmetries::SitePermutationSublattice<bit_t, n_sublat> const& action() const;
+  Vector const &characters() const;
+  symmetries::SitePermutationSublattice<bit_t, n_sublat> const &action() const;
 
   int64_t index(bit_t state) const;
   int64_t index(ProductState const &pstate) const override;
