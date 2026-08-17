@@ -126,10 +126,9 @@ static void test_charge_rep(std::string const &name, int64_t nsites,
       OpSum ops =
           random_charge_opsum(nsites, target, rl, neutrals, n_neutral, 3, gen);
       for (auto const &a : actions) {
-        std::optional<Representation> rep =
+        Representation rep =
             algebra::representation(ops, Representation(a, 0), alg);
-        REQUIRE(rep);
-        REQUIRE(rep->charge() == target.at(a));
+        REQUIRE(rep.charge() == target.at(a));
       }
 
       // Test 2: representation(op1 * op2) == representation(op1) *
@@ -145,11 +144,8 @@ static void test_charge_rep(std::string const &name, int64_t nsites,
         auto r1 = algebra::representation(o1, Representation(a, 0), alg);
         auto r2 = algebra::representation(o2, Representation(a, 0), alg);
         auto rp = algebra::representation(prod, Representation(a, 0), alg);
-        REQUIRE(r1);
-        REQUIRE(r2);
-        REQUIRE(rp);
-        REQUIRE(isapprox(*rp, (*r1) * (*r2)));
-        REQUIRE(rp->charge() == t1.at(a) + t2.at(a));
+        REQUIRE(isapprox(rp, r1 * r2));
+        REQUIRE(rp.charge() == t1.at(a) + t2.at(a));
       }
     }
   }

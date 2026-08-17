@@ -86,6 +86,8 @@ template <typename mat_t>
 static void apply_variant(OpSum const &ops, Block const &block_in,
                           mat_t const &vec_in, Block const &block_out,
                           mat_t &vec_out) try {
+  check_blocks_match(ops, block_in, block_out);
+
   // Layer 1: unwrap the Block variant (op_t is promoted to OpSum inside) and
   // forward to the block-generic apply_impl.
   utils::visit_same_type(

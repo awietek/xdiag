@@ -56,12 +56,7 @@ void apply(OpSum const &ops, State const &v, State &w) try {
     w = State();
   } else {
 
-    if (!blocks_match(ops, v.block(), w.block())) {
-      XDIAG_THROW(
-          "Cannot apply OpSum to State. The resulting state is not in "
-          "the correct symmetry sector. Please check the quantum numbers "
-          "of the output state w.");
-    }
+    check_blocks_match(ops, v.block(), w.block());
 
     if ((v.ncols() == 1) && (w.ncols() == 1)) {
       if (isreal(ops)) {

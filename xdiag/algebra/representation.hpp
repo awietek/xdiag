@@ -13,10 +13,9 @@
 
 namespace xdiag::algebra {
 
-std::optional<Representation> representation(OpSum const &ops,
-                                             Representation const &irrep,
-                                             Algebra const &algebra,
-                                             double tol = 1e-12);
+// Throws if ops has no well-defined sector under the symmetry of irrep.
+Representation representation(OpSum const &ops, Representation const &irrep,
+                              Algebra const &algebra, double tol = 1e-12);
 
 RepresentationSet representations(OpSum const &ops,
                                   RepresentationSet const &irreps,

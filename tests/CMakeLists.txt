@@ -55,6 +55,7 @@ set(XDIAG_TEST_SOURCES
 
   blocks/test_print_block.cpp
   blocks/test_index.cpp
+  blocks/test_blocks_match.cpp
 
   blocks/spinhalf/test_spinhalf_strategies.cpp
   blocks/spinhalf/test_spinhalf.cpp

@@ -79,6 +79,8 @@ XDIAG_CATCH
 template <typename coeff_t>
 void matrix(OpSum const &ops, Block const &block_in, Block const &block_out,
             coeff_t *mat) try {
+  check_blocks_match(ops, block_in, block_out);
+
   int64_t m = size(block_out);
   int64_t n = dim(block_in);
   std::fill_n(mat, m * n, coeff_t(0));
@@ -119,6 +121,8 @@ arma::mat matrix(op_t const &op, Block const &block_in,
                 "Consider using matrixC instead.");
   }
 
+  check_blocks_match(OpSum(op), block_in, block_out);
+
   int64_t m = size(block_out);
   int64_t n = dim(block_in);
   arma::mat mat(m, n, arma::fill::zeros); // zeroed here; kernel uses +=
@@ -137,6 +141,8 @@ XDIAG_CATCH
 template <typename op_t>
 arma::cx_mat matrixC(op_t const &op, Block const &block_in,
                      Block const &block_out) try {
+  check_blocks_match(OpSum(op), block_in, block_out);
+
   int64_t m = size(block_out);
   int64_t n = dim(block_in);
   arma::cx_mat mat(m, n, arma::fill::zeros); // zeroed here; kernel uses +=

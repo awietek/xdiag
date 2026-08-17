@@ -26,15 +26,6 @@ static RepresentationSet output_irreps(OpSum const &ops,
                                        algebra::Algebra const &algebra) try {
   RepresentationSet in = block_in.irreps();
   RepresentationSet shift = algebra::representations(ops, in, algebra);
-  for (Representation const &rep : in) {
-    if (!shift.has_type(rep.type())) {
-      XDIAG_THROW(fmt::format(
-          "Cannot determine output block: the OpSum has no well-defined "
-          "quantum number for the symmetry of type \"{}\" carried by the input "
-          "block.",
-          rep.type()));
-    }
-  }
   return in * shift;
 }
 XDIAG_CATCH
@@ -84,6 +75,16 @@ bool blocks_match(OpSum const &ops, Block const &block_in,
         }
       },
       block_in, block_out);
+}
+XDIAG_CATCH
+
+void check_blocks_match(OpSum const &ops, Block const &block_in,
+                        Block const &block_out) try {
+  if (!blocks_match(ops, block_in, block_out)) {
+    XDIAG_THROW("The OpSum maps the input block onto a different symmetry "
+                "sector than the output block. Please check the quantum "
+                "numbers of the output block.");
+  }
 }
 XDIAG_CATCH
 
