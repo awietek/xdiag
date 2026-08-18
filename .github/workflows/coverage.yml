@@ -15,7 +15,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y clang llvm libhdf5-dev libblas-dev liblapack-dev
       - name: build (instrumented)
         run: |
-          cmake -S . -B build-cov -DCMAKE_BUILD_TYPE=Debug -DXDIAG_COVERAGE=ON -DBUILD_TESTING=ON
+          cmake -S . -B build-cov -DCMAKE_BUILD_TYPE=RelWithDebInfo -DXDIAG_COVERAGE=ON -DBUILD_TESTING=ON
           cmake --build build-cov --target tests -j$(nproc)
       - name: run tests
         run: LLVM_PROFILE_FILE=tests.profraw ./build-cov/tests/tests
