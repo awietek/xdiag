@@ -26,7 +26,17 @@ jobs:
           GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
         rm GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
         echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
-        sudo apt-get update -o Acquire::Retries=3
+        # Refresh the Intel index only. A full update also polls
+        # azure.archive.ubuntu.com, the runner's default Ubuntu mirror, which
+        # stalls often enough to hang this step past any timeout - that, not the
+        # Intel repository, is what makes this job fail at random. The runner
+        # image already carries the Ubuntu package lists needed to resolve the
+        # dependencies of the oneAPI packages.
+        sudo apt-get update \
+          -o Dir::Etc::sourcelist="sources.list.d/oneAPI.list" \
+          -o Dir::Etc::sourceparts="-" \
+          -o APT::Get::List-Cleanup="0" \
+          -o Acquire::http::Timeout=20
 
     - name: Install Intel oneAPI compilers
       timeout-minutes: 5
