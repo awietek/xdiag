@@ -4,8 +4,10 @@
 
 #include "representation.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <map>
+#include <numeric>
 #include <set>
 #include <vector>
 
@@ -124,6 +126,34 @@ static std::optional<int64_t> opsum_charge(OpSum const &ops,
 }
 XDIAG_CATCH
 
+// Cheap sufficient test for permuted == ops. If ops is invariant under the
+// permutation, permuted holds the very same terms in a different order, which
+// sorting by monomial decides -- without any normal ordering, which is
+// essentially the entire cost of isapprox_multiple. Returning false merely
+// falls back to the general comparison, so this can never mask an asymmetry.
+static bool same_terms(OpSum const &ops, OpSum const &permuted) {
+  std::vector<Term> const &a = ops.terms();
+  std::vector<Term> const &b = permuted.terms();
+  if (a.size() != b.size()) {
+    return false;
+  }
+  std::vector<int64_t> ia(a.size()), ib(b.size());
+  std::iota(ia.begin(), ia.end(), 0);
+  std::iota(ib.begin(), ib.end(), 0);
+  std::sort(ia.begin(), ia.end(), [&](int64_t x, int64_t y) {
+    return a[x].monomial < a[y].monomial;
+  });
+  std::sort(ib.begin(), ib.end(), [&](int64_t x, int64_t y) {
+    return b[x].monomial < b[y].monomial;
+  });
+  for (int64_t i = 0; i < (int64_t)a.size(); ++i) {
+    if (!(a[ia[i]] == b[ib[i]])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 // --- representation() -------------------------------------------------------
 
 // Determine the Representation that `ops` transforms under, with respect to the
@@ -131,12 +161,10 @@ XDIAG_CATCH
 // permutation Representation supplies the PermutationGroup whose action is
 // probed; a charge (U(1)) Representation supplies the action string via its
 // type. The charge/characters carried by `irrep` itself are ignored and
-// recomputed from `ops`. Returns std::nullopt if `ops` has no well-defined
-// sector under that symmetry.
-std::optional<Representation> representation(OpSum const &ops,
-                                             Representation const &irrep,
-                                             Algebra const &algebra,
-                                             double tol) try {
+// recomputed from `ops`. Throws if `ops` has no well-defined sector under the
+// symmetry, naming the offending group element resp. the unconserved charge.
+Representation representation(OpSum const &ops, Representation const &irrep,
+                              Algebra const &algebra, double tol) try {
   if (irrep.is_permutation()) {
     // `ops` transforms as a 1-D irrep iff every group element only rescales it.
     // The scalar lambda with permute(ops, g) == lambda * ops is the character
@@ -148,11 +176,31 @@ std::optional<Representation> representation(OpSum const &ops,
     bool real = true;
     for (int64_t g = 0; g < n; ++g) {
       OpSum permuted = permute(ops, group[g]);
+      if (same_terms(ops, permuted)) {
+        chars[g] = 1.0;
+        continue;
+      }
       std::optional<Scalar> lambda =
           isapprox_multiple(permuted, ops, algebra, tol, tol);
       if (!lambda) {
-        return std::nullopt;
+        XDIAG_THROW(fmt::format(
+            "The OpSum is not invariant under the given PermutationGroup: "
+            "element {} maps it onto a different operator. Please check that "
+            "this permutation maps every term of the OpSum onto another "
+            "term:\n{}",
+            g, to_string(group[g])));
       }
+
+      // lambda == 0 means the permuted OpSum vanishes, and since permutations
+      // are invertible ops itself is zero. The zero OpSum carries no character:
+      // every lambda satisfies permute(0) == lambda * 0. It is invariant under
+      // the whole group, so report the trivial representation -- reading a
+      // character off it would contradict the invariance the fast path above
+      // correctly detects.
+      if (lambda->as<complex>() == 0.0) {
+        return Representation(group, arma::vec(n, arma::fill::ones));
+      }
+
       chars[g] = lambda->as<complex>();
       if (!lambda->isreal()) {
         real = false;
@@ -168,7 +216,9 @@ std::optional<Representation> representation(OpSum const &ops,
     std::optional<int64_t> charge =
         opsum_charge(ops, irrep.type(), algebra.d, tol);
     if (!charge) {
-      return std::nullopt;
+      XDIAG_THROW(fmt::format("The OpSum does not conserve the charge \"{}\": "
+                              "its terms do not all carry the same charge.",
+                              irrep.type()));
     }
     return Representation(irrep.type(), *charge);
   }
@@ -176,18 +226,13 @@ std::optional<Representation> representation(OpSum const &ops,
 XDIAG_CATCH
 
 // Determine the Representation that `ops` transforms under for each symmetry in
-// `irreps`. Symmetries under which `ops` has no well-defined sector are dropped
-// from the result.
+// `irreps`. Throws if `ops` has no well-defined sector under one of them.
 RepresentationSet representations(OpSum const &ops,
                                   RepresentationSet const &irreps,
                                   Algebra const &algebra, double tol) try {
   std::vector<Representation> result;
   for (Representation const &irrep : irreps) {
-    std::optional<Representation> rep =
-        representation(ops, irrep, algebra, tol);
-    if (rep) {
-      result.push_back(*rep);
-    }
+    result.push_back(representation(ops, irrep, algebra, tol));
   }
   return RepresentationSet(result);
 }

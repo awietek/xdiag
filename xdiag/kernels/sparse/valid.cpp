@@ -25,12 +25,7 @@ void check_valid_sparse_matrix(OpSum const &ops, Block const &block_in,
   }
 
   // Check if ops and blocks are compatible
-  if (!blocks_match(ops, block_in, block_out)) {
-    XDIAG_THROW("Cannot create a sparse matrix on blocks. The resulting block "
-                "is not in "
-                "the correct symmetry sector. Please check the quantum numbers "
-                "of the output block.");
-  }
+  check_blocks_match(ops, block_in, block_out);
 
   // Check if real matrix can be created
   if constexpr (isreal<coeff_t>()) {

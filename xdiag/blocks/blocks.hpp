@@ -71,6 +71,15 @@ Block block(OpSum const &ops, Block const &block_in);
 bool blocks_match(OpSum const &ops, Block const &block_in,
                   Block const &block_out);
 
+// Throws unless blocks_match(ops, block_in, block_out). This is the
+// precondition of every apply / matrix kernel: unless it holds, block_out is
+// not the image of block_in under ops and the numbers a kernel produces are
+// meaningless. An OpSum which is not invariant under a symmetry group carried
+// by the blocks throws from within blocks_match, naming the offending group
+// element.
+void check_blocks_match(OpSum const &ops, Block const &block_in,
+                        Block const &block_out);
+
 template <typename T> struct is_distributed : std::false_type {};
 #ifdef XDIAG_DISTRIBUTED
 template <> struct is_distributed<SpinhalfDistributed> : std::true_type {};
