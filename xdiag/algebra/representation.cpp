@@ -4,8 +4,10 @@
 
 #include "representation.hpp"
 
+#include <algorithm>
 #include <cmath>
 #include <map>
+#include <numeric>
 #include <set>
 #include <vector>
 
@@ -124,6 +126,34 @@ static std::optional<int64_t> opsum_charge(OpSum const &ops,
 }
 XDIAG_CATCH
 
+// Cheap sufficient test for permuted == ops. If ops is invariant under the
+// permutation, permuted holds the very same terms in a different order, which
+// sorting by monomial decides -- without any normal ordering, which is
+// essentially the entire cost of isapprox_multiple. Returning false merely
+// falls back to the general comparison, so this can never mask an asymmetry.
+static bool same_terms(OpSum const &ops, OpSum const &permuted) {
+  std::vector<Term> const &a = ops.terms();
+  std::vector<Term> const &b = permuted.terms();
+  if (a.size() != b.size()) {
+    return false;
+  }
+  std::vector<int64_t> ia(a.size()), ib(b.size());
+  std::iota(ia.begin(), ia.end(), 0);
+  std::iota(ib.begin(), ib.end(), 0);
+  std::sort(ia.begin(), ia.end(), [&](int64_t x, int64_t y) {
+    return a[x].monomial < a[y].monomial;
+  });
+  std::sort(ib.begin(), ib.end(), [&](int64_t x, int64_t y) {
+    return b[x].monomial < b[y].monomial;
+  });
+  for (int64_t i = 0; i < (int64_t)a.size(); ++i) {
+    if (!(a[ia[i]] == b[ib[i]])) {
+      return false;
+    }
+  }
+  return true;
+}
+
 // --- representation() -------------------------------------------------------
 
 // Determine the Representation that `ops` transforms under, with respect to the
@@ -146,6 +176,10 @@ Representation representation(OpSum const &ops, Representation const &irrep,
     bool real = true;
     for (int64_t g = 0; g < n; ++g) {
       OpSum permuted = permute(ops, group[g]);
+      if (same_terms(ops, permuted)) {
+        chars[g] = 1.0;
+        continue;
+      }
       std::optional<Scalar> lambda =
           isapprox_multiple(permuted, ops, algebra, tol, tol);
       if (!lambda) {
