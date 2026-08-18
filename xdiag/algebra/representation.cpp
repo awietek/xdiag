@@ -190,6 +190,17 @@ Representation representation(OpSum const &ops, Representation const &irrep,
             "term:\n{}",
             g, to_string(group[g])));
       }
+
+      // lambda == 0 means the permuted OpSum vanishes, and since permutations
+      // are invertible ops itself is zero. The zero OpSum carries no character:
+      // every lambda satisfies permute(0) == lambda * 0. It is invariant under
+      // the whole group, so report the trivial representation -- reading a
+      // character off it would contradict the invariance the fast path above
+      // correctly detects.
+      if (lambda->as<complex>() == 0.0) {
+        return Representation(group, arma::vec(n, arma::fill::ones));
+      }
+
       chars[g] = lambda->as<complex>();
       if (!lambda->isreal()) {
         real = false;
