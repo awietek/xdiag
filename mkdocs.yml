@@ -67,7 +67,12 @@ nav:
   - About: about.md
 
 hooks:
-  - hooks/bibliography.py
+  - docs/hooks/bibliography.py
+
+# The hooks live inside docs/ for tidiness, but they are build machinery and
+# must not be copied into the generated site.
+exclude_docs: |
+  hooks/
 
 plugins:
   - search
