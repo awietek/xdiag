@@ -2,6 +2,15 @@
 title: Releases
 ---
 
+## v0.5.1
+
+**Jul. 14, 2026**
+
+Patch release fixing two minor bugs
+
+* Fixes issue reported in https://github.com/awietek/xdiag/issues/113
+* Fixes issue reported in https://github.com/awietek/xdiag/issues/115
+
 ## v0.5.0
 
 **Jul. 14, 2026**
