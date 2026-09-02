@@ -1,5 +1,6 @@
 - update version numbers in
   * xdiag (C++) CMakeLists.txt
+  * xdiag README.md
   * Xdiag.jl (Julia) Project.toml (version)
   * XDiag.jl (Julia) Project.toml (compat jll)
 - commit and push xdiag (C++)
