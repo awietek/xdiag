@@ -8,6 +8,7 @@
 #include <cassert>
 #include <string>
 
+#include <xdiag/math/lapack.hpp>
 #include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
@@ -52,9 +53,12 @@ arma::vec Tmatrix::eigenvalues() const try {
   } else if (size() == 1) {
     return arma::Col<double>(1, arma::fill::value(alphas_[0]));
   } else {
-    arma::vec eigs;
-    arma::eig_sym(eigs, mat());
-    return eigs;
+    int64_t n = size();
+    // sterf overwrites both arrays, so the stored coefficients are copied
+    arma::vec diag(alphas_.data(), n);
+    arma::vec offdiag(betas_.data(), n - 1);
+    math::lapack::sterf(n, diag.memptr(), offdiag.memptr());
+    return diag;
   }
 } catch (...) {
   XDIAG_THROW("cannot compute eigenvalues of Tmatrix");
