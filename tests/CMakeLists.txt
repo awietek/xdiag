@@ -7,6 +7,7 @@ set(XDIAG_TEST_SOURCES
   math/test_scalar.cpp
   math/test_vector.cpp
   math/test_matrix.cpp
+  math/test_lapack.cpp
 
   bits/test_bitops.cpp
   bits/test_bitset.cpp
