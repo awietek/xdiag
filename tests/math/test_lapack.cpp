@@ -45,6 +45,15 @@ TEST_CASE("lapack_sterf", "[math]") {
                         highest.memptr());
     REQUIRE(std::abs(highest(0) - expected(n - 1)) < 1e-12);
 
+    // stedc, checked by residual and orthonormality so signs do not matter
+    arma::vec sd = diag;
+    arma::vec se = offdiag;
+    arma::mat evecs(n, n);
+    math::lapack::stedc(n, sd.memptr(), se.memptr(), evecs.memptr());
+    REQUIRE(arma::norm(sd - expected) < 1e-12);
+    REQUIRE(arma::norm(tmat * evecs - evecs * arma::diagmat(sd)) < 1e-10);
+    REQUIRE(arma::norm(evecs.t() * evecs - arma::eye(n, n)) < 1e-10);
+
     arma::fvec flowest(k);
     math::lapack::stebz(n, fd0.memptr(), fe0.memptr(), 1, k, flowest.memptr());
     REQUIRE(arma::norm(arma::conv_to<arma::vec>::from(flowest) -

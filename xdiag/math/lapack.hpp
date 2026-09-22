@@ -20,11 +20,15 @@
 #define XDIAG_LAPACK_dsterf DSTERF
 #define XDIAG_LAPACK_sstebz SSTEBZ
 #define XDIAG_LAPACK_dstebz DSTEBZ
+#define XDIAG_LAPACK_sstedc SSTEDC
+#define XDIAG_LAPACK_dstedc DSTEDC
 #else
 #define XDIAG_LAPACK_ssterf ssterf
 #define XDIAG_LAPACK_dsterf dsterf
 #define XDIAG_LAPACK_sstebz sstebz
 #define XDIAG_LAPACK_dstebz dstebz
+#define XDIAG_LAPACK_sstedc sstedc
+#define XDIAG_LAPACK_dstedc dstedc
 #endif
 
 #if defined(ARMA_BLAS_UNDERSCORE)
@@ -36,9 +40,13 @@
 
 // Trailing lengths fortran passes for each character argument.
 #if defined(ARMA_USE_FORTRAN_HIDDEN_ARGS)
+#define XDIAG_FORTRAN_CHARLEN1_DECL , arma::blas_len len1
+#define XDIAG_FORTRAN_CHARLEN1_ARGS , 1
 #define XDIAG_FORTRAN_CHARLEN2_DECL , arma::blas_len len1, arma::blas_len len2
 #define XDIAG_FORTRAN_CHARLEN2_ARGS , 1, 1
 #else
+#define XDIAG_FORTRAN_CHARLEN1_DECL
+#define XDIAG_FORTRAN_CHARLEN1_ARGS
 #define XDIAG_FORTRAN_CHARLEN2_DECL
 #define XDIAG_FORTRAN_CHARLEN2_ARGS
 #endif
@@ -62,6 +70,16 @@ void XDIAG_FORTRAN(XDIAG_LAPACK_dstebz)(
     const double *e, arma::blas_int *m, arma::blas_int *nsplit, double *w,
     arma::blas_int *iblock, arma::blas_int *isplit, double *work,
     arma::blas_int *iwork, arma::blas_int *info XDIAG_FORTRAN_CHARLEN2_DECL);
+void XDIAG_FORTRAN(XDIAG_LAPACK_sstedc)(
+    const char *compz, const arma::blas_int *n, float *d, float *e, float *z,
+    const arma::blas_int *ldz, float *work, const arma::blas_int *lwork,
+    arma::blas_int *iwork, const arma::blas_int *liwork,
+    arma::blas_int *info XDIAG_FORTRAN_CHARLEN1_DECL);
+void XDIAG_FORTRAN(XDIAG_LAPACK_dstedc)(
+    const char *compz, const arma::blas_int *n, double *d, double *e, double *z,
+    const arma::blas_int *ldz, double *work, const arma::blas_int *lwork,
+    arma::blas_int *iwork, const arma::blas_int *liwork,
+    arma::blas_int *info XDIAG_FORTRAN_CHARLEN1_DECL);
 }
 
 namespace xdiag::math::lapack {
@@ -125,13 +143,63 @@ inline void stebz(int64_t n, T const *diag, T const *offdiag, int64_t il,
 }
 XDIAG_CATCH
 
+// Eigenvalues and eigenvectors of a symmetric tridiagonal matrix by divide and
+// conquer. diag is overwritten with the eigenvalues in ascending order,
+// offdiag is destroyed, and the n by n column major evecs holds the
+// eigenvectors.
+template <typename T>
+inline void stedc(int64_t n, T *diag, T *offdiag, T *evecs) try {
+  static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                "stedc is only defined for float and double");
+  if (n > std::numeric_limits<arma::blas_int>::max()) {
+    XDIAG_THROW("dimension too large for the LAPACK integer type");
+  }
+  arma::blas_int nn = n, info = 0;
+  arma::blas_int lwork = -1, liwork = -1;
+  T work_query = 0;
+  arma::blas_int iwork_query = 0;
+  if constexpr (std::is_same_v<T, float>) {
+    XDIAG_FORTRAN(XDIAG_LAPACK_sstedc)
+    ("I", &nn, diag, offdiag, evecs, &nn, &work_query, &lwork, &iwork_query,
+     &liwork, &info XDIAG_FORTRAN_CHARLEN1_ARGS);
+  } else {
+    XDIAG_FORTRAN(XDIAG_LAPACK_dstedc)
+    ("I", &nn, diag, offdiag, evecs, &nn, &work_query, &lwork, &iwork_query,
+     &liwork, &info XDIAG_FORTRAN_CHARLEN1_ARGS);
+  }
+  if (info != 0) {
+    XDIAG_THROW("LAPACK stedc could not determine its workspace size");
+  }
+  lwork = (arma::blas_int)(work_query + T(0.5));
+  liwork = iwork_query;
+  std::vector<T> work(lwork);
+  std::vector<arma::blas_int> iwork(liwork);
+  if constexpr (std::is_same_v<T, float>) {
+    XDIAG_FORTRAN(XDIAG_LAPACK_sstedc)
+    ("I", &nn, diag, offdiag, evecs, &nn, work.data(), &lwork, iwork.data(),
+     &liwork, &info XDIAG_FORTRAN_CHARLEN1_ARGS);
+  } else {
+    XDIAG_FORTRAN(XDIAG_LAPACK_dstedc)
+    ("I", &nn, diag, offdiag, evecs, &nn, work.data(), &lwork, iwork.data(),
+     &liwork, &info XDIAG_FORTRAN_CHARLEN1_ARGS);
+  }
+  if (info != 0) {
+    XDIAG_THROW("LAPACK stedc did not converge");
+  }
+}
+XDIAG_CATCH
+
 } // namespace xdiag::math::lapack
 
 #undef XDIAG_LAPACK_ssterf
 #undef XDIAG_LAPACK_dsterf
 #undef XDIAG_LAPACK_sstebz
 #undef XDIAG_LAPACK_dstebz
+#undef XDIAG_LAPACK_sstedc
+#undef XDIAG_LAPACK_dstedc
 #undef XDIAG_FORTRAN_B
 #undef XDIAG_FORTRAN
+#undef XDIAG_FORTRAN_CHARLEN1_DECL
+#undef XDIAG_FORTRAN_CHARLEN1_ARGS
 #undef XDIAG_FORTRAN_CHARLEN2_DECL
 #undef XDIAG_FORTRAN_CHARLEN2_ARGS

@@ -80,16 +80,7 @@ arma::vec Tmatrix::eigenvalues_lowest(int64_t k) const try {
 }
 
 arma::mat Tmatrix::eigenvectors() const try {
-  if (size() == 0) {
-    return arma::Mat<double>();
-  } else if (size() == 1) {
-    return arma::Mat<double>(1, 1, arma::fill::value(1.0));
-  } else {
-    arma::vec eigs;
-    arma::mat evecs;
-    arma::eig_sym(eigs, evecs, mat());
-    return evecs;
-  }
+  return eigen().second;
 } catch (...) {
   XDIAG_THROW("cannot compute eigenvectors of Tmatrix");
   return arma::mat();
@@ -102,10 +93,13 @@ std::pair<arma::vec, arma::mat> Tmatrix::eigen() const try {
     return {arma::Col<double>(1, arma::fill::value(alphas_[0])),
             arma::Mat<double>(1, 1, arma::fill::value(1.0))};
   } else {
-    arma::vec eigs;
-    arma::mat evecs;
-    arma::eig_sym(eigs, evecs, mat());
-    return {eigs, evecs};
+    int64_t n = size();
+    // stedc overwrites diag with the eigenvalues and destroys offdiag
+    arma::vec diag(alphas_.data(), n);
+    arma::vec offdiag(betas_.data(), n - 1);
+    arma::mat evecs(n, n);
+    math::lapack::stedc(n, diag.memptr(), offdiag.memptr(), evecs.memptr());
+    return {diag, evecs};
   }
 } catch (...) {
   XDIAG_THROW("cannot compute eigendecomposition of Tmatrix");
