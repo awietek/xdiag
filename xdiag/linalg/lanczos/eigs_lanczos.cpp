@@ -84,18 +84,10 @@ static EigsLanczosResult eigs_lanczos(op_t const &ops, State const &state0,
                                    max_iterations, deflation_tol);
 
   // Perform second run to compute the eigenvectors. The tridiagonal T-matrix
-  // is reconstructed from the recurrence coefficients (cf. Tmatrix::mat()).
+  // is reconstructed from the recurrence coefficients.
   Tmatrix tmatrix(arma::conv_to<std::vector<double>>::from(r.alphas),
                   arma::conv_to<std::vector<double>>::from(r.betas));
-  arma::mat tmat = tmatrix.mat();
-
-  arma::vec reigs;
-  arma::mat revecs;
-  try {
-    arma::eig_sym(reigs, revecs, tmat);
-  } catch (...) {
-    XDIAG_THROW("Error diagonalizing tridiagonal matrix");
-  }
+  auto [reigs, revecs] = tmatrix.eigen();
 
   // Second run: no convergence is checked, just a fixed number of iterations
   auto const &block = state0.block();
