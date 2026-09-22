@@ -90,8 +90,10 @@ TEST_CASE("random_state", "[states]") try {
   // thread
   Log("random state Spinhalf omp test");
 
+  int nthreads = omp_get_max_threads();
   auto block = Spinhalf(4);
   for (int seed = 0; seed < 10; ++seed) {
+    omp_set_num_threads(nthreads);
     auto state = State(block, true);
     fill(state, RandomState(seed));
     auto state_cplx = State(block, false);
@@ -106,6 +108,8 @@ TEST_CASE("random_state", "[states]") try {
     REQUIRE(arma::norm(state.vector() - state2.vector()) < 1e-12);
     REQUIRE(arma::norm(state_cplx.vectorC() - state2_cplx.vectorC()) < 1e-12);
   }
+  // Restore the thread count for the remaining tests in the suite.
+  omp_set_num_threads(nthreads);
 #endif
 }
 XDIAG_CATCH
