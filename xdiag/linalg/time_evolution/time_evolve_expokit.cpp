@@ -99,7 +99,7 @@ time_evolve_expokit_inplace(op_t const &ops, State &state, double time,
   auto apply_A = [&iter, &ops, &block](arma::cx_vec const &v) {
     auto ta = rightnow();
     auto w = arma::cx_vec(v.n_rows, arma::fill::zeros);
-    apply(ops, block, v, block, w);
+    kernels::apply_hermitian(ops, block, v, block, w);
     w *= complex(0.0, -1.0);
     Log(2, "Lanczos iteration {}", iter);
     timing(ta, rightnow(), "MVM", 2);

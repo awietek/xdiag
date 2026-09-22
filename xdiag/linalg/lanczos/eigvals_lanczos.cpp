@@ -32,7 +32,7 @@ run_eigvals_lanczos(op_t const &ops, Block const &block, arma::Col<coeff_t> &v0,
   int64_t iter = 1;
   auto mult = [&](arma::Col<coeff_t> const &v, arma::Col<coeff_t> &w) {
     auto ta = rightnow();
-    apply(ops, block, v, block, w);
+    kernels::apply_hermitian(ops, block, v, block, w);
     Log(1, "Lanczos iteration {}", iter);
     timing(ta, rightnow(), "MVM", 1);
     ++iter;
