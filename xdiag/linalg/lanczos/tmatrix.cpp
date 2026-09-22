@@ -79,13 +79,6 @@ arma::vec Tmatrix::eigenvalues_lowest(int64_t k) const try {
   return arma::vec();
 }
 
-arma::mat Tmatrix::eigenvectors() const try {
-  return eigen().second;
-} catch (...) {
-  XDIAG_THROW("cannot compute eigenvectors of Tmatrix");
-  return arma::mat();
-}
-
 std::pair<arma::vec, arma::mat> Tmatrix::eigen() const try {
   if (size() == 0) {
     return {arma::vec(), arma::mat()};
