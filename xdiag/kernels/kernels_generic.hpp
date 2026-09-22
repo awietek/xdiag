@@ -43,7 +43,7 @@ using fill_t = std::function<void(int64_t, int64_t, coeff_t)>;
 template <typename coeff_t>
 using fill_omp_t = std::function<void(int64_t, int64_t, coeff_t, int)>;
 
-template <typename block_t, typename basis_t, typename mat_t>
+template <bool hc, typename block_t, typename basis_t, typename mat_t>
 void apply(OpSum const &ops, basis_t const &basis_in, mat_t const &mat_in,
            basis_t const &basis_out, mat_t &mat_out) try {
   using coeff_t = typename mat_t::elem_type;
@@ -51,7 +51,7 @@ void apply(OpSum const &ops, basis_t const &basis_in, mat_t const &mat_in,
   matrix_kernel<block_t>::template call<coeff_t>(
       ops, basis_in, basis_out,
       [&](int64_t idx_in, int64_t idx_out, coeff_t val) {
-        fill_apply(mat_in, mat_out, idx_in, idx_out, val);
+        fill_apply<hc>(mat_in, mat_out, idx_in, idx_out, val);
       });
 }
 XDIAG_CATCH
@@ -192,7 +192,9 @@ XDIAG_CATCH
 // ---------------------------------------------------------------------------
 
 #define XDIAG_INSTANTIATE_APPLY(BLOCK, BASIS, MAT)                                   \
-  template void xdiag::kernels::apply<BLOCK, BASIS, MAT>(                     \
+  template void xdiag::kernels::apply<false, BLOCK, BASIS, MAT>(              \
+      OpSum const &, BASIS const &, MAT const &, BASIS const &, MAT &);       \
+  template void xdiag::kernels::apply<true, BLOCK, BASIS, MAT>(               \
       OpSum const &, BASIS const &, MAT const &, BASIS const &, MAT &);
 
 #define XDIAG_INSTANTIATE_MATRIX(BLOCK, BASIS, COEFF)                                \

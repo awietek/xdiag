@@ -59,4 +59,36 @@ XDIAG_API void apply(OpSum const &op, Block const &block_in,
                      arma::cx_mat const &vec_in, Block const &block_out,
                      arma::cx_mat &vec_out);
 
+namespace kernels {
+
+// Internal (not part of the public API).
+//
+// Computes vec_out = ops * vec_in for a HERMITIAN ops, bitwise reproducible
+// for a fixed number of OpenMP threads: the gather fill writes every output
+// element from exactly one thread in a fixed order, without atomics
+// (see fill_apply<true> in fill_functions.hpp).
+//
+// Precondition: ops must be Hermitian on the block. The caller is responsible
+// for verifying this, e.g. with ishermitian(ops, block). Internally the gather
+// fill computes hc(ops) * vec_in, so for a non-Hermitian ops the result is the
+// adjoint applied, not ops itself, and no error is raised.
+//
+// Intended for iterative algorithms which regenerate a Krylov sequence and
+// therefore need identical matrix-vector products across passes (Lanczos,
+// LOBPCG, time evolution).
+
+void apply_hermitian(OpSum const &ops, Block const &block_in,
+                     arma::vec const &vec_in, Block const &block_out,
+                     arma::vec &vec_out);
+void apply_hermitian(OpSum const &ops, Block const &block_in,
+                     arma::cx_vec const &vec_in, Block const &block_out,
+                     arma::cx_vec &vec_out);
+void apply_hermitian(OpSum const &ops, Block const &block_in,
+                     arma::mat const &vec_in, Block const &block_out,
+                     arma::mat &vec_out);
+void apply_hermitian(OpSum const &ops, Block const &block_in,
+                     arma::cx_mat const &vec_in, Block const &block_out,
+                     arma::cx_mat &vec_out);
+
+} // namespace kernels
 } // namespace xdiag

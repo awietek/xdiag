@@ -5,6 +5,7 @@
 #pragma once
 
 #include <xdiag/armadillo.hpp>
+#include <xdiag/blocks/blocks.hpp>
 #include <xdiag/kernels/sparse/sparse_matrix_types.hpp>
 #include <xdiag/math/complex.hpp>
 #include <xdiag/utils/error.hpp>
@@ -70,4 +71,15 @@ inline void apply(CSRMatrix<idx_t, coeff_t> const &spmat, block_t const &,
 }
 XDIAG_CATCH
 
+namespace kernels {
+
+// Internal. Counterpart of kernels::apply_hermitian(OpSum, ...) for a
+// CSRMatrix, so generic algorithms can call apply_hermitian for either
+// operator type. Precondition (spmat Hermitian) is the caller's responsibility.
+template <typename idx_t, typename coeff_t, typename vec_t>
+void apply_hermitian(CSRMatrix<idx_t, coeff_t> const &spmat,
+                     Block const &block_in, vec_t const &vec_in,
+                     Block const &block_out, vec_t &vec_out);
+
+} // namespace kernels
 } // namespace xdiag
