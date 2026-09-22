@@ -65,6 +65,20 @@ arma::vec Tmatrix::eigenvalues() const try {
   return arma::vec();
 }
 
+arma::vec Tmatrix::eigenvalues_lowest(int64_t k) const try {
+  int64_t n = size();
+  if ((n == 0) || (k >= n)) {
+    return eigenvalues();
+  }
+  arma::vec eigs(k);
+  math::lapack::stebz(n, alphas_.data(), betas_.data(), (int64_t)1, k,
+                      eigs.memptr());
+  return eigs;
+} catch (...) {
+  XDIAG_THROW("cannot compute lowest eigenvalues of Tmatrix");
+  return arma::vec();
+}
+
 arma::mat Tmatrix::eigenvectors() const try {
   if (size() == 0) {
     return arma::Mat<double>();
