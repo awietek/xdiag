@@ -20,6 +20,9 @@ TEST_CASE("lapack_sterf", "[math]") {
     }
     arma::vec expected = arma::eig_sym(tmat);
 
+    arma::fvec fd0 = arma::conv_to<arma::fvec>::from(diag);
+    arma::fvec fe0 = arma::conv_to<arma::fvec>::from(offdiag);
+
     arma::vec d = diag;
     arma::vec e = offdiag;
     math::lapack::sterf(n, d.memptr(), e.memptr());
@@ -29,5 +32,22 @@ TEST_CASE("lapack_sterf", "[math]") {
     arma::fvec fe = arma::conv_to<arma::fvec>::from(offdiag);
     math::lapack::sterf(n, fd.memptr(), fe.memptr());
     REQUIRE(arma::norm(arma::conv_to<arma::vec>::from(fd) - expected) < 1e-4);
+
+    // stebz computes a range of eigenvalues and leaves its input alone
+    int64_t k = std::min<int64_t>(n, 3);
+    arma::vec lowest(k);
+    math::lapack::stebz(n, diag.memptr(), offdiag.memptr(), 1, k,
+                        lowest.memptr());
+    REQUIRE(arma::norm(lowest - expected.head(k)) < 1e-12);
+
+    arma::vec highest(1);
+    math::lapack::stebz(n, diag.memptr(), offdiag.memptr(), n, n,
+                        highest.memptr());
+    REQUIRE(std::abs(highest(0) - expected(n - 1)) < 1e-12);
+
+    arma::fvec flowest(k);
+    math::lapack::stebz(n, fd0.memptr(), fe0.memptr(), 1, k, flowest.memptr());
+    REQUIRE(arma::norm(arma::conv_to<arma::vec>::from(flowest) -
+                       expected.head(k)) < 1e-4);
   }
 }
