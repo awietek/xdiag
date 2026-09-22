@@ -8,6 +8,7 @@ set(XDIAG_TEST_SOURCES
   math/test_vector.cpp
   math/test_matrix.cpp
   math/test_lapack.cpp
+  math/test_dot.cpp
 
   bits/test_bitops.cpp
   bits/test_bitset.cpp
@@ -94,6 +95,7 @@ set(XDIAG_TEST_SOURCES
   linalg/lanczos/test_eigs_lanczos.cpp
   linalg/lanczos/test_eigs_lanczos_csr_matrix.cpp
   linalg/lanczos/test_eigs_lanczos_rerun_bitwise.cpp
+  linalg/lanczos/test_tmatrix.cpp
   linalg/lanczos/test_lanczos_pro.cpp
   linalg/arnoldi/test_arnoldi.cpp
   linalg/gram_schmidt/test_gram_schmidt.cpp

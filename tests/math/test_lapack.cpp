@@ -4,6 +4,7 @@
 
 #include <tests/catch.hpp>
 #include <xdiag/math/lapack.hpp>
+#include <xdiag/utils/error.hpp>
 
 TEST_CASE("lapack_sterf", "[math]") {
   using namespace xdiag;
@@ -59,4 +60,25 @@ TEST_CASE("lapack_sterf", "[math]") {
     REQUIRE(arma::norm(arma::conv_to<arma::vec>::from(flowest) -
                        expected.head(k)) < 1e-4);
   }
+}
+
+TEST_CASE("lapack_stebz_range", "[math]") {
+  using namespace xdiag;
+
+  arma::vec diag(5, arma::fill::randn);
+  arma::vec offdiag(4, arma::fill::randn);
+  arma::vec out(5);
+
+  REQUIRE_THROWS_AS(
+      math::lapack::stebz(5, diag.memptr(), offdiag.memptr(), 0, 2,
+                          out.memptr()),
+      Error);
+  REQUIRE_THROWS_AS(
+      math::lapack::stebz(5, diag.memptr(), offdiag.memptr(), 3, 2,
+                          out.memptr()),
+      Error);
+  REQUIRE_THROWS_AS(
+      math::lapack::stebz(5, diag.memptr(), offdiag.memptr(), 1, 6,
+                          out.memptr()),
+      Error);
 }
