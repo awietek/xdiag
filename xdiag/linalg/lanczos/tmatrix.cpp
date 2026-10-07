@@ -8,6 +8,7 @@
 #include <cassert>
 #include <string>
 
+#include <xdiag/math/lapack.hpp>
 #include <xdiag/utils/logger.hpp>
 
 namespace xdiag {
@@ -52,29 +53,30 @@ arma::vec Tmatrix::eigenvalues() const try {
   } else if (size() == 1) {
     return arma::Col<double>(1, arma::fill::value(alphas_[0]));
   } else {
-    arma::vec eigs;
-    arma::eig_sym(eigs, mat());
-    return eigs;
+    int64_t n = size();
+    // sterf overwrites both arrays, so the stored coefficients are copied
+    arma::vec diag(alphas_.data(), n);
+    arma::vec offdiag(betas_.data(), n - 1);
+    math::lapack::sterf(n, diag.memptr(), offdiag.memptr());
+    return diag;
   }
 } catch (...) {
   XDIAG_THROW("cannot compute eigenvalues of Tmatrix");
   return arma::vec();
 }
 
-arma::mat Tmatrix::eigenvectors() const try {
-  if (size() == 0) {
-    return arma::Mat<double>();
-  } else if (size() == 1) {
-    return arma::Mat<double>(1, 1, arma::fill::value(1.0));
-  } else {
-    arma::vec eigs;
-    arma::mat evecs;
-    arma::eig_sym(eigs, evecs, mat());
-    return evecs;
+arma::vec Tmatrix::eigenvalues_lowest(int64_t k) const try {
+  int64_t n = size();
+  if ((n == 0) || (k >= n)) {
+    return eigenvalues();
   }
+  arma::vec eigs(k);
+  math::lapack::stebz(n, alphas_.data(), betas_.data(), (int64_t)1, k,
+                      eigs.memptr());
+  return eigs;
 } catch (...) {
-  XDIAG_THROW("cannot compute eigenvectors of Tmatrix");
-  return arma::mat();
+  XDIAG_THROW("cannot compute lowest eigenvalues of Tmatrix");
+  return arma::vec();
 }
 
 std::pair<arma::vec, arma::mat> Tmatrix::eigen() const try {
@@ -84,10 +86,13 @@ std::pair<arma::vec, arma::mat> Tmatrix::eigen() const try {
     return {arma::Col<double>(1, arma::fill::value(alphas_[0])),
             arma::Mat<double>(1, 1, arma::fill::value(1.0))};
   } else {
-    arma::vec eigs;
-    arma::mat evecs;
-    arma::eig_sym(eigs, evecs, mat());
-    return {eigs, evecs};
+    int64_t n = size();
+    // stedc overwrites diag with the eigenvalues and destroys offdiag
+    arma::vec diag(alphas_.data(), n);
+    arma::vec offdiag(betas_.data(), n - 1);
+    arma::mat evecs(n, n);
+    math::lapack::stedc(n, diag.memptr(), offdiag.memptr(), evecs.memptr());
+    return {diag, evecs};
   }
 } catch (...) {
   XDIAG_THROW("cannot compute eigendecomposition of Tmatrix");

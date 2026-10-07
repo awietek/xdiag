@@ -29,45 +29,60 @@ constexpr void fill_matrix(coeff_t *mat, int64_t m, int64_t idx_in,
 };
 
 // ---------------------------------------------------------------------------
-// Apply fill  (vec_out[idx_out] += val * vec_in[idx_in]).
-// Atomics required because multiple threads may contribute to the same row.
+// Apply fill. Two variants selected at compile time by the hc flag:
+//
+//   hc = false (scatter): vec_out[idx_out] += val * vec_in[idx_in]
+//     Applies ops itself. Under OpenMP several threads may contribute to the
+//     same idx_out, so the update is atomic. The summation order at a given
+//     idx_out then depends on thread timing and the result is not bitwise
+//     reproducible between runs.
+//
+//   hc = true (gather):   vec_out[idx_in] += conj(val) * vec_in[idx_out]
+//     Applies hc(ops) using the very same (idx_in, idx_out, val) triples. The
+//     kernels partition idx_in over threads, so each output element is written
+//     by exactly one thread in a fixed order: no atomics, and the result is
+//     bitwise reproducible for a fixed number of threads. For a Hermitian ops
+//     (e.g. a Hamiltonian in Lanczos) this computes ops * vec_in.
 // ---------------------------------------------------------------------------
 
-template <typename coeff_t>
+template <bool hc, typename coeff_t>
 inline void fill_apply(coeff_t const *vec_in, coeff_t *vec_out, int64_t idx_in,
                        int64_t idx_out, coeff_t val) {
-#ifdef _OPENMP
-  if constexpr (isreal<coeff_t>()) {
-    coeff_t x = val * vec_in[idx_in];
-#pragma omp atomic update
-    vec_out[idx_out] += x;
+  if constexpr (hc) {
+    vec_out[idx_in] += conj(val) * vec_in[idx_out];
   } else {
-    complex x = val * vec_in[idx_in];
-    double *r = &reinterpret_cast<double(&)[2]>(vec_out[idx_out])[0];
-    double *i = &reinterpret_cast<double(&)[2]>(vec_out[idx_out])[1];
+#ifdef _OPENMP
+    if constexpr (isreal<coeff_t>()) {
+      coeff_t x = val * vec_in[idx_in];
 #pragma omp atomic update
-    *r += x.real();
+      vec_out[idx_out] += x;
+    } else {
+      complex x = val * vec_in[idx_in];
+      double *out = reinterpret_cast<double(&)[2]>(vec_out[idx_out]);
 #pragma omp atomic update
-    *i += x.imag();
-  }
+      out[0] += x.real();
+#pragma omp atomic update
+      out[1] += x.imag();
+    }
 #else
-  vec_out[idx_out] += val * vec_in[idx_in];
+    vec_out[idx_out] += val * vec_in[idx_in];
 #endif
+  }
 }
 
-template <typename coeff_t>
+template <bool hc, typename coeff_t>
 constexpr void fill_apply(arma::Col<coeff_t> const &vec_in,
                           arma::Col<coeff_t> &vec_out, int64_t idx_in,
                           int64_t idx_out, coeff_t val) {
-  fill_apply(vec_in.memptr(), vec_out.memptr(), idx_in, idx_out, val);
+  fill_apply<hc>(vec_in.memptr(), vec_out.memptr(), idx_in, idx_out, val);
 }
 
-template <typename coeff_t>
+template <bool hc, typename coeff_t>
 constexpr void fill_apply(arma::Mat<coeff_t> const &mat_in,
                           arma::Mat<coeff_t> &mat_out, int64_t idx_in,
                           int64_t idx_out, coeff_t val) {
   for (int i = 0; i < mat_in.n_cols; i++) {
-    fill_apply(mat_in.colptr(i), mat_out.colptr(i), idx_in, idx_out, val);
+    fill_apply<hc>(mat_in.colptr(i), mat_out.colptr(i), idx_in, idx_out, val);
   }
 }
 

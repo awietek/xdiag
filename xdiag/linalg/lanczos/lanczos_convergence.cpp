@@ -22,10 +22,10 @@ bool converged_eigenvalues(Tmatrix const &tmat, int n_eigenvalue,
     if (std::abs(tmat.betas()(size - 1)) < 1e-8)
       return true;
 
-    auto eigs = tmat.eigenvalues();
+    auto eigs = tmat.eigenvalues_lowest(n_eigenvalue);
     auto tmat_previous = tmat;
     tmat_previous.pop();
-    auto eigs_previous = tmat_previous.eigenvalues();
+    auto eigs_previous = tmat_previous.eigenvalues_lowest(n_eigenvalue);
 
     double residue =
         std::abs(eigs(n_eigenvalue - 1) - eigs_previous(n_eigenvalue - 1)) /

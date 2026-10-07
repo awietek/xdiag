@@ -23,7 +23,7 @@
 
 namespace xdiag::kernels {
 
-template <typename block_t, typename basis_t, typename mat_t>
+template <bool hc, typename block_t, typename basis_t, typename mat_t>
 void apply(OpSum const &ops, basis_t const &basis_in, mat_t const &mat_in,
            basis_t const &basis_out, mat_t &mat_out);
 

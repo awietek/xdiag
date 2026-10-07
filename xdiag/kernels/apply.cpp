@@ -35,11 +35,14 @@
 //     error here, never a silent fallback that re-resolves to the Block
 //     overload and recurses.
 //
-// Kernel — kernels::apply<block_t, basis_t, mat_t>(ops, basis_in, mat_in,
+// Kernel — kernels::apply<hc, block_t, basis_t, mat_t>(ops, basis_in, mat_in,
 //          basis_out, mat_out)
 //     Defined in kernels.cpp; only declared here. Each (block_t, basis_t)
 //     specialisation is compiled in its own translation unit (instantiation
-//     groups), keeping this file free of heavy template instantiation.
+//     groups), keeping this file free of heavy template instantiation. The
+//     bool hc selects the fill: false is the scatter fill (atomic under
+//     OpenMP) used by the public apply, true is the atomics-free gather fill
+//     used by kernels::apply_hermitian, see fill_functions.hpp.
 
 namespace xdiag {
 
@@ -47,7 +50,7 @@ namespace xdiag {
 // One body for every block type: the dispatch_basis overload supplies the basis
 // dispatch (the numerical kernel is selected by block_t in kernels.cpp). A
 // block type with no dispatch_basis overload is a compile error here.
-template <typename block_t, typename vec_t>
+template <bool hermitian, typename block_t, typename vec_t>
 static void apply_template(OpSum const &ops, block_t const &block_in,
                            vec_t const &vec_in, block_t const &block_out,
                            vec_t &vec_out) try {
@@ -58,7 +61,8 @@ static void apply_template(OpSum const &ops, block_t const &block_in,
     // Distributed blocks use a separate matrix-free, MPI-aware apply path
     // (kernels/blocks/distributed/<block>/kernels.cpp) that operates on a
     // single column. A multi-column block (e.g. a LOBPCG search space) is
-    // applied one column at a time.
+    // applied one column at a time. A Hermitian certificate is not used here:
+    // the distributed kernels have no gather fill and are applied as is.
     using coeff_t = typename vec_t::elem_type;
     if constexpr (std::is_same_v<vec_t, arma::Col<coeff_t>>) {
       kernels::apply_distributed(ops, block_in, vec_in, block_out, vec_out);
@@ -76,13 +80,16 @@ static void apply_template(OpSum const &ops, block_t const &block_in,
     kernels::dispatch_basis(
         block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
           // Kernel: definition is in kernels.cpp, instantiated per basis type.
-          kernels::apply<block_t>(ops, basis_in, vec_in, basis_out, vec_out);
+          // For a Hermitian ops the kernel may apply hc(ops) == ops via the
+          // atomics-free gather fill.
+          kernels::apply<hermitian, block_t>(ops, basis_in, vec_in, basis_out,
+                                             vec_out);
         });
   }
 }
 XDIAG_CATCH
 
-template <typename mat_t>
+template <bool hermitian, typename mat_t>
 static void apply_variant(OpSum const &ops, Block const &block_in,
                           mat_t const &vec_in, Block const &block_out,
                           mat_t &vec_out) try {
@@ -93,7 +100,7 @@ static void apply_variant(OpSum const &ops, Block const &block_in,
   utils::visit_same_type(
       block_in, block_out,
       [&](auto const &bin, auto const &bout) {
-        apply_template(OpSum(ops), bin, vec_in, bout, vec_out);
+        apply_template<hermitian>(OpSum(ops), bin, vec_in, bout, vec_out);
       },
       "Type mismatch of Block types");
 }
@@ -101,68 +108,96 @@ XDIAG_CATCH
 
 void apply(Op const &op, Block const &block_in, arma::vec const &vec_in,
            Block const &block_out, arma::vec &vec_out) try {
-  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(OpSum(op), block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 
 void apply(Op const &op, Block const &block_in, arma::cx_vec const &vec_in,
            Block const &block_out, arma::cx_vec &vec_out) try {
-  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(OpSum(op), block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 void apply(Op const &op, Block const &block_in, arma::mat const &vec_in,
            Block const &block_out, arma::mat &vec_out) try {
-  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(OpSum(op), block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 void apply(Op const &op, Block const &block_in, arma::cx_mat const &vec_in,
            Block const &block_out, arma::cx_mat &vec_out) try {
-  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(OpSum(op), block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 
 void apply(Monomial const &op, Block const &block_in, arma::vec const &vec_in,
            Block const &block_out, arma::vec &vec_out) try {
-  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(OpSum(op), block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 void apply(Monomial const &op, Block const &block_in,
            arma::cx_vec const &vec_in, Block const &block_out,
            arma::cx_vec &vec_out) try {
-  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(OpSum(op), block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 void apply(Monomial const &op, Block const &block_in, arma::mat const &vec_in,
            Block const &block_out, arma::mat &vec_out) try {
-  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(OpSum(op), block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 void apply(Monomial const &op, Block const &block_in,
            arma::cx_mat const &vec_in, Block const &block_out,
            arma::cx_mat &vec_out) try {
-  apply_variant(OpSum(op), block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(OpSum(op), block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 
 void apply(OpSum const &op, Block const &block_in, arma::vec const &vec_in,
            Block const &block_out, arma::vec &vec_out) try {
-  apply_variant(op, block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(op, block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 void apply(OpSum const &op, Block const &block_in, arma::cx_vec const &vec_in,
            Block const &block_out, arma::cx_vec &vec_out) try {
-  apply_variant(op, block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(op, block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 void apply(OpSum const &op, Block const &block_in, arma::mat const &vec_in,
            Block const &block_out, arma::mat &vec_out) try {
-  apply_variant(op, block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(op, block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 void apply(OpSum const &op, Block const &block_in, arma::cx_mat const &vec_in,
            Block const &block_out, arma::cx_mat &vec_out) try {
-  apply_variant(op, block_in, vec_in, block_out, vec_out);
+  apply_variant<false>(op, block_in, vec_in, block_out, vec_out);
 }
 XDIAG_CATCH
 
+namespace kernels {
+
+void apply_hermitian(OpSum const &ops, Block const &block_in,
+                     arma::vec const &vec_in, Block const &block_out,
+                     arma::vec &vec_out) try {
+  apply_variant<true>(ops, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply_hermitian(OpSum const &ops, Block const &block_in,
+                     arma::cx_vec const &vec_in, Block const &block_out,
+                     arma::cx_vec &vec_out) try {
+  apply_variant<true>(ops, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply_hermitian(OpSum const &ops, Block const &block_in,
+                     arma::mat const &vec_in, Block const &block_out,
+                     arma::mat &vec_out) try {
+  apply_variant<true>(ops, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+void apply_hermitian(OpSum const &ops, Block const &block_in,
+                     arma::cx_mat const &vec_in, Block const &block_out,
+                     arma::cx_mat &vec_out) try {
+  apply_variant<true>(ops, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+
+} // namespace kernels
 } // namespace xdiag

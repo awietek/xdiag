@@ -163,8 +163,9 @@ static bool same_terms(OpSum const &ops, OpSum const &permuted) {
 // type. The charge/characters carried by `irrep` itself are ignored and
 // recomputed from `ops`. Throws if `ops` has no well-defined sector under the
 // symmetry, naming the offending group element resp. the unconserved charge.
-Representation representation(OpSum const &ops, Representation const &irrep,
+Representation representation(OpSum const &ops_in, Representation const &irrep,
                               Algebra const &algebra, double tol) try {
+  OpSum ops = ops_in.plain();
   if (irrep.is_permutation()) {
     // `ops` transforms as a 1-D irrep iff every group element only rescales it.
     // The scalar lambda with permute(ops, g) == lambda * ops is the character

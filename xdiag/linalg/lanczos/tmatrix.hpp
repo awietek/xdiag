@@ -26,7 +26,8 @@ public:
   arma::mat mat() const;
 
   arma::vec eigenvalues() const;
-  arma::mat eigenvectors() const;
+  // the k lowest eigenvalues, ascending
+  arma::vec eigenvalues_lowest(int64_t k) const;
   std::pair<arma::vec, arma::mat> eigen() const;
 
   void print_log() const;

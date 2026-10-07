@@ -4,6 +4,9 @@
 
 #include "dot.hpp"
 
+#include <algorithm>
+#include <vector>
+
 #include <xdiag/utils/error.hpp>
 
 #ifdef XDIAG_DISTRIBUTED
@@ -13,6 +16,64 @@
 
 namespace xdiag::math {
 
+// Chunk length of dot_chunked. A compile-time constant independent of the
+// thread count and the vector length, so that chunk boundaries, the chunk sums
+// and their in-order reduction are identical for any number of threads.
+constexpr int64_t dot_chunk_size = 4096;
+
+// Number of independent accumulators in the chunk loop. Breaks the dependency
+// chain of a single accumulator (so the loop vectorizes without reassociation
+// flags) and fixes the summation pattern in the source.
+constexpr int64_t dot_nacc = 8;
+
+template <typename coeff_t>
+coeff_t dot_chunked(arma::Col<coeff_t> const &v,
+                    arma::Col<coeff_t> const &w) try {
+  if (v.n_rows != w.n_rows) {
+    XDIAG_THROW("vector size does not match");
+  }
+  int64_t n = v.n_rows;
+  int64_t nchunks = (n + dot_chunk_size - 1) / dot_chunk_size;
+  coeff_t const *vp = v.memptr();
+  coeff_t const *wp = w.memptr();
+  std::vector<coeff_t> chunk_sums(nchunks, coeff_t(0));
+
+  // Chunk sums: which thread computes a chunk does not affect its value.
+#ifdef _OPENMP
+#pragma omp parallel for schedule(static)
+#endif
+  for (int64_t c = 0; c < nchunks; ++c) {
+    int64_t begin = c * dot_chunk_size;
+    int64_t end = std::min(begin + dot_chunk_size, n);
+    coeff_t acc[dot_nacc] = {};
+    int64_t i = begin;
+    for (; i + dot_nacc <= end; i += dot_nacc) {
+      for (int64_t k = 0; k < dot_nacc; ++k) {
+        acc[k] += conj(vp[i + k]) * wp[i + k];
+      }
+    }
+    for (; i < end; ++i) {
+      acc[0] += conj(vp[i]) * wp[i];
+    }
+    coeff_t s = 0;
+    for (int64_t k = 0; k < dot_nacc; ++k) {
+      s += acc[k];
+    }
+    chunk_sums[c] = s;
+  }
+
+  // In-order reduction of the chunk sums (serial, never in arrival order).
+  coeff_t total = 0;
+  for (int64_t c = 0; c < nchunks; ++c) {
+    total += chunk_sums[c];
+  }
+  return total;
+}
+XDIAG_CATCH
+
+template double dot_chunked(arma::vec const &, arma::vec const &);
+template complex dot_chunked(arma::cx_vec const &, arma::cx_vec const &);
+
 double dot(Block const &block, arma::vec const &v, arma::vec const &w) try {
 #ifdef XDIAG_DISTRIBUTED
   if (isdistributed(block)) {
@@ -21,7 +82,7 @@ double dot(Block const &block, arma::vec const &v, arma::vec const &w) try {
 #else
   (void)block;
 #endif
-    return arma::dot(v, w);
+    return dot_chunked(v, w);
 #ifdef XDIAG_DISTRIBUTED
   }
 #endif
@@ -37,7 +98,7 @@ complex dot(Block const &block, arma::cx_vec const &v,
 #else
   (void)block;
 #endif
-    return arma::cdot(v, w);
+    return dot_chunked(v, w);
 #ifdef XDIAG_DISTRIBUTED
   }
 #endif

@@ -349,4 +349,35 @@ template void apply(CSRMatrix<int32_t, double> const &, arma::cx_mat const &,
 template void apply(CSRMatrix<int64_t, double> const &, arma::cx_mat const &,
                     arma::cx_mat &);
 
+namespace kernels {
+
+// The row-parallel CSR product writes each output element from exactly one
+// thread, so it is bitwise reproducible as is and simply forwarded.
+template <typename idx_t, typename coeff_t, typename vec_t>
+void apply_hermitian(CSRMatrix<idx_t, coeff_t> const &spmat,
+                     Block const &block_in, vec_t const &vec_in,
+                     Block const &block_out, vec_t &vec_out) try {
+  apply(spmat, block_in, vec_in, block_out, vec_out);
+}
+XDIAG_CATCH
+
+#define XDIAG_INST(IDX, COEFF, VEC)                                            \
+  template void apply_hermitian(CSRMatrix<IDX, COEFF> const &, Block const &,  \
+                                VEC const &, Block const &, VEC &);
+
+XDIAG_INST(int32_t, double, arma::vec)
+XDIAG_INST(int64_t, double, arma::vec)
+XDIAG_INST(int32_t, double, arma::cx_vec)
+XDIAG_INST(int64_t, double, arma::cx_vec)
+XDIAG_INST(int32_t, complex, arma::cx_vec)
+XDIAG_INST(int64_t, complex, arma::cx_vec)
+XDIAG_INST(int32_t, double, arma::mat)
+XDIAG_INST(int64_t, double, arma::mat)
+XDIAG_INST(int32_t, double, arma::cx_mat)
+XDIAG_INST(int64_t, double, arma::cx_mat)
+XDIAG_INST(int32_t, complex, arma::cx_mat)
+XDIAG_INST(int64_t, complex, arma::cx_mat)
+#undef XDIAG_INST
+
+} // namespace kernels
 } // namespace xdiag
