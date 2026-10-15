@@ -4,8 +4,10 @@
 
 #include <tests/catch.hpp>
 
+#include <limits>
 #include <random>
 
+#include <xdiag/bits/ctz.hpp>
 #include <xdiag/bits/extract_deposit.hpp>
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
@@ -165,4 +167,51 @@ TEST_CASE("bitops", "[bitops]") {
   Log("Testing bitops<uint64_t>");
   test_bitops<uint64_t>();
   Log.set_verbosity(0);
+}
+
+// trailing zeros by plain bit scanning (x != 0)
+template <typename bit_t> static int ctz_reference(bit_t x) {
+  int n = 0;
+  while (!((x >> n) & 1)) {
+    ++n;
+  }
+  return n;
+}
+
+// ctz (builtin, or the fallback on other compilers) and the SWAR fallback,
+// which is tested explicitly as gcc / clang never use it
+template <typename bit_t> void test_ctz(int (*swar_ctz)(bit_t)) {
+  constexpr int width = std::numeric_limits<bit_t>::digits;
+
+  // bit i alone, and bit i with all bits above set: the higher bits must not
+  // change the result
+  for (int i = 0; i < width; ++i) {
+    bit_t x = bit_t(1) << i;
+    bit_t y = ~bit_t(0) << i;
+    REQUIRE(ctz(x) == i);
+    REQUIRE(ctz(y) == i);
+    REQUIRE(swar_ctz(x) == i);
+    REQUIRE(swar_ctz(y) == i);
+  }
+
+  // random values with at least k trailing zeros, k running over all widths
+  std::mt19937_64 gen(42);
+  for (int k = 0; k < 1000; ++k) {
+    bit_t x = (bit_t)gen() << (k % width);
+    if (x == 0) {
+      continue;
+    }
+    REQUIRE(ctz(x) == ctz_reference(x));
+    REQUIRE(swar_ctz(x) == ctz_reference(x));
+  }
+
+  // the fallback is defined for zero and gives the full width
+  REQUIRE(swar_ctz(bit_t(0)) == width);
+}
+
+TEST_CASE("ctz", "[bitops]") {
+  Log("Testing ctz<uint32_t>");
+  test_ctz<uint32_t>(swar_ctz_32);
+  Log("Testing ctz<uint64_t>");
+  test_ctz<uint64_t>(swar_ctz_64);
 }

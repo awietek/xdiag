@@ -4,6 +4,8 @@
 
 #include "../../catch.hpp"
 
+#include <random>
+
 #include <xdiag/bits/bitarray.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/symmetries/action/site_permutation.hpp>
@@ -119,6 +121,35 @@ TEST_CASE("site_permutation", "[symmetries]") try {
     REQUIRE(to_uint64(sp.apply(1, bits_in)) == 0b0010);
     REQUIRE(to_uint64(sp.apply(2, bits_in)) == 0b0100);
     REQUIRE(to_uint64(sp.apply(3, bits_in)) == 0b1000);
+  }
+
+  // apply with native integers (only the occupied sites are moved): compare
+  // against the definition (bit at site i moves to site p[i]) and against the
+  // generic site-by-site Bitset path, including the zero state and the full
+  // 32 / 64 bit widths
+  {
+    std::mt19937_64 rng(42);
+    for (int64_t n : {2, 5, 18, 32, 64}) {
+      auto group = cyclic_group(n);
+      auto sp = SitePermutation(group);
+      uint64_t mask = (n == 64) ? ~uint64_t(0) : (uint64_t(1) << n) - 1;
+      for (int k = 0; k < 200; ++k) {
+        uint64_t state = (k == 0) ? 0 : (rng() & mask);
+        for (int64_t sym = 0; sym < group.size(); ++sym) {
+          int64_t const *p = group.ptr(sym);
+          uint64_t expected = 0;
+          for (int64_t i = 0; i < n; ++i) {
+            expected |= ((state >> i) & 1) << p[i];
+          }
+          REQUIRE(sp.apply(sym, state) == expected);
+          REQUIRE(to_uint64(sp.apply(sym, make_bitset<uint64_t, 1>(state))) ==
+                  expected);
+          if (n <= 32) {
+            REQUIRE(sp.apply(sym, (uint32_t)state) == (uint32_t)expected);
+          }
+        }
+      }
+    }
   }
 
   Log("done");

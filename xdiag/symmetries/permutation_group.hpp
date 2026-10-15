@@ -7,6 +7,7 @@
 #include <ostream>
 #include <string>
 #include <vector>
+#include <cassert>
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/symmetries/permutation.hpp>
@@ -32,7 +33,11 @@ public:
   int64_t nsites() const;
 
   Permutation operator[](int64_t sym) const;
-  int64_t const *ptr(int64_t sym) const; // pointer to sym-th column
+  inline int64_t const *ptr(int64_t sym) const {
+    assert((sym >= 0) && (sym < size()));
+    return permutations_.colptr(sym);
+  }
+
   int64_t inv(int64_t sym) const;
   int64_t multiply(int64_t s1, int64_t s2) const;
 

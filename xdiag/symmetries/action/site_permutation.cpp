@@ -4,11 +4,10 @@
 
 #include "site_permutation.hpp"
 
-#include <type_traits>
-
 #include <xdiag/bits/bitarray.hpp>
 #include <xdiag/bits/bitset.hpp>
 #include <xdiag/bits/get_set.hpp>
+#include <xdiag/bits/zero_one.hpp>
 
 namespace xdiag::symmetries {
 
@@ -28,40 +27,18 @@ bool SitePermutation::operator!=(SitePermutation const &rhs) const {
 
 template <typename bit_t>
 bit_t SitePermutation::apply(int64_t sym, bit_t const &bits) const {
-  bit_t bitsr;
-  if constexpr (std::is_same_v<bit_t, bits::BitsetDynamic>) {
-    bitsr = bits::BitsetDynamic(nsites_);
-  } else {
-    bitsr = bit_t{};
-  }
-  const int64_t *permutation = group_.ptr(sym);
+  int64_t const *permutation = group_.ptr(sym);
+  bit_t bitsr = bits::zero<bit_t>(nsites_);
   for (int64_t i = 0; i < nsites_; ++i) {
     bits::set(bitsr, permutation[i], bits::get(bits, i));
   }
   return bitsr;
 }
 
-template <typename bit_t, int nbits>
-bits::BitArray<bit_t, nbits>
-SitePermutation::apply(int64_t sym,
-                       bits::BitArray<bit_t, nbits> const &bits) const {
-  bits::BitArray<bit_t, nbits> bitsr;
-  if constexpr (std::is_same_v<bit_t, bits::BitsetDynamic>) {
-    bitsr = bits::BitArray<bit_t, nbits>(bit_t(nsites_ * nbits));
-  }
-  const int64_t *permutation = group_.ptr(sym);
-  for (int64_t i = 0; i < nsites_; ++i) {
-    bitsr.set(permutation[i], bits.get(i));
-  }
-  return bitsr;
-}
 using namespace bits;
-
 #define INSTANTIATE_APPLY(BIT_TYPE)                                            \
   template BIT_TYPE SitePermutation::apply(int64_t, BIT_TYPE const &) const;
 
-INSTANTIATE_APPLY(uint32_t);
-INSTANTIATE_APPLY(uint64_t);
 INSTANTIATE_APPLY(BitsetDynamic);
 INSTANTIATE_APPLY(BitsetStatic1);
 INSTANTIATE_APPLY(BitsetStatic2);
