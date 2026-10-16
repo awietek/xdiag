@@ -146,8 +146,8 @@ int64_t BasisElectronSymmetric<enumeration_t>::index(bit_t ups,
 }
 
 template <typename enumeration_t>
-int64_t BasisElectronSymmetric<enumeration_t>::index(
-    ProductState const &pstate) const {
+int64_t
+BasisElectronSymmetric<enumeration_t>::index(ProductState const &pstate) const {
   auto [ups, dns] = pair_from_pstate<bit_t>(pstate, nsites());
   return index(ups, dns);
 }
@@ -222,6 +222,28 @@ BasisElectronSymmetric<enumeration_t>::end() const {
 }
 
 template <typename enumeration_t>
+BasisSymmetric<enumeration_t> const &
+BasisElectronSymmetric<enumeration_t>::basis_up() const {
+  return basis_up_;
+}
+
+template <typename enumeration_t>
+BasisOnTheFly<enumeration_t> const &
+BasisElectronSymmetric<enumeration_t>::basis_dn() const {
+  return basis_dn_;
+}
+
+template <typename enumeration_t>
+PermutationGroup const &BasisElectronSymmetric<enumeration_t>::group() const {
+  return action_.group();
+}
+
+template <typename enumeration_t>
+Vector const &BasisElectronSymmetric<enumeration_t>::characters() const {
+  return characters_;
+}
+
+template <typename enumeration_t>
 bool BasisElectronSymmetric<enumeration_t>::operator==(
     BasisElectronSymmetric<enumeration_t> const &rhs) const {
   return (basis_up_ == rhs.basis_up_) && (basis_dn_ == rhs.basis_dn_) &&
@@ -237,8 +259,7 @@ bool BasisElectronSymmetric<enumeration_t>::operator!=(
 template <typename enumeration_t>
 BasisElectronSymmetricIterator<enumeration_t>::BasisElectronSymmetricIterator(
     BasisElectronSymmetric<enumeration_t> const &basis, bool begin)
-    : basis_(&basis), up_idx_(begin ? 0 : basis.basis_up().size()),
-      dn_idx_(0) {
+    : basis_(&basis), up_idx_(begin ? 0 : basis.basis_up().size()), dn_idx_(0) {
   if ((basis.basis_up().size() > 0) && begin) {
     dnss_ = basis.dns_for_ups_rep(0);
     // skip leading up representatives whose dn block is empty

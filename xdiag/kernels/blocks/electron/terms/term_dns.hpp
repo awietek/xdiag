@@ -4,13 +4,14 @@
 
 #pragma once
 
+#include <cassert>
 #include <cstdint>
 #include <utility>
+#include <vector>
+
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-
-#include <vector>
 
 #include <xdiag/basis/basis_electron.hpp>
 #include <xdiag/basis/basis_electron_symmetric.hpp>
@@ -150,10 +151,12 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
         for (bit_t dns_in : dnss_in) {
           if (non_zero_term(dns_in)) {
             auto [dns_flip, coeff] = term_action(dns_in);
-            int64_t idx_dns_flip =
-                basis_out.index_dns(dns_flip, idx_up, dnss_out);
-            if (idx_dns_flip >=
-                0) { // -1: tJ double occupancy (never for electron)
+
+            // checks double occupancy (tJ-only, trivial for Hubbard)
+            if (basis_out.allowed(ups, dns_flip)) {
+              int64_t idx_dns_flip =
+                  basis_out.index_dns(dns_flip, idx_up, dnss_out);
+              assert(idx_dns_flip >= 0); // trivial stabilizer -> norm 1
               XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_flip,
                          nup_neg ? -coeff : coeff);
             }
@@ -166,15 +169,19 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
         for (bit_t dns_in : dnss_in) {
           if (non_zero_term(dns_in)) {
             auto [dns_flip, coeff] = term_action(dns_in);
-            auto [idx_dns_flip, fermi_dn, sym] =
-                basis_out.index_dns_fermi_sym(dns_flip, syms, dnss_out);
-            if (idx_dns_flip >= 0) {
-              bool fermi_up = basis_in.fermi_bool_ups(sym, ups);
-              coeff_t val = coeff * characters(sym) * norms_out[idx_dns_flip] /
-                            norms_in[dn_idx];
-              bool neg = (fermi_up ^ fermi_dn) ^ nup_neg;
-              XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_flip,
-                         neg ? -val : val);
+
+            // checks double occupancy (tJ-only, trivial for Hubbard)
+            if (basis_out.allowed(ups, dns_flip)) {
+              auto [idx_dns_flip, fermi_dn, sym] =
+                  basis_out.index_dns_fermi_sym(dns_flip, syms, dnss_out);
+              if (idx_dns_flip >= 0) { // -1: zero-norm dn representative
+                bool fermi_up = basis_in.fermi_bool_ups(sym, ups);
+                coeff_t val = coeff * characters(sym) *
+                              norms_out[idx_dns_flip] / norms_in[dn_idx];
+                bool neg = (fermi_up ^ fermi_dn) ^ nup_neg;
+                XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_flip,
+                           neg ? -val : val);
+              }
             }
           }
           ++dn_idx;

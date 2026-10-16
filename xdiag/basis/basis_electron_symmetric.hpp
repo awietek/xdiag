@@ -100,14 +100,21 @@ public:
   // The up representatives (BasisSymmetric) and dn enumeration (BasisOnTheFly).
   // Source of n_rep_ups (size()), rep_ups (operator[]), index_ups / rep_sym
   // (representative_data) and index_dns (index) -- reached through directly.
-  BasisSymmetric<enumeration_t> const &basis_up() const { return basis_up_; }
-  BasisOnTheFly<enumeration_t> const &basis_dn() const { return basis_dn_; }
+  BasisSymmetric<enumeration_t> const &basis_up() const;
+  BasisOnTheFly<enumeration_t> const &basis_dn() const;
 
-  PermutationGroup const &group() const { return action_.group(); }
-  Vector const &characters() const { return characters_; }
+  PermutationGroup const &group() const;
+  Vector const &characters() const;
 
   bool operator==(BasisElectronSymmetric<enumeration_t> const &rhs) const;
   bool operator!=(BasisElectronSymmetric<enumeration_t> const &rhs) const;
+
+  // no constraint like no-double-occupancy for tJ -> always allowed
+  inline bool allowed(bit_t ups, bit_t dns) const {
+    (void)ups;
+    (void)dns;
+    return true;
+  }
 
   // ---- coupled data used by the symmetric matrix kernels ----------------
 
@@ -149,11 +156,11 @@ public:
   }
 
   // Block index of `dns` in up representative `idx_up`'s dn block. For electron
-  // the trivial-stabilizer block is the full dn enumeration, so this is the O(1)
-  // basis_dn().index() and the idx_up / dnss arguments are unused; they exist so
-  // the symmetric kernels are shared verbatim with BasistJSymmetric, whose block
-  // is up-rep-specific. Electron states are never absent here (no double
-  // occupancy constraint), so the result is always >= 0.
+  // the trivial-stabilizer block is the full dn enumeration, so this is the
+  // O(1) basis_dn().index() and the idx_up / dnss arguments are unused; they
+  // exist so the symmetric kernels are shared verbatim with BasistJSymmetric,
+  // whose block is up-rep-specific. Electron states are never absent here (no
+  // double occupancy constraint), so the result is always >= 0.
   inline int64_t index_dns(bit_t dns, int64_t idx_up,
                            gsl::span<bit_t const> dnss) const {
     (void)idx_up;
@@ -162,8 +169,8 @@ public:
   }
 
   // dn index and fermi sign of `dns` mapped by the single symmetry `sym`
-  // (the trivial up-stabilizer path: dn block is the full enumeration). idx_up /
-  // dnss are unused for electron (see index_dns).
+  // (the trivial up-stabilizer path: dn block is the full enumeration). idx_up
+  // / dnss are unused for electron (see index_dns).
   inline std::pair<int64_t, bool>
   index_dns_fermi(bit_t dns, int64_t sym, int64_t idx_up,
                   gsl::span<bit_t const> dnss) const {

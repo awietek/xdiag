@@ -4,13 +4,13 @@
 
 #pragma once
 
+#include <cassert>
 #include <cstdint>
 #include <utility>
+#include <vector>
 #ifdef _OPENMP
 #include <omp.h>
 #endif
-
-#include <vector>
 
 #include <xdiag/basis/basis_electron.hpp>
 #include <xdiag/basis/basis_electron_symmetric.hpp>
@@ -83,6 +83,7 @@ void term_ups(basis_t const &basis_in, basis_t const &basis_out,
   using bit_t = typename basis_t::bit_t;
 
   auto const &basis_up_in = basis_in.basis_up();
+  auto const &basis_up_out = basis_out.basis_up();
 
   // conjugation necessary for definition of projected states
   arma::Col<coeff_t> characters =
@@ -104,7 +105,7 @@ void term_ups(basis_t const &basis_in, basis_t const &basis_out,
       }
       auto [ups_out, coeff] = term_action(ups_in);
 
-      auto [raw, s0, nrm] = basis_out.basis_up().representative_data(ups_out);
+      auto [raw, s0, nrm] = basis_up_out.representative_data(ups_out);
       (void)nrm;
       int64_t idx_up_out = raw - 1;
       int64_t off_in = basis_in.ups_offset(idx_up_in);
@@ -119,10 +120,12 @@ void term_ups(basis_t const &basis_in, basis_t const &basis_out,
         auto dnss_out = basis_out.dns_for_ups_rep(idx_up_out);
         int64_t idx_dn = 0;
         for (bit_t dns : dnss_in) {
-          auto [idx_dns_out, fermi_dn] =
-              basis_out.index_dns_fermi(dns, s0, idx_up_out, dnss_out);
-          if (idx_dns_out >=
-              0) { // -1: tJ double occupancy (never for electron)
+	  
+          // checks double occupancy (tJ-only, trivial for Hubbard)
+          if (basis_out.allowed(ups_out, dns)) {
+            auto [idx_dns_out, fermi_dn] =
+                basis_out.index_dns_fermi(dns, s0, idx_up_out, dnss_out);
+            assert(idx_dns_out >= 0); // trivial stabilizer -> norm 1
             coeff_t val = prefac / norms_in[idx_dn];
             XDIAG_FILL(off_in + idx_dn, off_out + idx_dns_out,
                        (fermi_up ^ fermi_dn) ? -val : val);
@@ -136,14 +139,18 @@ void term_ups(basis_t const &basis_in, basis_t const &basis_out,
         auto norms_out = basis_out.norms_for_ups_rep(idx_up_out);
         int64_t idx_dn = 0;
         for (bit_t dns : dnss_in) {
-          auto [idx_dns_out, fermi_dn, sym] =
-              basis_out.index_dns_fermi_sym(dns, syms, dnss_out);
-          if (idx_dns_out >= 0) {
-            bool fermi_up = basis_out.fermi_bool_ups(sym, ups_out);
-            coeff_t val = coeff * characters(sym) * norms_out[idx_dns_out] /
-                          norms_in[idx_dn];
-            XDIAG_FILL(off_in + idx_dn, off_out + idx_dns_out,
-                       (fermi_up ^ fermi_dn) ? -val : val);
+	  
+          // checks double occupancy (tJ-only, trivial for Hubbard)
+          if (basis_out.allowed(ups_out, dns)) {
+            auto [idx_dns_out, fermi_dn, sym] =
+                basis_out.index_dns_fermi_sym(dns, syms, dnss_out);
+            if (idx_dns_out >= 0) { // -1: zero-norm dn representative
+              bool fermi_up = basis_out.fermi_bool_ups(sym, ups_out);
+              coeff_t val = coeff * characters(sym) * norms_out[idx_dns_out] /
+                            norms_in[idx_dn];
+              XDIAG_FILL(off_in + idx_dn, off_out + idx_dns_out,
+                         (fermi_up ^ fermi_dn) ? -val : val);
+            }
           }
           ++idx_dn;
         }

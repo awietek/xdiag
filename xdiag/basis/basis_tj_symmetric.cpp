@@ -295,6 +295,29 @@ BasistJSymmetric<enumeration_t>::end() const {
 }
 
 template <typename enumeration_t>
+BasisSymmetric<enumeration_t> const &
+BasistJSymmetric<enumeration_t>::basis_up() const {
+  return basis_up_;
+}
+
+template <typename enumeration_t>
+BasisOnTheFly<enumeration_t> const &
+BasistJSymmetric<enumeration_t>::basis_dn() const {
+  return basis_dn_;
+}
+
+template <typename enumeration_t>
+PermutationGroup const &BasistJSymmetric<enumeration_t>::group() const {
+  return action_.group();
+}
+
+template <typename enumeration_t>
+Vector const &BasistJSymmetric<enumeration_t>::characters() const {
+  return characters_;
+}
+  
+
+template <typename enumeration_t>
 bool BasistJSymmetric<enumeration_t>::operator==(
     BasistJSymmetric<enumeration_t> const &rhs) const {
   return (basis_up_ == rhs.basis_up_) && (basis_dn_ == rhs.basis_dn_) &&
