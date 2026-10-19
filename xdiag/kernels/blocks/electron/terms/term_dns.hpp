@@ -16,7 +16,6 @@
 #include <xdiag/basis/basis_electron.hpp>
 #include <xdiag/basis/basis_electron_symmetric.hpp>
 #include <xdiag/bits/popcount.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/utils/thread_range.hpp>
 
 namespace xdiag::kernels::electron {
@@ -75,7 +74,7 @@ void term_dns(basis::BasisElectron<enumeration_t> const &basis_in,
           if (non_zero_term(dns_in)) {
             auto [dns_out, coeff] = term_action(dns_in);
             int64_t idx_dn_out = basis_dn_out.index(dns_out);
-            XDIAG_FILL(base_in + idx_dn_in, base_out + idx_dn_out, -coeff);
+            fill(base_in + idx_dn_in, base_out + idx_dn_out, -coeff);
           }
           ++idx_dn_in;
         }
@@ -85,7 +84,7 @@ void term_dns(basis::BasisElectron<enumeration_t> const &basis_in,
           if (non_zero_term(dns_in)) {
             auto [dns_out, coeff] = term_action(dns_in);
             int64_t idx_dn_out = basis_dn_out.index(dns_out);
-            XDIAG_FILL(base_in + idx_dn_in, base_out + idx_dn_out, coeff);
+            fill(base_in + idx_dn_in, base_out + idx_dn_out, coeff);
           }
           ++idx_dn_in;
         }
@@ -157,7 +156,7 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
               int64_t idx_dns_flip =
                   basis_out.index_dns(dns_flip, idx_up, dnss_out);
               assert(idx_dns_flip >= 0); // trivial stabilizer -> norm 1
-              XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_flip,
+              fill(off_in + dn_idx, off_out + idx_dns_flip,
                          nup_neg ? -coeff : coeff);
             }
           }
@@ -179,7 +178,7 @@ void term_dns(basis_t const &basis_in, basis_t const &basis_out,
                 coeff_t val = coeff * characters(sym) *
                               norms_out[idx_dns_flip] / norms_in[dn_idx];
                 bool neg = (fermi_up ^ fermi_dn) ^ nup_neg;
-                XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_flip,
+                fill(off_in + dn_idx, off_out + idx_dns_flip,
                            neg ? -val : val);
               }
             }

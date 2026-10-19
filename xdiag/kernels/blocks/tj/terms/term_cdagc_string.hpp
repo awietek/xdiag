@@ -15,7 +15,6 @@
 #include <xdiag/basis/basis_tj.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/bits/zero_one.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/kernels/terms/cdagc_string.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/monomial.hpp>
@@ -109,7 +108,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
             bit_t dnc_out = basis::tj_compress_dns(ups_mid, dns_mid, nsites);
             int64_t idx_out = base_out + basis_out.index_dncs(ups_mid, dnc_out);
             bool neg = up_total ^ dn_fermi;
-            XDIAG_FILL(base_in + idx_dnc, idx_out, neg ? -cf : cf);
+            fill(base_in + idx_dnc, idx_out, neg ? -cf : cf);
           }
         }
         ++idx_dnc;

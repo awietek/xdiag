@@ -11,7 +11,6 @@
 
 #include <xdiag/basis/basis_onthefly.hpp>
 #include <xdiag/basis/basis_symmetric.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/kernels/terms/term_offdiag.hpp>
 #include <xdiag/utils/likely.hpp>
 #include <xdiag/utils/thread_range.hpp>
@@ -67,7 +66,7 @@ void term_offdiag_fermionic(
         if (XDIAG_LIKELY(raw_idx_out)) {
           double inv_norm_in = basis_in.inv_norm(idx_in);
           coeff_t val = coeff * characters(sym) * norm_out * inv_norm_in;
-          XDIAG_FILL(idx_in, raw_idx_out - 1, fermi ? -val : val);
+          fill(idx_in, raw_idx_out - 1, fermi ? -val : val);
         }
       }
     }

@@ -15,7 +15,6 @@
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/bits/zero_one.hpp>
 #include <xdiag/kernels/blocks/tj/terms/recompress.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/utils/error.hpp>
@@ -79,7 +78,7 @@ void term_cdn(Coeff const &c, Op const &op,
         if (bits::nonzero(dnc & mask)) { // dn present at s
           bool sign = (bool)(bits::popcount(dnc & fermimask) & 1) ^ nup_neg;
           int64_t idx_out = base_out + basis_out.index_dncs(ups, dnc ^ mask);
-          XDIAG_FILL(base_in + idx_dnc, idx_out, sign ? -cf : cf);
+          fill(base_in + idx_dnc, idx_out, sign ? -cf : cf);
         }
         ++idx_dnc;
       }
@@ -130,7 +129,7 @@ void term_cdagdn(Coeff const &c, Op const &op,
         if (bits::iszero(dnc & mask)) { // s free of a dn
           bool sign = (bool)(bits::popcount(dnc & fermimask) & 1) ^ nup_neg;
           int64_t idx_out = base_out + basis_out.index_dncs(ups, dnc | mask);
-          XDIAG_FILL(base_in + idx_dnc, idx_out, sign ? -cf : cf);
+          fill(base_in + idx_dnc, idx_out, sign ? -cf : cf);
         }
         ++idx_dnc;
       }
@@ -183,7 +182,7 @@ void term_cup(Coeff const &c, Op const &op,
       for (bit_t dnc : basis_in.basis_dncs(ups)) {
         bit_t dnc_out = insert_zero_slot(dnc, r_out, nsites);
         int64_t idx_out = base_out + basis_out.index_dncs(ups_out, dnc_out);
-        XDIAG_FILL(base_in + idx_dnc, idx_out, coeff);
+        fill(base_in + idx_dnc, idx_out, coeff);
         ++idx_dnc;
       }
     }
@@ -237,7 +236,7 @@ void term_cdagup(Coeff const &c, Op const &op,
         if (!bits::get(dnc, r_in)) { // s free of a dn -> result not doubly occ.
           bit_t dnc_out = remove_slot(dnc, r_in, nsites);
           int64_t idx_out = base_out + basis_out.index_dncs(ups_out, dnc_out);
-          XDIAG_FILL(base_in + idx_dnc, idx_out, coeff);
+          fill(base_in + idx_dnc, idx_out, coeff);
         }
         ++idx_dnc;
       }

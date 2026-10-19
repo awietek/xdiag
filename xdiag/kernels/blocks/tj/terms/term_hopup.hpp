@@ -16,7 +16,6 @@
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/bits/zero_one.hpp>
 #include <xdiag/kernels/blocks/tj/terms/recompress.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/utils/error.hpp>
@@ -99,7 +98,7 @@ void term_hopup(Coeff const &c, Op const &op,
           bit_t dnc_out =
               insert_zero_slot(remove_slot(dnc, rd_in, nsites), rs_out, nsites);
           int64_t idx_out = base_out + basis_out.index_dncs(ups_out, dnc_out);
-          XDIAG_FILL(base_in + idx_dnc, idx_out, coeff);
+          fill(base_in + idx_dnc, idx_out, coeff);
         }
         ++idx_dnc;
       }

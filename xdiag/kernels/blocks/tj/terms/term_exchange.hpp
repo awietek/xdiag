@@ -16,7 +16,6 @@
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/bits/zero_one.hpp>
 #include <xdiag/kernels/blocks/tj/terms/recompress.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/utils/error.hpp>
@@ -109,7 +108,7 @@ void term_exchange(Coeff const &c, Op const &op,
           bits::set(dnc_out, ra_out);
           int64_t idx_out = base_out + basis_out.index_dncs(ups_out, dnc_out);
           bool neg = !(up_fermi ^ dn_fermi); // overall (-1) from spin-flip order
-          XDIAG_FILL(base_in + idx_dnc, idx_out, neg ? -Jhalf : Jhalf);
+          fill(base_in + idx_dnc, idx_out, neg ? -Jhalf : Jhalf);
         }
         ++idx_dnc;
       }

@@ -11,7 +11,6 @@
 #endif
 
 #include <xdiag/basis/basis_electron_symmetric.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/utils/thread_range.hpp>
 
 namespace xdiag::kernels::electron {
@@ -59,7 +58,7 @@ void term_offdiag(basis_t const &basis_in, basis_t const &basis_out,
             basis_out.representative_data_fermi(ups_out, dns_out);
         if (idx_out >= 0) {
           coeff_t val = c * characters(sym) * norm_out / norms_in[idx_dn];
-          XDIAG_FILL(off_in + idx_dn, idx_out, fermi ? -val : val);
+          fill(off_in + idx_dn, idx_out, fermi ? -val : val);
         }
         ++idx_dn;
       }

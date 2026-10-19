@@ -8,7 +8,6 @@
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/kernels/blocks/dispatch_bases.hpp>
 #include <xdiag/kernels/blocks/distributed/apply_distributed.hpp>
-#include <xdiag/kernels/kernels.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
@@ -24,10 +23,21 @@
 //
 // apply_compiled unwraps the Block variant (visit_same_type), apply_block
 // resolves the concrete basis types (dispatch_basis) and calls the kernel
-// kernels::apply<true, block_t> (kernels_generic.hpp, instantiated per basis in
+// kernels::apply<block_t> (kernels.hpp, instantiated per basis in
 // kernels/blocks/<block>/kernels.cpp). The kernels enumerate the rows
 // (block_out) and write each output element from one thread (gather fill), so
 // the result is bitwise reproducible for any number of threads.
+
+namespace xdiag::kernels {
+
+// The basis-level kernel: defined in kernels.hpp and explicitly instantiated
+// per basis type in kernels/blocks/<block>/kernels.cpp, so this file never
+// compiles the term kernels itself.
+template <typename block_t, typename basis_t, typename mat_t>
+void apply(OpSum const &ops, basis_t const &rows, mat_t const &vec_in,
+           basis_t const &cols, mat_t &vec_out);
+
+} // namespace xdiag::kernels
 
 namespace xdiag {
 
@@ -64,7 +74,7 @@ static void apply_block(OpSum const &ops, block_t const &block_in,
     // that into vec_out = ops * vec_in.
     kernels::dispatch_basis(
         block_out, block_in, [&](auto const &rows, auto const &cols) {
-          kernels::apply<true, block_t>(ops, rows, vec_in, cols, vec_out);
+          kernels::apply<block_t>(ops, rows, vec_in, cols, vec_out);
         });
   }
 }

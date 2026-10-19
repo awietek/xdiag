@@ -59,8 +59,7 @@ XDIAG_API arma::Mat<coeff_t> to_dense(COOMatrix<idx_t, coeff_t> const &coo_mat);
 //
 // Phase 2 — coo_matrix_fill: populates the caller's row/col/data. nnz_capacity
 // is the length the caller allocated (the phase-1 result); the routine throws
-// rather than overflow if the recomputed count exceeds it (a guard against the
-// OpenMP thread count changing between the two calls). i0 is the index base
+// rather than overflow if the count exceeds it. i0 is the index base
 // (0 or 1). No pointer is retained past the call. coeff_t in {double, complex};
 // idx_t in {int32_t, int64_t}. Distributed blocks throw.
 template <typename coeff_t>

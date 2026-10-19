@@ -13,7 +13,6 @@
 #include <xdiag/basis/basis_onthefly.hpp>
 #include <xdiag/basis/basis_sublattice.hpp>
 #include <xdiag/basis/basis_symmetric.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/utils/likely.hpp>
 #include <xdiag/utils/thread_range.hpp>
 
@@ -41,7 +40,7 @@ void term_offdiag(basis::BasisOnTheFly<enumeration_t> const &basis_in,
       if (non_zero_term(spins_in)) {
         auto [spins_out, coeff] = term_action(spins_in);
         int64_t idx_out = basis_out.index(spins_out);
-        XDIAG_FILL(idx_in, idx_out, coeff);
+        fill(idx_in, idx_out, coeff);
       }
     }
 #ifdef _OPENMP
@@ -65,7 +64,7 @@ void term_offdiag_sym(basis_t const &basis_in, basis_t const &basis_out,
   // conjugation necessary for definition of projected states
   arma::Col<coeff_t> characters =
       arma::conj(basis_out.characters().template as<arma::Col<coeff_t>>());
-  
+
 #ifdef _OPENMP
 #pragma omp parallel
   {
@@ -84,7 +83,7 @@ void term_offdiag_sym(basis_t const &basis_in, basis_t const &basis_out,
         if (XDIAG_LIKELY(raw_idx_out)) { // raw_idx_out == 0 means 0-norm
           double inv_norm_in = basis_in.inv_norm(idx_in);
           coeff_t val = coeff * characters(sym) * norm_out * inv_norm_in;
-          XDIAG_FILL(idx_in, raw_idx_out - 1, val);
+          fill(idx_in, raw_idx_out - 1, val);
         }
       }
     }

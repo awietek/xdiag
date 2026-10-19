@@ -24,9 +24,6 @@ void check_valid_sparse_matrix(OpSum const &ops, Block const &block_in,
         "Invalid zero index i0. Must be either 0 or 1, but got i0={}", i0));
   }
 
-  // Check if ops and blocks are compatible
-  check_blocks_match(ops, block_in, block_out);
-
   // Check if real matrix can be created
   if constexpr (isreal<coeff_t>()) {
     if (!isreal(ops)) {

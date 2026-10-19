@@ -9,16 +9,16 @@
 #include <xdiag/combinatorics/combinations/combinations.hpp>
 #include <xdiag/combinatorics/combinations/lin_table.hpp>
 #include <xdiag/combinatorics/subsets/subsets.hpp>
-#include <xdiag/math/complex.hpp>
 #include <xdiag/kernels/blocks/fermion/matrix_generic.hpp>
-#include <xdiag/kernels/kernels_generic.hpp>
+#include <xdiag/kernels/kernels.hpp>
+#include <xdiag/math/complex.hpp>
 
 namespace xdiag::kernels {
 
 // The only place fermion::matrix_generic (and the fermion term headers) is
 // pulled in. A change to a fermion term recompiles only this source's groups.
-template <> struct matrix_kernel<Fermion> {
-  template <typename coeff_t, typename basis_t, typename fill_f>
+template <typename coeff_t> struct matrix_kernel<Fermion, coeff_t> {
+  template <typename basis_t, typename fill_f>
   static void call(OpSum const &ops, basis_t const &basis_in,
                    basis_t const &basis_out, fill_f &&fill) {
     fermion::matrix_generic<coeff_t>(ops, basis_in, basis_out, fill);

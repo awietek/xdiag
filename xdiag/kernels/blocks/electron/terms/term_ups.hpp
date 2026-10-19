@@ -14,7 +14,6 @@
 
 #include <xdiag/basis/basis_electron.hpp>
 #include <xdiag/basis/basis_electron_symmetric.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/utils/thread_range.hpp>
 
 namespace xdiag::kernels::electron {
@@ -57,7 +56,7 @@ void term_ups(basis::BasisElectron<enumeration_t> const &basis_in,
         int64_t idx_in = idx_up_in * size_dn_in;
         int64_t idx_out = idx_up_out * size_dn_out;
         for (int64_t k = 0; k < size_dn_in; ++k) {
-          XDIAG_FILL(idx_in + k, idx_out + k, coeff);
+          fill(idx_in + k, idx_out + k, coeff);
         }
       }
     }
@@ -127,7 +126,7 @@ void term_ups(basis_t const &basis_in, basis_t const &basis_out,
                 basis_out.index_dns_fermi(dns, s0, idx_up_out, dnss_out);
             assert(idx_dns_out >= 0); // trivial stabilizer -> norm 1
             coeff_t val = prefac / norms_in[idx_dn];
-            XDIAG_FILL(off_in + idx_dn, off_out + idx_dns_out,
+            fill(off_in + idx_dn, off_out + idx_dns_out,
                        (fermi_up ^ fermi_dn) ? -val : val);
           }
           ++idx_dn;
@@ -148,7 +147,7 @@ void term_ups(basis_t const &basis_in, basis_t const &basis_out,
               bool fermi_up = basis_out.fermi_bool_ups(sym, ups_out);
               coeff_t val = coeff * characters(sym) * norms_out[idx_dns_out] /
                             norms_in[idx_dn];
-              XDIAG_FILL(off_in + idx_dn, off_out + idx_dns_out,
+              fill(off_in + idx_dn, off_out + idx_dns_out,
                          (fermi_up ^ fermi_dn) ? -val : val);
             }
           }

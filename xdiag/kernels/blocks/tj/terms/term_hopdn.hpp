@@ -15,7 +15,6 @@
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/bits/zero_one.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/utils/error.hpp>
@@ -83,7 +82,7 @@ void term_hopdn(Coeff const &c, Op const &op,
           bit_t dnc_out = dnc ^ flipmask;
           bool fermi = bits::popcount(dnc & fermimask) & 1;
           int64_t idx_dnc_out = basis_out.index_dncs(ups, dnc_out);
-          XDIAG_FILL(base + idx_dnc_in, base + idx_dnc_out, fermi ? t : -t);
+          fill(base + idx_dnc_in, base + idx_dnc_out, fermi ? t : -t);
         }
         ++idx_dnc_in;
       }

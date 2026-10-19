@@ -13,7 +13,6 @@
 #include <xdiag/bits/bitmask.hpp>
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/utils/thread_range.hpp>
 
 namespace xdiag::kernels::tj {
@@ -67,7 +66,7 @@ void term_diag(basis::BasistJ<enumeration_t> const &basis_in,
       auto value = build(ups); // per-ups evaluator: dnc -> coeff (ranks hoisted)
       int64_t idx = basis_in.ups_offset(idx_up);
       for (bit_t dnc : basis_in.basis_dncs(ups)) {
-        XDIAG_FILL(idx, idx, value(dnc));
+        fill(idx, idx, value(dnc));
         ++idx;
       }
     }

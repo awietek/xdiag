@@ -8,14 +8,11 @@
 #include <type_traits>
 #include <utility>
 
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/valid.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
@@ -61,15 +58,9 @@ void matrix_generic_symmetric(OpSum const &ops, basis_t const &basis_in,
                               basis_t const &basis_out, fill_f fill) try {
   using bit_t = typename basis_t::bit_t;
 
-  operators::check_valid(ops);
-  // No Exchange kernel for the symmetric basis: let it expand to
-  // (normal-ordered) Cdag/C strings handled by the electron string kernel.
-  auto algebra =
-      algebra::tj_implementation_algebra(basis_in.nsites(),
-                                         /*exchange_as_kernel=*/false);
-  auto ops_compiled = normal_order(ops.plain(), algebra);
-
-  for (auto const &[c, monomial] : ops_compiled) {
+  // ops is compiled (see kernels/compile.hpp): normal-ordered with this
+  // block's implementation algebra
+  for (auto const &[c, monomial] : ops) {
     if (monomial.size() != 1) {
       electron::term_cdagc_string<coeff_t>(c, monomial, basis_in, basis_out,
                                            fill);
@@ -143,11 +134,9 @@ void matrix_generic(OpSum const &ops, basis_t const &basis_in,
     matrix_generic_symmetric<coeff_t>(ops, basis_in, basis_out, fill);
   } else {
 
-    operators::check_valid(ops);
-    auto algebra = algebra::tj_implementation_algebra(basis_in.nsites());
-    auto ops_compiled = normal_order(ops.plain(), algebra);
-
-    for (auto const &[c, monomial] : ops_compiled) {
+    // ops is compiled (see kernels/compile.hpp): normal-ordered with this
+    // block's implementation algebra
+    for (auto const &[c, monomial] : ops) {
       // Products of elementary operators are handled by the general Cdag/C
       // string kernel; size-1 named operators dispatch to their dedicated fast
       // kernels.

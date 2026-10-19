@@ -16,7 +16,6 @@
 #include <xdiag/basis/basis_electron.hpp>
 #include <xdiag/basis/basis_electron_symmetric.hpp>
 #include <xdiag/bits/popcount.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/kernels/terms/cdagc_string.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/monomial.hpp>
@@ -135,7 +134,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
       for (int64_t idx_dn = 0; idx_dn < size_dn_in; ++idx_dn) {
         if (dn_out[idx_dn] >= 0) {
           bool neg = up_total ^ (bool)dn_neg[idx_dn];
-          XDIAG_FILL(base_in + idx_dn, base_out + dn_out[idx_dn],
+          fill(base_in + idx_dn, base_out + dn_out[idx_dn],
                      neg ? -cf : cf);
         }
       }
@@ -238,7 +237,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
               assert(idx_dns_out >= 0); // trivial stabilizer -> norm 1
               coeff_t val = prefac / norms_in[dn_idx];
               bool neg = up_fermi ^ dn_fermi ^ fermi_up ^ fermi_dn;
-              XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_out,
+              fill(off_in + dn_idx, off_out + idx_dns_out,
                          neg ? -val : val);
             }
           }
@@ -262,7 +261,7 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
                 coeff_t val = cf * characters(sym) * norms_out[idx_dns_out] /
                               norms_in[dn_idx];
                 bool neg = up_fermi ^ dn_fermi ^ fermi_up ^ fermi_dn;
-                XDIAG_FILL(off_in + dn_idx, off_out + idx_dns_out,
+                fill(off_in + dn_idx, off_out + idx_dns_out,
                            neg ? -val : val);
               }
             }

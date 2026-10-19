@@ -4,39 +4,29 @@
 
 #pragma once
 
-#include <xdiag/armadillo.hpp>
-#include <xdiag/operators/opsum.hpp>
+#include <cstdint>
+#include <vector>
+
+#include <xdiag/kernels/compile.hpp>
 
 namespace xdiag {
 
-// Builds the CSR-style arrays (ptr of length ndim+1, idx, data) for a block.
-//   transpose == false -> CSR: ndim = nrows, groups are rows,    idx = columns
-//   transpose == true  -> CSC: ndim = ncols, groups are columns, idx = rows
-// This is the single place the (expensive) per-basis-type dispatch is
-// instantiated; csr_matrix.cpp and csc_matrix.cpp both call it so the visitor
-// over all concrete basis types is compiled only once rather than in each.
-template <typename idx_t, typename coeff_t, typename block_t>
-void build_csr_arrays(OpSum const &ops, block_t const &block_in,
-                      block_t const &block_out, idx_t ndim, idx_t i0,
-                      bool transpose, arma::Col<idx_t> &ptr,
-                      arma::Col<idx_t> &idx, arma::Col<coeff_t> &data);
+// The two passes of building a compressed sparse matrix from a compiled
+// operator (see kernels/compile.hpp). The entries are grouped by row (CSR) or,
+// with transpose, by column (CSC).
+//
+// Pass 1: the number of nonzeros of every group (length nrows, or ncols with
+// transpose).
+template <typename coeff_t>
+std::vector<int64_t> sparse_counts(kernels::CompiledOpSum const &ops,
+                                   bool transpose);
 
-// Two-phase CSR build into caller-owned storage (used by the Julia wrapper,
-// which allocates rowptr/col/data itself to avoid a copy). Phase 1 returns the
-// per-row nonzero counts (length size(block_out)); the caller sums them to get
-// nnz and allocates. Phase 2 fills the caller's arrays, building rowptr from the
-// same counts and sorting each row by column. Both go through the (single)
-// dispatch_basis instantiation here, shared with build_csr_arrays.
-template <typename coeff_t, typename block_t>
-std::vector<int64_t> build_csr_nnz(OpSum const &ops, block_t const &block_in,
-                                   block_t const &block_out,
-                                   bool transpose = false);
-
-template <typename idx_t, typename coeff_t, typename block_t>
-void build_csr_fill(OpSum const &ops, block_t const &block_in,
-                    block_t const &block_out,
-                    std::vector<int64_t> const &n_elements_in_row,
-                    idx_t *rowptr, idx_t *col, coeff_t *data, idx_t i0,
-                    bool transpose = false);
+// Pass 2: from the counts, fills ptr (ngroups + 1 entries) and idx / data (nnz
+// entries each; idx is the column for CSR and the row for CSC, shifted by i0)
+// and sorts every group by idx.
+template <typename idx_t, typename coeff_t>
+void sparse_fill(kernels::CompiledOpSum const &ops,
+                 std::vector<int64_t> const &counts, idx_t i0, bool transpose,
+                 idx_t *ptr, idx_t *idx, coeff_t *data);
 
 } // namespace xdiag

@@ -10,7 +10,6 @@
 #endif
 
 #include <xdiag/basis/basis_onthefly.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/kernels/terms/term_offdiag.hpp>
 #include <xdiag/utils/thread_range.hpp>
 
@@ -45,7 +44,7 @@ void term_diag(basis_t const &basis_in, basis_t const &basis_out,
 #endif
       for (auto it = begin; it != end; ++it, ++idx) {
         auto coeff = term_coeff(*it);
-        XDIAG_FILL(idx, idx, coeff);
+        fill(idx, idx, coeff);
       }
 #ifdef _OPENMP
     }

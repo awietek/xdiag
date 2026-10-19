@@ -15,7 +15,6 @@
 #include <xdiag/basis/basis_electron.hpp>
 #include <xdiag/basis/basis_electron_symmetric.hpp>
 #include <xdiag/kernels/blocks/electron/terms/term_offdiag.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/utils/thread_range.hpp>
 
 namespace xdiag::kernels::electron {
@@ -57,7 +56,7 @@ void term_diag(basis::BasisElectron<enumeration_t> const &basis_in,
       int64_t idx = idx_up * size_dn;
       for (bit_t dns : basis_dn) {
         coeff_t c = apply(ups, dns);
-        XDIAG_FILL(idx, idx, c);
+        fill(idx, idx, c);
         ++idx;
       }
     }
@@ -111,7 +110,7 @@ void term_diag(basis_t const &basis_in, basis_t const &basis_out, apply_f apply,
       int64_t idx = basis_in.ups_offset(idx_ups);
       for (bit_t dns : basis_in.dns_for_ups_rep(idx_ups)) {
         coeff_t c = apply(ups, dns);
-        XDIAG_FILL(idx, idx, c);
+        fill(idx, idx, c);
         ++idx;
       }
     }
