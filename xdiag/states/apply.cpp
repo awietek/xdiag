@@ -56,8 +56,6 @@ void apply(OpSum const &ops, State const &v, State &w) try {
     w = State();
   } else {
 
-    check_blocks_match(ops, v.block(), w.block());
-
     if ((v.ncols() == 1) && (w.ncols() == 1)) {
       if (isreal(ops)) {
         if (isreal(v) && isreal(w)) {

@@ -25,10 +25,11 @@ run_exp_sym_v(op_t const &H, Block const &block, arma::Col<coeff_t> &v,
               coeff_t tau, double precision, double shift, bool normalize,
               int64_t max_iterations, double deflation_tol) {
   int64_t iter = 1;
-  auto mult = [&iter, &H, &block](arma::Col<coeff_t> const &v,
-                                  arma::Col<coeff_t> &w) {
+  auto const &H_compiled = kernels::compile(H, block, block);
+  auto mult = [&iter, &H_compiled](arma::Col<coeff_t> const &v,
+                                   arma::Col<coeff_t> &w) {
     auto ta = rightnow();
-    kernels::apply_hermitian(H, block, v, block, w);
+    kernels::apply(H_compiled, v, w);
     Log(2, "Lanczos iteration {}", iter);
     timing(ta, rightnow(), "MVM", 1);
     ++iter;

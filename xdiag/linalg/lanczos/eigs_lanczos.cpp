@@ -29,9 +29,10 @@ static void run_eigs_lanczos(op_t const &ops, Block const &block,
                              int64_t neigvals, int64_t max_iterations,
                              double deflation_tol, State &eigenvectors) {
   int64_t iter = 1;
+  auto const &ops_compiled = kernels::compile(ops, block, block);
   auto mult = [&](arma::Col<coeff_t> const &v, arma::Col<coeff_t> &w) {
     auto ta = rightnow();
-    kernels::apply_hermitian(ops, block, v, block, w);
+    kernels::apply(ops_compiled, v, w);
     Log(1, "Lanczos iteration {}", iter);
     timing(ta, rightnow(), "MVM", 1);
     ++iter;

@@ -42,9 +42,10 @@ static EigsLobpcgResult run_eigs_lobpcg(op_t const &ops, Block const &block,
     X = X0.matrixC(false);
   }
 
-  auto multiplyA = [&ops, &block](arma::Mat<coeff_t> const &V,
-                                  arma::Mat<coeff_t> &W) {
-    kernels::apply_hermitian(ops, block, V, block, W);
+  auto const &ops_compiled = kernels::compile(ops, block, block);
+  auto multiplyA = [&ops_compiled](arma::Mat<coeff_t> const &V,
+                                   arma::Mat<coeff_t> &W) {
+    kernels::apply(ops_compiled, V, W);
   };
   auto dot = [&block](arma::Mat<coeff_t> const &V,
                       arma::Mat<coeff_t> const &W) {

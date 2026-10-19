@@ -27,9 +27,9 @@ Algebra spin_algebra(int64_t nsites) {
   a.name = "spin-1/2";
   a.nsites = nsites;
   a.d = 2;
-  a.allowed_types = {"Exchange",        "ExchangeAsym", "Id",   "S+",
-                     "S-",              "ScalarChirality", "SdotS", "Sx",
-                     "Sy",              "Sz",           "SzSz", "TotalSz"};
+  a.allowed_types = {
+      "Exchange", "ExchangeAsym", "Id", "S+", "S-",   "ScalarChirality",
+      "SdotS",    "Sx",           "Sy", "Sz", "SzSz", "TotalSz"};
   a.expand = spin_expand;
   a.simplify = spin_simplify;
   return a;
@@ -40,11 +40,25 @@ Algebra matrix_algebra(int64_t nsites, int64_t d) {
   a.name = "matrix";
   a.nsites = nsites;
   a.d = d;
-  a.allowed_types = {"A",      "Adag",  "Exchange", "ExchangeAsym",
-                     "Hop",    "HopAsym", "HubbardU", "Id",
-                     "Matrix", "N",     "S+",       "S-",
-                     "ScalarChirality", "SdotS", "Sx", "Sy",
-                     "Sz",     "SzSz",  "TotalN"};
+  a.allowed_types = {"A",
+                     "Adag",
+                     "Exchange",
+                     "ExchangeAsym",
+                     "Hop",
+                     "HopAsym",
+                     "HubbardU",
+                     "Id",
+                     "Matrix",
+                     "N",
+                     "S+",
+                     "S-",
+                     "ScalarChirality",
+                     "SdotS",
+                     "Sx",
+                     "Sy",
+                     "Sz",
+                     "SzSz",
+                     "TotalN"};
   // Nothing is kept named: every operator is converted to an explicit Matrix.
   a.expand = boson_expand;
   a.simplify = matrix_simplify;
@@ -77,15 +91,14 @@ Algebra electron_algebra(int64_t nsites) {
   a.nsites = nsites;
   a.d = 4;
   a.fermionic_types = {"Cdagup", "Cup", "Cdagdn", "Cdn"};
-  a.allowed_types = {"Cdagdn",   "Cdagup", "Cdn",      "Cup",
-                     "Exchange", "ExchangeAsym", "Hop",  "HopAsym",
-                     "Hopdn",    "HopdnAsym", "Hopup",   "HopupAsym",
-                     "HubbardU", "Id",     "Ndn",      "NdnNdn",
-                     "NdnNup",   "Ntot",   "NtotNtot", "Nup",
-                     "NupNdn",   "NupNup", "Nupdn",    "NupdnNupdn",
-                     "S+",       "S-",     "SdotS",    "Sx",
-                     "Sy",       "Sz",     "SzSz",     "TotalN",
-                     "TotalNup", "TotalNdn", "TotalSz"};
+  a.allowed_types = {
+      "Cdagdn",       "Cdagup",    "Cdn",      "Cup",        "Exchange",
+      "ExchangeAsym", "Hop",       "HopAsym",  "Hopdn",      "HopdnAsym",
+      "Hopup",        "HopupAsym", "HubbardU", "Id",         "Ndn",
+      "NdnNdn",       "NdnNup",    "Ntot",     "NtotNtot",   "Nup",
+      "NupNdn",       "NupNup",    "Nupdn",    "NupdnNupdn", "S+",
+      "S-",           "SdotS",     "Sx",       "Sy",         "Sz",
+      "SzSz",         "TotalN",    "TotalNup", "TotalNdn",   "TotalSz"};
   a.expand = electron_expand;
   a.simplify = electron_simplify_symmetry;
   return a;
@@ -94,9 +107,9 @@ Algebra electron_algebra(int64_t nsites) {
 Algebra electron_implementation_algebra(int64_t nsites) {
   Algebra a = electron_algebra(nsites);
   a.name = "electron_implementation";
-  a.kept_named = {"Cdagup", "Cup",        "Cdagdn",   "Cdn",    "Hopup",
-                  "Hopdn",  "HopupAsym",  "HopdnAsym", "Nup",   "Ndn",
-                  "Nupdn",  "NupdnNupdn", "NtotNtot",  "NupNdn", "NupNup",
+  a.kept_named = {"Cdagup", "Cup",        "Cdagdn",    "Cdn",     "Hopup",
+                  "Hopdn",  "HopupAsym",  "HopdnAsym", "Nup",     "Ndn",
+                  "Nupdn",  "NupdnNupdn", "NtotNtot",  "NupNdn",  "NupNup",
                   "NdnNdn", "NdnNup",     "SzSz",      "HubbardU"};
   a.simplify = electron_simplify; // creation-major
   return a;
@@ -121,15 +134,13 @@ Algebra tj_algebra(int64_t nsites) {
   a.nsites = nsites;
   a.d = 3;
   a.fermionic_types = {"Cdagup", "Cup", "Cdagdn", "Cdn"};
-  a.allowed_types = {"Cdagdn",   "Cdagup", "Cdn",      "Cup",
-                     "Exchange", "ExchangeAsym", "Hop",  "HopAsym",
-                     "Hopdn",    "HopdnAsym", "Hopup",   "HopupAsym",
-                     "Id",       "Ndn",    "NdnNdn",   "NdnNup",
-                     "Ntot",     "NtotNtot", "Nup",    "NupNdn",
-                     "NupNup",   "S+",     "S-",       "SdotS",
-                     "SzSz",     "Sx",     "Sy",       "Sz",
-                     "TotalN",   "TotalNup", "TotalNdn", "TotalSz",
-                     "tJSdotS",  "tJSzSz"};
+  a.allowed_types = {
+      "Cdagdn",   "Cdagup",  "Cdn",     "Cup",       "Exchange", "ExchangeAsym",
+      "Hop",      "HopAsym", "Hopdn",   "HopdnAsym", "Hopup",    "HopupAsym",
+      "Id",       "Ndn",     "NdnNdn",  "NdnNup",    "Ntot",     "NtotNtot",
+      "Nup",      "NupNdn",  "NupNup",  "S+",        "S-",       "SdotS",
+      "SzSz",     "Sx",      "Sy",      "Sz",        "TotalN",   "TotalNup",
+      "TotalNdn", "TotalSz", "tJSdotS", "tJSzSz"};
   a.expand = tj_expand;
   a.simplify = tj_simplify_symmetry;
   return a;
@@ -165,13 +176,14 @@ Algebra spinhalf_implementation_algebra(int64_t nsites) {
   a.name = "spinhalf_implementation";
   a.nsites = nsites;
   a.d = 2;
-  a.allowed_types = {"Exchange", "ExchangeAsym", "Id", "Matrix", "S+", "S-",
-                     "ScalarChirality", "SdotS", "Sx", "Sy", "Sz", "SzSz",
-                     "TotalSz"};
+  a.allowed_types = {
+      "Exchange",        "ExchangeAsym", "Id", "Matrix", "S+", "S-",
+      "ScalarChirality", "SdotS",        "Sx", "Sy",     "Sz", "SzSz",
+      "TotalSz"};
   // Named operators with a dedicated spin-1/2 kernel; the rest are converted to
   // local Matrix operators.
-  a.kept_named = {"Exchange", "ExchangeAsym", "S+",  "S-",
-                  "ScalarChirality", "Sz",    "SzSz"};
+  a.kept_named = {"Exchange",        "ExchangeAsym", "S+",  "S-",
+                  "ScalarChirality", "Sz",           "SzSz"};
   a.expand = spinhalf_expand;
   a.simplify = matrix_simplify;
   return a;
@@ -202,7 +214,11 @@ Algebra implementation_algebra(Electron const &block) try {
 XDIAG_CATCH
 
 Algebra implementation_algebra(tJ const &block) try {
-  return tj_implementation_algebra(block.nsites());
+  // The symmetric basis has no Exchange kernel: there Exchange expands into
+  // Cdag/C strings for the electron string kernel (see tj/matrix_generic.hpp).
+  bool symmetric = block.irreps().group("SitePermutation").has_value();
+  return tj_implementation_algebra(block.nsites(),
+                                   /*exchange_as_kernel=*/!symmetric);
 }
 XDIAG_CATCH
 
