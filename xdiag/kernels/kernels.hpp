@@ -20,7 +20,7 @@
 // matrix_kernel<Block> specialization, the ONLY place that pulls in that
 // block's matrix_generic and term headers.
 //
-// Both kernels take a compiled ops, i.e. trans of the operator (see
+// Both kernels take a compiled ops, i.e. transpose of the operator (see
 // compile.hpp), and run it from the rows (the output basis of the operator) to
 // the columns.
 // The term kernels split their input states, the rows, over the threads, so
@@ -32,7 +32,7 @@ namespace xdiag::kernels {
 // template is intentionally undefined; each block source specializes it.
 template <typename block_t, typename coeff_t> struct matrix_kernel;
 
-// The fill of the matrix-vector product. The kernels run trans(ops), so for each
+// The fill of the matrix-vector product. The kernels run transpose(ops), so for each
 // row they enumerate they report val = ops(row, col), and this gathers
 // vec_out[row] += ops(row, col) * vec_in[col]. Every row is written by exactly
 // one thread, in a fixed order: no atomics, and the result is bitwise

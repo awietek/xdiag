@@ -79,7 +79,7 @@ Matrix Matrix::hc() const {
 }
 
 // Plain transpose. For complex matrices arma::trans conjugates, so use .st().
-Matrix Matrix::trans() const {
+Matrix Matrix::transpose() const {
   if (isreal()) {
     return Matrix(arma::mat(as<arma::mat>().t()));
   } else {
@@ -286,7 +286,7 @@ bool isreal(Matrix const &m) { return m.isreal(); }
 arma::mat real(Matrix const &m) { return m.real(); }
 arma::mat imag(Matrix const &m) { return m.imag(); }
 Matrix hc(Matrix const &m) { return m.hc(); }
-Matrix trans(Matrix const &m) { return m.trans(); }
+Matrix transpose(Matrix const &m) { return m.transpose(); }
 Matrix conj(Matrix const &m) { return m.conj(); }
 
 bool isapprox(Matrix const &a, Matrix const &b, double rtol, double atol) {

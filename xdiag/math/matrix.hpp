@@ -60,7 +60,7 @@ public:
   arma::mat real() const;
   arma::mat imag() const; // zero matrix for real Matrices
   Matrix hc() const;      // conjugate transpose
-  Matrix trans() const;   // transpose, without conjugation
+  Matrix transpose() const; // transpose, without conjugation
   Matrix conj() const;    // element-wise complex conjugate
   Matrix to_real(double tol = 1e-12)
       const; // narrows to arma::mat; throws if any |imag| > tol
@@ -75,7 +75,7 @@ bool isreal(Matrix const &m);
 arma::mat real(Matrix const &m);
 arma::mat imag(Matrix const &m);
 Matrix hc(Matrix const &m);
-Matrix trans(Matrix const &m);
+Matrix transpose(Matrix const &m);
 Matrix conj(Matrix const &m);
 bool isapprox(Matrix const &a, Matrix const &b, double rtol = 1e-12,
               double atol = 1e-12);

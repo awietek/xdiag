@@ -168,8 +168,8 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
   auto const &basis_up_in = basis_in.basis_up();
   auto const &basis_up_out = basis_out.basis_up();
 
-  // The projected states use conj(chi); the kernels run trans(ops), which gives
-  // the same matrix with the characters unconjugated (see compile.hpp)
+  // The projected states use conj(chi); the kernels run transpose(ops), which
+  // gives the same matrix with the characters unconjugated (see compile.hpp)
   arma::Col<coeff_t> characters =
       basis_out.characters().template as<arma::Col<coeff_t>>();
 

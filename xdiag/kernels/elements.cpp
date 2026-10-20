@@ -31,7 +31,7 @@ void elements(CompiledOpSum const &ops, fill_t<coeff_t> const &fill) try {
                       "Hilbert space is distributed across MPI ranks. Use "
                       "apply(...) instead.");
         } else {
-          // ops is the compiled trans(ops): the kernels run it from the rows
+          // ops is the compiled transpose(ops): the kernels run it from the rows
           // (block_out) to the columns (block_in), see compile.hpp
           dispatch_basis(bout, bin, [&](auto const &rows, auto const &cols) {
             elements<block_t, coeff_t>(ops.ops, rows, cols, fill);

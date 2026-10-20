@@ -20,7 +20,7 @@ CompiledOpSum compile(OpSum const &ops, Block const &block_in,
     return {ops, block_in, block_out};
   }
   algebra::Algebra alg = algebra::implementation_algebra(block_in);
-  return {algebra::normal_order(trans(ops).plain(), alg), block_in, block_out};
+  return {algebra::normal_order(transpose(ops).plain(), alg), block_in, block_out};
 }
 XDIAG_CATCH
 

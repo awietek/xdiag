@@ -23,16 +23,18 @@ XDIAG_API OpSum adjoint(Monomial const &mono);
 XDIAG_API OpSum adjoint(OpSum const &ops);
 
 // Transpose and complex conjugate of the operator's matrix in the Fock basis.
-// These are the two primitives; hermitian conjugation is hc = conj(trans(.)):
+// These are the two primitives; hermitian conjugation is hc = conj(transpose(.)).
 //
-//   trans(A * B) = trans(B) * trans(A)   trans(c * A) = c * trans(A)
-//   conj(A * B)  = conj(A) * conj(B)     conj(c * A)  = conj(c) * conj(A)
+//   transpose(A * B) = transpose(B) * transpose(A)
+//   transpose(c * A) = c * transpose(A)
+//   conj(A * B)      = conj(A) * conj(B)
+//   conj(c * A)      = conj(c) * conj(A)
 //
 // Like hc, each returns an OpSum since a phase may appear (e.g. conj(Sy) = -Sy).
 // Throws if the Op type is unknown (not in the operator registry).
-XDIAG_API OpSum trans(Op const &op);
-XDIAG_API OpSum trans(Monomial const &mono);
-XDIAG_API OpSum trans(OpSum const &ops);
+XDIAG_API OpSum transpose(Op const &op);
+XDIAG_API OpSum transpose(Monomial const &mono);
+XDIAG_API OpSum transpose(OpSum const &ops);
 XDIAG_API OpSum conj(Op const &op);
 XDIAG_API OpSum conj(Monomial const &mono);
 XDIAG_API OpSum conj(OpSum const &ops);

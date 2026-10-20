@@ -41,8 +41,8 @@ void term_offdiag_fermionic(
   using coeff_t =
       typename std::invoke_result_t<decltype(term_action), bit_t>::second_type;
 
-  // The projected states use conj(chi); the kernels run trans(ops), which gives
-  // the same matrix with the characters unconjugated (see compile.hpp)
+  // The projected states use conj(chi); the kernels run transpose(ops), which
+  // gives the same matrix with the characters unconjugated (see compile.hpp)
   arma::Col<coeff_t> characters =
       basis_out.characters().template as<arma::Col<coeff_t>>();
 
