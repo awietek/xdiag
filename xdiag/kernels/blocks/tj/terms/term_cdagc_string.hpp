@@ -8,9 +8,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include <xdiag/basis/basis_tj.hpp>
 #include <xdiag/bits/popcount.hpp>
@@ -77,46 +74,38 @@ void term_cdagc_string(Coeff const &c, Monomial const &mono,
 
   auto const &basis_up = basis_in.basis_up();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up] =
-        utils::thread_range(basis_up, num_thread, omp_get_num_threads());
-#else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
-      bit_t ups = *it_up;
-      if (!up_str.non_zero(ups)) {
-        continue;
-      }
-      // up sub-string action + cross sign, hoisted out of the dn loop
-      auto [ups_mid, up_total] = up_str.action(ups);
-      if (cross_when_odd_nup && (bits::popcount(ups) & 1)) {
-        up_total = !up_total;
-      }
-      int64_t base_in = basis_in.ups_offset(idx_up);
-      int64_t base_out = basis_out.ups_offset(basis_out.index_up(ups_mid));
+  utils::for_each_thread_range(
+      basis_up, [&](auto begin_up, auto end_up, int64_t idx_up) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
+          bit_t ups = *it_up;
+          if (!up_str.non_zero(ups)) {
+            continue;
+          }
+          // up sub-string action + cross sign, hoisted out of the dn loop
+          auto [ups_mid, up_total] = up_str.action(ups);
+          if (cross_when_odd_nup && (bits::popcount(ups) & 1)) {
+            up_total = !up_total;
+          }
+          int64_t base_in = basis_in.ups_offset(idx_up);
+          int64_t base_out = basis_out.ups_offset(basis_out.index_up(ups_mid));
 
-      int64_t idx_dnc = 0;
-      for (bit_t dnc : basis_in.basis_dncs(ups)) {
-        bit_t dns = basis::tj_decompress_dns(ups, dnc, nsites);
-        if (dn_str.non_zero(dns)) {
-          auto [dns_mid, dn_fermi] = dn_str.action(dns);
-          if (bits::iszero(ups_mid & dns_mid)) { // no double occupancy
-            bit_t dnc_out = basis::tj_compress_dns(ups_mid, dns_mid, nsites);
-            int64_t idx_out = base_out + basis_out.index_dncs(ups_mid, dnc_out);
-            bool neg = up_total ^ dn_fermi;
-            fill(base_in + idx_dnc, idx_out, neg ? -cf : cf);
+          int64_t idx_dnc = 0;
+          for (bit_t dnc : basis_in.basis_dncs(ups)) {
+            bit_t dns = basis::tj_decompress_dns(ups, dnc, nsites);
+            if (dn_str.non_zero(dns)) {
+              auto [dns_mid, dn_fermi] = dn_str.action(dns);
+              if (bits::iszero(ups_mid & dns_mid)) { // no double occupancy
+                bit_t dnc_out = basis::tj_compress_dns(ups_mid, dns_mid, nsites);
+                int64_t idx_out =
+                    base_out + basis_out.index_dncs(ups_mid, dnc_out);
+                bool neg = up_total ^ dn_fermi;
+                fill(base_in + idx_dnc, idx_out, neg ? -cf : cf);
+              }
+            }
+            ++idx_dnc;
           }
         }
-        ++idx_dnc;
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+      });
 }
 XDIAG_CATCH
 

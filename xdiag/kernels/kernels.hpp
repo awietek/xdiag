@@ -20,8 +20,9 @@
 // matrix_kernel<Block> specialization, the ONLY place that pulls in that
 // block's matrix_generic and term headers.
 //
-// Both kernels take a compiled ops, i.e. hc of the operator (see compile.hpp),
-// and run it from the rows (the output basis of the operator) to the columns.
+// Both kernels take a compiled ops, i.e. trans of the operator (see
+// compile.hpp), and run it from the rows (the output basis of the operator) to
+// the columns.
 // The term kernels split their input states, the rows, over the threads, so
 // anything written per row needs no synchronisation.
 
@@ -31,8 +32,8 @@ namespace xdiag::kernels {
 // template is intentionally undefined; each block source specializes it.
 template <typename block_t, typename coeff_t> struct matrix_kernel;
 
-// The fill of the matrix-vector product. The kernels report
-// val = conj(ops(row, col)) for each row they enumerate, so this gathers
+// The fill of the matrix-vector product. The kernels run trans(ops), so for each
+// row they enumerate they report val = ops(row, col), and this gathers
 // vec_out[row] += ops(row, col) * vec_in[col]. Every row is written by exactly
 // one thread, in a fixed order: no atomics, and the result is bitwise
 // identical for any number of threads.
@@ -40,16 +41,15 @@ template <typename coeff_t>
 inline void fill_apply(arma::Col<coeff_t> const &vec_in,
                        arma::Col<coeff_t> &vec_out, int64_t row, int64_t col,
                        coeff_t val) {
-  vec_out[row] += conj(val) * vec_in[col];
+  vec_out[row] += val * vec_in[col];
 }
 
 template <typename coeff_t>
 inline void fill_apply(arma::Mat<coeff_t> const &mat_in,
                        arma::Mat<coeff_t> &mat_out, int64_t row, int64_t col,
                        coeff_t val) {
-  coeff_t v = conj(val);
   for (arma::uword i = 0; i < mat_in.n_cols; ++i) {
-    mat_out.at(row, i) += v * mat_in.at(col, i);
+    mat_out.at(row, i) += val * mat_in.at(col, i);
   }
 }
 
@@ -67,14 +67,14 @@ void apply(OpSum const &ops, basis_t const &rows, mat_t const &vec_in,
 XDIAG_CATCH
 
 // Calls fill(row, col, ops(row, col)) for every nonzero matrix element. The
-// kernels report the elements of hc(ops), conj(ops(row, col)). One
+// kernels report the elements of trans(ops), ops(row, col). One
 // instantiation per coeff_t serves every builder (dense, CSR, CSC, COO).
 template <typename block_t, typename coeff_t, typename basis_t>
 void elements(OpSum const &ops, basis_t const &rows, basis_t const &cols,
               fill_t<coeff_t> const &fill) try {
   matrix_kernel<block_t, coeff_t>::call(
       ops, rows, cols, [&](int64_t row, int64_t col, coeff_t val) {
-        fill(row, col, conj(val));
+        fill(row, col, val);
       });
 }
 XDIAG_CATCH

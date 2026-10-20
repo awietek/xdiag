@@ -11,9 +11,30 @@ namespace xdiag {
 
 // Hermitian conjugate of a single Op. Returns an OpSum (rather than an Op)
 // because hc may introduce a phase (e.g. hc(ExchangeAsym) = -ExchangeAsym).
-// Throws if the Op type has no defined hermitian-conjugate partner.
+// Throws if the Op type is unknown (not in the operator registry).
 XDIAG_API OpSum hc(Op const &op);
 XDIAG_API OpSum hc(Monomial const &mono);
 XDIAG_API OpSum hc(OpSum const &ops);
+
+// adjoint is the name of the same involution in the *-algebra language (it is
+// the name used for it in Julia). It returns exactly hc(.).
+XDIAG_API OpSum adjoint(Op const &op);
+XDIAG_API OpSum adjoint(Monomial const &mono);
+XDIAG_API OpSum adjoint(OpSum const &ops);
+
+// Transpose and complex conjugate of the operator's matrix in the Fock basis.
+// These are the two primitives; hermitian conjugation is hc = conj(trans(.)):
+//
+//   trans(A * B) = trans(B) * trans(A)   trans(c * A) = c * trans(A)
+//   conj(A * B)  = conj(A) * conj(B)     conj(c * A)  = conj(c) * conj(A)
+//
+// Like hc, each returns an OpSum since a phase may appear (e.g. conj(Sy) = -Sy).
+// Throws if the Op type is unknown (not in the operator registry).
+XDIAG_API OpSum trans(Op const &op);
+XDIAG_API OpSum trans(Monomial const &mono);
+XDIAG_API OpSum trans(OpSum const &ops);
+XDIAG_API OpSum conj(Op const &op);
+XDIAG_API OpSum conj(Monomial const &mono);
+XDIAG_API OpSum conj(OpSum const &ops);
 
 } // namespace xdiag

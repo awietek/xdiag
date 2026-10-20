@@ -6,9 +6,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include <xdiag/basis/basis_tj.hpp>
 #include <xdiag/bits/bitmask.hpp>
@@ -48,48 +45,39 @@ void term_hopdn(Coeff const &c, Op const &op,
 
   auto const &basis_up = basis_in.basis_up();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up] =
-        utils::thread_range(basis_up, num_thread, omp_get_num_threads());
-#else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
-      bit_t ups = *it_up;
-      if (bits::get(ups, s1) || bits::get(ups, s2)) {
-        continue; // a hop site is up-occupied -> no dn contribution
-      }
+  utils::for_each_thread_range(
+      basis_up, [&](auto begin_up, auto end_up, int64_t idx_up) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
+          bit_t ups = *it_up;
+          if (bits::get(ups, s1) || bits::get(ups, s2)) {
+            continue; // a hop site is up-occupied -> no dn contribution
+          }
 
-      // --- per-ups setup (hoisted): physical sites -> compressed ranks ---
-      bit_t notups = (~ups) & sitesmask;
-      int64_t r1 = bits::popcount(notups & bits::bitmask<bit_t>(nsites, s1));
-      int64_t r2 = bits::popcount(notups & bits::bitmask<bit_t>(nsites, s2));
-      int64_t rl = std::min(r1, r2);
-      int64_t rh = std::max(r1, r2);
-      bit_t flipmask = bits::zero<bit_t>(nsites);
-      bits::set(flipmask, r1);
-      bits::set(flipmask, r2);
-      bit_t fermimask = bits::bitmask<bit_t>(nsites, rh - rl - 1) << (rl + 1);
+          // --- per-ups setup (hoisted): physical sites -> compressed ranks ---
+          bit_t notups = (~ups) & sitesmask;
+          int64_t r1 = bits::popcount(notups & bits::bitmask<bit_t>(nsites, s1));
+          int64_t r2 = bits::popcount(notups & bits::bitmask<bit_t>(nsites, s2));
+          int64_t rl = std::min(r1, r2);
+          int64_t rh = std::max(r1, r2);
+          bit_t flipmask = bits::zero<bit_t>(nsites);
+          bits::set(flipmask, r1);
+          bits::set(flipmask, r2);
+          bit_t fermimask = bits::bitmask<bit_t>(nsites, rh - rl - 1) << (rl + 1);
 
-      // --- inner loop: spinless-fermion hop on the compressed dn string ---
-      int64_t base = basis_in.ups_offset(idx_up); // ups unchanged by a dn hop
-      int64_t idx_dnc_in = 0;
-      for (bit_t dnc : basis_in.basis_dncs(ups)) {
-        if (bits::popcount(dnc & flipmask) & 1) { // exactly one end occupied
-          bit_t dnc_out = dnc ^ flipmask;
-          bool fermi = bits::popcount(dnc & fermimask) & 1;
-          int64_t idx_dnc_out = basis_out.index_dncs(ups, dnc_out);
-          fill(base + idx_dnc_in, base + idx_dnc_out, fermi ? t : -t);
+          // --- inner loop: spinless-fermion hop on the compressed dn string ---
+          int64_t base = basis_in.ups_offset(idx_up); // ups unchanged by a dn hop
+          int64_t idx_dnc_in = 0;
+          for (bit_t dnc : basis_in.basis_dncs(ups)) {
+            if (bits::popcount(dnc & flipmask) & 1) { // exactly one end occupied
+              bit_t dnc_out = dnc ^ flipmask;
+              bool fermi = bits::popcount(dnc & fermimask) & 1;
+              int64_t idx_dnc_out = basis_out.index_dncs(ups, dnc_out);
+              fill(base + idx_dnc_in, base + idx_dnc_out, fermi ? t : -t);
+            }
+            ++idx_dnc_in;
+          }
         }
-        ++idx_dnc_in;
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+      });
 }
 XDIAG_CATCH
 

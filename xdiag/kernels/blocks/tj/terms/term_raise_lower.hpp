@@ -5,9 +5,6 @@
 #pragma once
 
 #include <cstdint>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include <xdiag/basis/basis_tj.hpp>
 #include <xdiag/bits/bitmask.hpp>
@@ -51,41 +48,34 @@ void term_cdn(Coeff const &c, Op const &op,
   bit_t sitesmask = bits::bitmask<bit_t>(nsites, nsites);
   auto const &basis_up = basis_in.basis_up();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up] =
-        utils::thread_range(basis_up, num_thread, omp_get_num_threads());
-#else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
-      bit_t ups = *it_up;
-      if (bits::get(ups, s)) {
-        continue; // s carries an up -> no dn there to annihilate
-      }
-      bit_t notups = (~ups) & sitesmask;
-      int64_t r = bits::popcount(notups & bits::bitmask<bit_t>(nsites, s));
-      bit_t mask = bits::zero<bit_t>(nsites);
-      bits::set(mask, r);
-      bit_t fermimask = bits::bitmask<bit_t>(nsites, r); // dn below r
-      bool nup_neg = bits::popcount(ups) & 1;
-      int64_t base_in = basis_in.ups_offset(idx_up);
-      int64_t base_out = basis_out.ups_offset(idx_up); // ups (and Nup) unchanged
-      int64_t idx_dnc = 0;
-      for (bit_t dnc : basis_in.basis_dncs(ups)) {
-        if (bits::nonzero(dnc & mask)) { // dn present at s
-          bool sign = (bool)(bits::popcount(dnc & fermimask) & 1) ^ nup_neg;
-          int64_t idx_out = base_out + basis_out.index_dncs(ups, dnc ^ mask);
-          fill(base_in + idx_dnc, idx_out, sign ? -cf : cf);
+  utils::for_each_thread_range(
+      basis_up, [&](auto begin_up, auto end_up, int64_t idx_up) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
+          bit_t ups = *it_up;
+          if (bits::get(ups, s)) {
+            continue; // s carries an up -> no dn there to annihilate
+          }
+          bit_t notups = (~ups) & sitesmask;
+          int64_t r = bits::popcount(notups & bits::bitmask<bit_t>(nsites, s));
+          bit_t mask = bits::zero<bit_t>(nsites);
+          bits::set(mask, r);
+          bit_t fermimask = bits::bitmask<bit_t>(nsites, r); // dn below r
+          bool nup_neg = bits::popcount(ups) & 1;
+          int64_t base_in = basis_in.ups_offset(idx_up);
+          int64_t base_out =
+              basis_out.ups_offset(idx_up); // ups (and Nup) unchanged
+          int64_t idx_dnc = 0;
+          for (bit_t dnc : basis_in.basis_dncs(ups)) {
+            if (bits::nonzero(dnc & mask)) { // dn present at s
+              bool sign = (bool)(bits::popcount(dnc & fermimask) & 1) ^ nup_neg;
+              int64_t idx_out =
+                  base_out + basis_out.index_dncs(ups, dnc ^ mask);
+              fill(base_in + idx_dnc, idx_out, sign ? -cf : cf);
+            }
+            ++idx_dnc;
+          }
         }
-        ++idx_dnc;
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+      });
 }
 XDIAG_CATCH
 
@@ -102,41 +92,34 @@ void term_cdagdn(Coeff const &c, Op const &op,
   bit_t sitesmask = bits::bitmask<bit_t>(nsites, nsites);
   auto const &basis_up = basis_in.basis_up();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up] =
-        utils::thread_range(basis_up, num_thread, omp_get_num_threads());
-#else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
-      bit_t ups = *it_up;
-      if (bits::get(ups, s)) {
-        continue; // s carries an up -> creating a dn would doubly occupy
-      }
-      bit_t notups = (~ups) & sitesmask;
-      int64_t r = bits::popcount(notups & bits::bitmask<bit_t>(nsites, s));
-      bit_t mask = bits::zero<bit_t>(nsites);
-      bits::set(mask, r);
-      bit_t fermimask = bits::bitmask<bit_t>(nsites, r); // dn below r
-      bool nup_neg = bits::popcount(ups) & 1;
-      int64_t base_in = basis_in.ups_offset(idx_up);
-      int64_t base_out = basis_out.ups_offset(idx_up);
-      int64_t idx_dnc = 0;
-      for (bit_t dnc : basis_in.basis_dncs(ups)) {
-        if (bits::iszero(dnc & mask)) { // s free of a dn
-          bool sign = (bool)(bits::popcount(dnc & fermimask) & 1) ^ nup_neg;
-          int64_t idx_out = base_out + basis_out.index_dncs(ups, dnc | mask);
-          fill(base_in + idx_dnc, idx_out, sign ? -cf : cf);
+  utils::for_each_thread_range(
+      basis_up, [&](auto begin_up, auto end_up, int64_t idx_up) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
+          bit_t ups = *it_up;
+          if (bits::get(ups, s)) {
+            continue; // s carries an up -> creating a dn would doubly occupy
+          }
+          bit_t notups = (~ups) & sitesmask;
+          int64_t r = bits::popcount(notups & bits::bitmask<bit_t>(nsites, s));
+          bit_t mask = bits::zero<bit_t>(nsites);
+          bits::set(mask, r);
+          bit_t fermimask = bits::bitmask<bit_t>(nsites, r); // dn below r
+          bool nup_neg = bits::popcount(ups) & 1;
+          int64_t base_in = basis_in.ups_offset(idx_up);
+          int64_t base_out = basis_out.ups_offset(idx_up);
+          int64_t idx_dnc = 0;
+          for (bit_t dnc : basis_in.basis_dncs(ups)) {
+            if (bits::iszero(dnc & mask)) { // s free of a dn
+              bool sign =
+                  (bool)(bits::popcount(dnc & fermimask) & 1) ^ nup_neg;
+              int64_t idx_out =
+                  base_out + basis_out.index_dncs(ups, dnc | mask);
+              fill(base_in + idx_dnc, idx_out, sign ? -cf : cf);
+            }
+            ++idx_dnc;
+          }
         }
-        ++idx_dnc;
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+      });
 }
 XDIAG_CATCH
 
@@ -156,39 +139,30 @@ void term_cup(Coeff const &c, Op const &op,
   bit_t fermimask = bits::bitmask<bit_t>(nsites, s); // up below s
   auto const &basis_up = basis_in.basis_up();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up] =
-        utils::thread_range(basis_up, num_thread, omp_get_num_threads());
-#else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
-      bit_t ups = *it_up;
-      if (!bits::get(ups, s)) {
-        continue; // no up at s to annihilate
-      }
-      bit_t ups_out = ups ^ mask;
-      bit_t notups_out = (~ups_out) & sitesmask;
-      int64_t r_out =
-          bits::popcount(notups_out & bits::bitmask<bit_t>(nsites, s));
-      bool fermi = bits::popcount(ups & fermimask) & 1;
-      coeff_t coeff = fermi ? -cf : cf;
-      int64_t base_in = basis_in.ups_offset(idx_up);
-      int64_t base_out = basis_out.ups_offset(basis_out.index_up(ups_out));
-      int64_t idx_dnc = 0;
-      for (bit_t dnc : basis_in.basis_dncs(ups)) {
-        bit_t dnc_out = insert_zero_slot(dnc, r_out, nsites);
-        int64_t idx_out = base_out + basis_out.index_dncs(ups_out, dnc_out);
-        fill(base_in + idx_dnc, idx_out, coeff);
-        ++idx_dnc;
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+  utils::for_each_thread_range(
+      basis_up, [&](auto begin_up, auto end_up, int64_t idx_up) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
+          bit_t ups = *it_up;
+          if (!bits::get(ups, s)) {
+            continue; // no up at s to annihilate
+          }
+          bit_t ups_out = ups ^ mask;
+          bit_t notups_out = (~ups_out) & sitesmask;
+          int64_t r_out =
+              bits::popcount(notups_out & bits::bitmask<bit_t>(nsites, s));
+          bool fermi = bits::popcount(ups & fermimask) & 1;
+          coeff_t coeff = fermi ? -cf : cf;
+          int64_t base_in = basis_in.ups_offset(idx_up);
+          int64_t base_out = basis_out.ups_offset(basis_out.index_up(ups_out));
+          int64_t idx_dnc = 0;
+          for (bit_t dnc : basis_in.basis_dncs(ups)) {
+            bit_t dnc_out = insert_zero_slot(dnc, r_out, nsites);
+            int64_t idx_out = base_out + basis_out.index_dncs(ups_out, dnc_out);
+            fill(base_in + idx_dnc, idx_out, coeff);
+            ++idx_dnc;
+          }
+        }
+      });
 }
 XDIAG_CATCH
 
@@ -210,40 +184,33 @@ void term_cdagup(Coeff const &c, Op const &op,
   bit_t fermimask = bits::bitmask<bit_t>(nsites, s); // up below s
   auto const &basis_up = basis_in.basis_up();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up] =
-        utils::thread_range(basis_up, num_thread, omp_get_num_threads());
-#else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
-      bit_t ups = *it_up;
-      if (bits::get(ups, s)) {
-        continue; // s already carries an up
-      }
-      bit_t notups = (~ups) & sitesmask;
-      int64_t r_in = bits::popcount(notups & bits::bitmask<bit_t>(nsites, s));
-      bit_t ups_out = ups | mask;
-      bool fermi = bits::popcount(ups & fermimask) & 1;
-      coeff_t coeff = fermi ? -cf : cf;
-      int64_t base_in = basis_in.ups_offset(idx_up);
-      int64_t base_out = basis_out.ups_offset(basis_out.index_up(ups_out));
-      int64_t idx_dnc = 0;
-      for (bit_t dnc : basis_in.basis_dncs(ups)) {
-        if (!bits::get(dnc, r_in)) { // s free of a dn -> result not doubly occ.
-          bit_t dnc_out = remove_slot(dnc, r_in, nsites);
-          int64_t idx_out = base_out + basis_out.index_dncs(ups_out, dnc_out);
-          fill(base_in + idx_dnc, idx_out, coeff);
+  utils::for_each_thread_range(
+      basis_up, [&](auto begin_up, auto end_up, int64_t idx_up) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
+          bit_t ups = *it_up;
+          if (bits::get(ups, s)) {
+            continue; // s already carries an up
+          }
+          bit_t notups = (~ups) & sitesmask;
+          int64_t r_in =
+              bits::popcount(notups & bits::bitmask<bit_t>(nsites, s));
+          bit_t ups_out = ups | mask;
+          bool fermi = bits::popcount(ups & fermimask) & 1;
+          coeff_t coeff = fermi ? -cf : cf;
+          int64_t base_in = basis_in.ups_offset(idx_up);
+          int64_t base_out = basis_out.ups_offset(basis_out.index_up(ups_out));
+          int64_t idx_dnc = 0;
+          for (bit_t dnc : basis_in.basis_dncs(ups)) {
+            if (!bits::get(dnc, r_in)) { // s free of a dn -> not doubly occ.
+              bit_t dnc_out = remove_slot(dnc, r_in, nsites);
+              int64_t idx_out =
+                  base_out + basis_out.index_dncs(ups_out, dnc_out);
+              fill(base_in + idx_dnc, idx_out, coeff);
+            }
+            ++idx_dnc;
+          }
         }
-        ++idx_dnc;
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+      });
 }
 XDIAG_CATCH
 

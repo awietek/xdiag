@@ -5,9 +5,6 @@
 #pragma once
 
 #include <cstdint>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include <xdiag/basis/basis_onthefly.hpp>
 #include <xdiag/kernels/terms/term_offdiag.hpp>
@@ -25,7 +22,7 @@ void term_diag(basis_t const &basis_in, basis_t const &basis_out,
 
   // Input and output basis can differ for different irreps,
   // where the action is still diagonal in the basis
-  if (basis_in != basis_out) { 
+  if (basis_in != basis_out) {
     using bit_t = typename basis_t::bit_t;
     term_offdiag(
         basis_in, basis_out, [](bit_t) { return true; },
@@ -33,22 +30,12 @@ void term_diag(basis_t const &basis_in, basis_t const &basis_out,
   } else {
     basis_t const &basis = basis_in;
 
-#ifdef _OPENMP
-#pragma omp parallel
-    {
-      int num_thread = omp_get_thread_num();
-      auto [begin, end, idx] =
-          utils::thread_range(basis, num_thread, omp_get_num_threads());
-#else
-      auto [begin, end, idx] = utils::thread_range(basis, 0, 1);
-#endif
+    utils::for_each_thread_range(basis, [&](auto begin, auto end, int64_t idx) {
       for (auto it = begin; it != end; ++it, ++idx) {
         auto coeff = term_coeff(*it);
         fill(idx, idx, coeff);
       }
-#ifdef _OPENMP
-    }
-#endif
+    });
   }
 }
 

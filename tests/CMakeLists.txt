@@ -28,6 +28,7 @@ set(XDIAG_TEST_SOURCES
   basis/test_basis_tj.cpp
   
   operators/test_coeff.cpp
+  operators/test_hc.cpp
   operators/test_monomial.cpp
   operators/test_op.cpp
   operators/test_opsum.cpp

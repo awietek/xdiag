@@ -17,7 +17,7 @@
 // Dispatch overview
 // -----------------
 // apply(ops, block_in, vec_in, block_out, vec_out) compiles ops
-// (kernels::compile: sector check, hc, normal ordering, see compile.hpp) and
+// (kernels::compile: sector check, trans, normal ordering, see compile.hpp) and
 // calls apply_compiled. Iterative algorithms compile once themselves and call
 // kernels::apply(CompiledOpSum, ...) on every iteration.
 //
@@ -69,7 +69,7 @@ static void apply_block(OpSum const &ops, block_t const &block_in,
     }
 #endif
   } else {
-    // ops is the compiled hc(ops) (see compile.hpp): the kernels run it from
+    // ops is the compiled trans(ops) (see compile.hpp): the kernels run it from
     // the rows (block_out) to the columns (block_in), and the gather fill turns
     // that into vec_out = ops * vec_in.
     kernels::dispatch_basis(

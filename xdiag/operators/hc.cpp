@@ -5,123 +5,151 @@
 #include "hc.hpp"
 
 #include <map>
+#include <set>
 #include <string>
-#include <utility>
 
+#include <xdiag/math/matrix.hpp>
+#include <xdiag/operators/types.hpp>
 #include <xdiag/operators/valid.hpp>
 #include <xdiag/utils/error.hpp>
-#include <xdiag/utils/format.hpp>
 
 namespace xdiag {
 
-// Hermitian-conjugate partner of each Op type: hc(type{sites}) is
+// Two primitives, trans and conj. Hermitian conjugation is hc = conj(trans(.)).
 //
-//     phase * partner{sites}
+// conj(type{sites}) = s * type{sites}, with s = -1 if the Fock-basis matrix of
+// the type is purely imaginary (is_real = false in the registry), else s = +1.
 //
-// where {phase, partner} is looked up below. Self-adjoint types map to
-// themselves with phase +1; raising/lowering and creation/annihilation types
-// map to their counterpart; ExchangeAsym is anti-hermitian and carries -1.
+// trans(type{sites}) = s * partner{sites}. The partner is the type itself,
+// unless it is listed in trans_partner (the transpose of S+ is S-, the
+// transpose of Cdag is C, ...). The sign is s = -1 if the matrix is
+// antisymmetric, else s = +1.
 //
-// Types absent from this table have no well-defined hermitian conjugate, and
-// hc() throws on them. The "Matrix" type is handled separately (its stored
-// matrix is conjugate-transposed), so it is intentionally not listed here.
-//
-// The phase is real for every operator type here (it is only ever +1 or -1); a
-// real phase also keeps hc of a real operator real. Should a type ever require
-// a genuinely complex phase, widen this to complex.
+// Every type not listed in trans_partner or antisymmetric_types is symmetric and
+// its own partner, so trans and conj leave it unchanged. Unknown types are
+// rejected by operators::check_valid.
 //
 // clang-format off
-static const std::map<std::string, std::pair<double, std::string>> hc_partners = {
-//  type                phase   partner
-  {"Id",              {1.0,  "Id"             }},
-  {"SdotS",           {1.0,  "SdotS"          }},
-  {"Exchange",        {1.0,  "Exchange"       }},
-  {"ExchangeAsym",    {-1.0, "ExchangeAsym"   }}, // anti-hermitian
-  {"SzSz",            {1.0,  "SzSz"           }},
-  {"Sz",              {1.0,  "Sz"             }},
-  {"S+",              {1.0,  "S-"             }},
-  {"S-",              {1.0,  "S+"             }},
-  {"Sx",              {1.0,  "Sx"             }},
-  {"Sy",              {1.0,  "Sy"             }},
-  {"A",               {1.0,  "Adag"           }},
-  {"Adag",            {1.0,  "A"              }},
-  {"N",               {1.0,  "N"              }},
-  {"NN",              {1.0,  "NN"             }},
-  {"TotalN",          {1.0,  "TotalN"         }},
-  {"TotalNup",        {1.0,  "TotalNup"       }},
-  {"TotalNdn",        {1.0,  "TotalNdn"       }},
-  {"TotalSz",         {1.0,  "TotalSz"        }},
-  {"ScalarChirality", {1.0,  "ScalarChirality"}},
-  {"Hop",             {1.0,  "Hop"            }},
-  {"HopAsym",         {-1.0, "HopAsym"        }},
-  {"Hopup",           {1.0,  "Hopup"          }},
-  {"Hopdn",           {1.0,  "Hopdn"          }},
-  {"HopupAsym",       {-1.0, "HopupAsym"      }},
-  {"HopdnAsym",       {-1.0, "HopdnAsym"      }},
-  {"Cdag",            {1.0,  "C"              }},
-  {"C",               {1.0,  "Cdag"           }},
-  {"Cdagup",          {1.0,  "Cup"            }},
-  {"Cup",             {1.0,  "Cdagup"         }},
-  {"Cdagdn",          {1.0,  "Cdn"            }},
-  {"Cdn",             {1.0,  "Cdagdn"         }},
-  {"HubbardU",        {1.0,  "HubbardU"       }},
-  {"Ntot",            {1.0,  "Ntot"           }},
-  {"Nup",             {1.0,  "Nup"            }},
-  {"Ndn",             {1.0,  "Ndn"            }},
-  {"Nupdn",           {1.0,  "Nupdn"          }},
-  {"NtotNtot",        {1.0,  "NtotNtot"       }},
-  {"NupdnNupdn",      {1.0,  "NupdnNupdn"     }},
-  {"tJSzSz",          {1.0,  "tJSzSz"         }},
-  {"tJSdotS",         {1.0,  "tJSdotS"        }},
-  {"NupNdn",          {1.0,  "NupNdn"         }},
-  {"NupNup",          {1.0,  "NupNup"         }},
-  {"NdnNdn",          {1.0,  "NdnNdn"         }},
-  {"NdnNup",          {1.0,  "NdnNup"         }},
+static const std::map<std::string, std::string> trans_partner = {
+  {"S+",      "S-"     }, {"S-",      "S+"     },
+  {"A",       "Adag"   }, {"Adag",    "A"      },
+  {"C",       "Cdag"   }, {"Cdag",    "C"      },
+  {"Cdagup",  "Cup"    }, {"Cup",     "Cdagup" },
+  {"Cdagdn",  "Cdn"    }, {"Cdn",     "Cdagdn" },
 };
+
+// Types with an antisymmetric Fock-basis matrix. This includes the real
+// anti-hermitian ops (ExchangeAsym, HopAsym, ...) and the imaginary ones Sy and
+// ScalarChirality, which are hermitian and antisymmetric at the same time.
+static const std::set<std::string> antisymmetric_types = {
+  "ExchangeAsym", "HopAsym", "HopupAsym", "HopdnAsym", "Sy", "ScalarChirality"};
 // clang-format on
 
-OpSum hc(Op const &op) try {
+OpSum trans(Op const &op) try {
   operators::check_valid(op);
 
-  // "Matrix" type: same type and sites, but the matrix is conjugate-transposed.
   if (op.type() == "Matrix") {
-    return OpSum(Op("Matrix", op.sites(), op.matrix().hc()));
-  }
-
-  auto it = hc_partners.find(op.type());
-  if (it == hc_partners.end()) {
-    XDIAG_THROW(fmt::format(
-        "Cannot form the hermitian conjugate (hc) of Op type \"{}\": no "
-        "hermitian-conjugate partner is defined for it.",
-        op.type()));
-  }
-
-  auto const &[phase, partner] = it->second;
-  if (op.hassites()) {
-    return OpSum(phase, Op(partner, op.sites()));
+    return OpSum(Op("Matrix", op.sites(), op.matrix().trans()));
   } else {
-    return OpSum(phase, Op(partner));
+    auto it = trans_partner.find(op.type());
+    std::string partner = (it != trans_partner.end()) ? it->second : op.type();
+    double phase = antisymmetric_types.count(op.type()) ? -1.0 : 1.0;
+    if (op.hassites()) {
+      return OpSum(phase, Op(partner, op.sites()));
+    } else {
+      return OpSum(phase, Op(partner));
+    }
   }
+}
+XDIAG_CATCH
+
+OpSum trans(Monomial const &mono) try {
+  // trans(A_1 * ... * A_n) = trans(A_n) * ... * trans(A_1)
+  OpSum mono_trans(Monomial{}); // multiplicative identity (empty product = 1)
+  for (int64_t i = mono.size() - 1; i >= 0; --i) {
+    mono_trans = mono_trans * trans(mono[i]);
+  }
+  return mono_trans;
+}
+XDIAG_CATCH
+
+OpSum trans(OpSum const &ops) try {
+  OpSum ops_trans;
+  for (auto const &[coeff, mono] : ops.plain()) {
+    // trans(coeff * mono) = coeff * trans(mono): the coefficient is not conjugated
+    ops_trans += coeff.scalar() * trans(mono);
+  }
+  return ops_trans;
+}
+XDIAG_CATCH
+
+OpSum conj(Op const &op) try {
+  operators::check_valid(op);
+
+  if (op.type() == "Matrix") {
+    return OpSum(Op("Matrix", op.sites(), op.matrix().conj()));
+  } else {
+    double phase = is_real_type(op.type()) ? 1.0 : -1.0;
+    if (op.hassites()) {
+      return OpSum(phase, Op(op.type(), op.sites()));
+    } else {
+      return OpSum(phase, Op(op.type()));
+    }
+  }
+}
+XDIAG_CATCH
+
+OpSum conj(Monomial const &mono) try {
+  // conj(A_1 * ... * A_n) = conj(A_1) * ... * conj(A_n)
+  OpSum mono_conj(Monomial{}); // multiplicative identity (empty product = 1)
+  for (int64_t i = 0; i < mono.size(); ++i) {
+    mono_conj = mono_conj * conj(mono[i]);
+  }
+  return mono_conj;
+}
+XDIAG_CATCH
+
+OpSum conj(OpSum const &ops) try {
+  OpSum ops_conj;
+  for (auto const &[coeff, mono] : ops.plain()) {
+    // conj(coeff * mono) = conj(coeff) * conj(mono)
+    ops_conj += conj(coeff.scalar()) * conj(mono);
+  }
+  return ops_conj;
+}
+XDIAG_CATCH
+
+// hc = conj(trans(.)). conj is multiplicative and trans reverses products, so
+// this also gives hc(A_1 * ... * A_n) = hc(A_n) * ... * hc(A_1) and
+// hc(coeff * mono) = conj(coeff) * hc(mono).
+
+OpSum hc(Op const &op) try {
+  return conj(trans(op));
 }
 XDIAG_CATCH
 
 OpSum hc(Monomial const &mono) try {
-  // hc(A_1 * A_2 * ... * A_n) = hc(A_n) * ... * hc(A_2) * hc(A_1)
-  OpSum mono_hc(Monomial{}); // multiplicative identity (empty product = 1)
-  for (int64_t i = mono.size() - 1; i >= 0; --i) {
-    mono_hc = mono_hc * hc(mono[i]);
-  }
-  return mono_hc;
+  return conj(trans(mono));
 }
 XDIAG_CATCH
 
 OpSum hc(OpSum const &ops) try {
-  OpSum ops_hc;
-  for (auto const &[coeff, mono] : ops.plain()) {
-    // hc(coeff * mono) = conj(coeff) * hc(mono)
-    ops_hc += conj(coeff.scalar()) * hc(mono);
-  }
-  return ops_hc;
+  return conj(trans(ops));
+}
+XDIAG_CATCH
+
+OpSum adjoint(Op const &op) try {
+  return hc(op);
+}
+XDIAG_CATCH
+
+OpSum adjoint(Monomial const &mono) try {
+  return hc(mono);
+}
+XDIAG_CATCH
+
+OpSum adjoint(OpSum const &ops) try {
+  return hc(ops);
 }
 XDIAG_CATCH
 

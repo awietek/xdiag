@@ -5,14 +5,12 @@
 #pragma once
 
 #include <cstdint>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include <xdiag/basis/basis_tj.hpp>
 #include <xdiag/bits/bitmask.hpp>
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/bits/popcount.hpp>
+#include <xdiag/bits/zero_one.hpp>
 #include <xdiag/utils/thread_range.hpp>
 
 namespace xdiag::kernels::tj {
@@ -52,27 +50,19 @@ void term_diag(basis::BasistJ<enumeration_t> const &basis_in,
 
   auto const &basis_up = basis_in.basis_up();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up] =
-        utils::thread_range(basis_up, num_thread, omp_get_num_threads());
-#else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
-      bit_t ups = *it_up;
-      auto value = build(ups); // per-ups evaluator: dnc -> coeff (ranks hoisted)
-      int64_t idx = basis_in.ups_offset(idx_up);
-      for (bit_t dnc : basis_in.basis_dncs(ups)) {
-        fill(idx, idx, value(dnc));
-        ++idx;
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+  utils::for_each_thread_range(
+      basis_up, [&](auto begin_up, auto end_up, int64_t idx_up) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
+          bit_t ups = *it_up;
+          auto value =
+              build(ups); // per-ups evaluator: dnc -> coeff (ranks hoisted)
+          int64_t idx = basis_in.ups_offset(idx_up);
+          for (bit_t dnc : basis_in.basis_dncs(ups)) {
+            fill(idx, idx, value(dnc));
+            ++idx;
+          }
+        }
+      });
 }
 
 } // namespace xdiag::kernels::tj
