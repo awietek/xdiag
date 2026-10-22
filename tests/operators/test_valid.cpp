@@ -36,6 +36,15 @@ TEST_CASE("check_valid Op", "[operators]") try {
   // --- site_required but no sites given ---
   REQUIRE_THROWS_AS(check_valid(Op("Sz")), Error);
 
+  // --- negative sites (e.g. site 0 passed from the 1-based Julia wrapper) ---
+  REQUIRE_THROWS_AS(check_valid(Op("Cdag", int64_t(-1))), Error);
+  REQUIRE_THROWS_AS(check_valid(Op("SdotS", std::vector<int64_t>{0, -1})),
+                    Error);
+  {
+    arma::mat m(2, 2, arma::fill::eye);
+    REQUIRE_THROWS_AS(check_valid(Op("Matrix", int64_t(-1), m)), Error);
+  }
+
   // --- wrong number of sites (Sz needs exactly 1) ---
   REQUIRE_THROWS_AS(
       check_valid(Op("Sz", std::vector<int64_t>{0, 1})), Error);
