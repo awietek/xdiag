@@ -12,8 +12,12 @@
 #include <xdiag/blocks/spinhalf.hpp>
 #include <xdiag/linalg/sparse_diag.hpp>
 #include <xdiag/math/isapprox.hpp>
+#include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/states/apply.hpp>
+#include <xdiag/states/create_state.hpp>
+#include <xdiag/states/dot.hpp>
 #include <xdiag/states/expect.hpp>
 #include <xdiag/states/inner.hpp>
 #include <xdiag/states/state.hpp>
@@ -94,6 +98,68 @@ TEST_CASE("expect", "[states]") try {
           psi, [&](int64_t i) { return symmetrize(Op("N", i), group); });
       REQUIRE(isapprox(ex, naive, 1e-10, 1e-10));
     }
+  }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}
+
+TEST_CASE("inner overloads", "[states]") try {
+  using namespace xdiag;
+
+  auto block = Spinhalf(4, 2);
+  auto v = random_state(block, true, 1, 3);
+  auto w = random_state(block, true, 1, 5);
+  auto vc = random_state(block, false, 1, 3);
+
+  Op sz0("Sz", 0);
+  Op sz1("Sz", 1);
+  Monomial mono{sz0, sz1};
+  OpSum ops(mono);
+  OpSum opsc = complex(0.0, 1.0) * mono;
+
+  // --- expectation values: Op, Monomial, OpSum agree ---
+  {
+    double eo = inner(sz0, v);
+    double em = inner(mono, v);
+    double es = inner(ops, v);
+    REQUIRE(std::abs(em - es) < 1e-12);
+    REQUIRE(std::abs(eo - dot(v, apply(sz0, v))) < 1e-12);
+    REQUIRE(std::abs(em - dot(v, apply(mono, v))) < 1e-12);
+
+    REQUIRE(std::abs(innerC(sz0, v) - complex(eo)) < 1e-12);
+    REQUIRE(std::abs(innerC(mono, v) - complex(em)) < 1e-12);
+    REQUIRE(std::abs(innerC(ops, v) - complex(es)) < 1e-12);
+  }
+
+  // --- matrix elements <v|A|w> ---
+  {
+    double mo = inner(v, sz0, w);
+    double mm = inner(v, mono, w);
+    double ms = inner(v, ops, w);
+    REQUIRE(std::abs(mm - ms) < 1e-12);
+    REQUIRE(std::abs(mo - dot(v, apply(sz0, w))) < 1e-12);
+    REQUIRE(std::abs(innerC(v, sz0, w) - complex(mo)) < 1e-12);
+    REQUIRE(std::abs(innerC(v, mono, w) - complex(mm)) < 1e-12);
+    REQUIRE(std::abs(innerC(v, ops, w) - complex(ms)) < 1e-12);
+  }
+
+  // --- complex states and operators need innerC ---
+  {
+    REQUIRE_THROWS_AS(inner(sz0, vc), Error);
+    REQUIRE_THROWS_AS(inner(mono, vc), Error);
+    REQUIRE_THROWS_AS(inner(opsc, v), Error);
+    REQUIRE_THROWS_AS(inner(v, sz0, vc), Error);
+    REQUIRE_THROWS_AS(inner(vc, mono, v), Error);
+
+    complex ec = innerC(opsc, v);
+    REQUIRE(std::abs(ec - complex(0.0, 1.0) * inner(mono, v)) < 1e-12);
+    complex em = innerC(mono, vc);
+    REQUIRE(std::abs(em - dotC(vc, apply(mono, vc))) < 1e-12);
+    complex eo = innerC(vc, sz0, v);
+    REQUIRE(std::abs(eo - dotC(vc, apply(sz0, v))) < 1e-12);
+    complex emm = innerC(v, mono, vc);
+    REQUIRE(std::abs(emm - dotC(v, apply(mono, vc))) < 1e-12);
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);

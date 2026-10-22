@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <tests/blocks/electron/testcases_electron.hpp>
+#include <tests/blocks/spectrum_union.hpp>
 #include <tests/blocks/tj/testcases_tj.hpp>
 #include <tests/catch.hpp>
 #include <tests/is_approx_hermitian.hpp>
@@ -64,36 +65,11 @@ static void test_spectra_np(OpSum const &ops, int64_t nsites,
       if (dim(block) == 0 || dim(block) > 1000) {
         continue;
       }
-      arma::cx_mat H = matrixC(ops, block);
-      REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
-      arma::vec eigs_full;
-      arma::eig_sym(eigs_full, H);
-
-      std::vector<double> eigs_sym;
-      for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
-        auto blockk = tJ(nsites, nup, ndn, irreps[k]);
-        if (dim(blockk) == 0) {
-          continue;
-        }
-        arma::cx_mat Hk = matrixC(ops, blockk);
-        REQUIRE(testcases::is_approx_hermitian(Hk, 1e-8));
-        arma::vec ek;
-        arma::eig_sym(ek, Hk);
-
-        if (blockk.isreal() && isreal(ops)) {
-          arma::mat Hk_real = matrix(ops, blockk);
-          arma::vec ek_real;
-          arma::eig_sym(ek_real, Hk_real);
-          REQUIRE(isapprox(ek, ek_real));
-        }
-        for (double e : ek) {
-          for (int64_t m = 0; m < mults[k]; ++m) {
-            eigs_sym.push_back(e);
-          }
-        }
+      std::vector<Block> parts;
+      for (Representation const &irrep : irreps) {
+        parts.push_back(tJ(nsites, nup, ndn, irrep));
       }
-      std::sort(eigs_sym.begin(), eigs_sym.end());
-      REQUIRE(isapprox(eigs_full, arma::vec(eigs_sym)));
+      testcases::spectrum_union(ops, block, parts, mults);
     }
   }
 }
@@ -180,6 +156,84 @@ TEST_CASE("tjsymmetricapply", "[tj]") try {
     auto ops = tJchain(nsites, 1.0, 0.4);
     auto [irreps, mults] = get_cyclic_group_irreps_mult(nsites);
     test_apply(ops, nsites, irreps);
+  }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}
+
+// Large site counts select the 64-bit bases (40 sites: LinTable<uint64_t>,
+// 43 sites: Combinations<uint64_t>); one up and one down hole keep the Hilbert
+// space small. The bond shell at distance 13 crosses bit position 32.
+TEST_CASE("tj_symmetric_large_nsites", "[tj]") try {
+  for (int64_t nsites : {40, 43}) {
+    Log("tj symmetric large nsites: N = {}", nsites);
+    OpSum ops;
+    for (int64_t i = 0; i < nsites; ++i) {
+      for (auto [j, t] : std::vector<std::pair<int64_t, double>>{
+               {(i + 1) % nsites, 1.0}, {(i + 13) % nsites, 0.3}}) {
+        ops += t * Op("Hop", {i, j});
+        ops += 0.4 * t * Op("tJSdotS", {i, j});
+      }
+    }
+    testcases::translation_spectrum_union(
+        ops, tJ(nsites, 1, 1), nsites,
+        [&](Representation const &irrep) { return tJ(nsites, 1, 1, irrep); });
+  }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}
+
+// Symmetric tJ blocks without particle-number conservation use a separate
+// basis (Subsets enumeration with the compressed dn index).
+TEST_CASE("tj_symmetric_no_number_conservation", "[tj]") try {
+  for (int64_t nsites : {4, 5, 6}) {
+    Log("tj symmetric without number conservation: N = {}", nsites);
+    OpSum ops;
+    for (int64_t i = 0; i < nsites; ++i) {
+      ops += 1.0 * Op("Hop", {i, (i + 1) % nsites});
+      ops += 0.4 * Op("tJSdotS", {i, (i + 1) % nsites});
+      ops += 0.2 * Op("Ntot", i);
+    }
+    testcases::translation_spectrum_union(
+        ops, tJ(nsites), nsites,
+        [&](Representation const &irrep) { return tJ(nsites, irrep); });
+  }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}
+
+// The symmetric tJ matrix kernel has its own branches for the density-density
+// operators and the identity, which the hopping/exchange Hamiltonians above
+// never reach.
+TEST_CASE("tj_symmetric_density_operators", "[tj]") try {
+  for (int64_t nsites : {4, 5, 6}) {
+    Log("tj symmetric density operators: N = {}", nsites);
+    OpSum ops;
+    for (int64_t i = 0; i < nsites; ++i) {
+      int64_t j = (i + 1) % nsites;
+      ops += 1.0 * Op("Hop", {i, j});
+      ops += 0.7 * Op("NupNup", {i, j});
+      ops += 0.6 * Op("NdnNdn", {i, j});
+      ops += 0.5 * Op("NupNdn", {i, j});
+      ops += 0.4 * Op("NdnNup", {i, j});
+      ops += 0.3 * Op("NtotNtot", {i, j});
+      ops += 0.2 * Op("Nup", i);
+      ops += 0.1 * Op("Ndn", i);
+      ops += 0.15 * Op("Ntot", i);
+    }
+    ops += 0.25 * Op("Id");
+    for (int64_t nup = 0; nup <= nsites; ++nup) {
+      for (int64_t ndn = 0; ndn + nup <= nsites; ++ndn) {
+        testcases::translation_spectrum_union(
+            ops, tJ(nsites, nup, ndn), nsites,
+            [&](Representation const &irrep) {
+              return tJ(nsites, nup, ndn, irrep);
+            });
+      }
+    }
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);

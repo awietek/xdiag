@@ -111,3 +111,55 @@ TEST_CASE("dot errors", "[states]") try {
   error_trace(e);
   throw;
 }
+
+TEST_CASE("matrix_dot promotion and errors", "[states]") try {
+  using namespace xdiag;
+
+  auto block = Spinhalf(4, 2); // dim 6
+  arma::mat M(6, 3, arma::fill::randu);
+  arma::mat N(6, 2, arma::fill::randu);
+  arma::cx_mat MC(6, 3, arma::fill::randu);
+  arma::cx_mat NC(6, 2, arma::fill::randu);
+  auto vr = State(block, M);
+  auto wr = State(block, N);
+  auto vc = State(block, MC);
+  auto wc = State(block, NC);
+  arma::cx_mat Mc = arma::conv_to<arma::cx_mat>::from(M);
+  arma::cx_mat Nc = arma::conv_to<arma::cx_mat>::from(N);
+
+  // --- rectangular Gram matrices between states of different widths ---
+  {
+    arma::mat g = matrix_dot(vr, wr);
+    REQUIRE(g.n_rows == 3);
+    REQUIRE(g.n_cols == 2);
+    REQUIRE(arma::norm(g - M.t() * N) < 1e-10);
+  }
+
+  // --- matrix_dotC in every real/complex combination ---
+  {
+    REQUIRE(arma::norm(matrix_dotC(vr, wr) - Mc.t() * Nc) < 1e-10);
+    REQUIRE(arma::norm(matrix_dotC(vr, wc) - Mc.t() * NC) < 1e-10);
+    REQUIRE(arma::norm(matrix_dotC(vc, wr) - MC.t() * Nc) < 1e-10);
+    REQUIRE(arma::norm(matrix_dotC(vc, wc) - MC.t() * NC) < 1e-10);
+  }
+
+  // --- invalid states give empty results ---
+  {
+    REQUIRE(matrix_dot(State(), vr).is_empty());
+    REQUIRE(matrix_dotC(vr, State()).is_empty());
+    REQUIRE(dot(State(), vr) == 0.0);
+    REQUIRE(dotC(vr, State()) == complex(0.0));
+  }
+
+  // --- real matrix_dot rejects complex states, blocks must match ---
+  {
+    REQUIRE_THROWS_AS(matrix_dot(vr, wc), Error);
+    REQUIRE_THROWS_AS(matrix_dot(vc, wr), Error);
+    auto other = State(Spinhalf(4, 1), true, 3);
+    REQUIRE_THROWS_AS(matrix_dot(vr, other), Error);
+    REQUIRE_THROWS_AS(matrix_dotC(vr, other), Error);
+  }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}

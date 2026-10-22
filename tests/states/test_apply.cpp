@@ -5,6 +5,7 @@
 #include <tests/catch.hpp>
 
 #include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/kernels/matrix.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
@@ -50,10 +51,10 @@ TEST_CASE("states_apply", "[states]") try {
     OpSum opc = complex(0, 1) * Op("SdotS", std::vector<int64_t>{0, 1});
 
     for (int ncols = 1; ncols < 4; ++ncols) {
-      auto vr = random_state(block, true);
-      auto vc = random_state(block, false);
-      auto wr = random_state(block, true);
-      auto wc = random_state(block, false);
+      auto vr = random_state(block, true, ncols);
+      auto vc = random_state(block, false, ncols);
+      auto wr = random_state(block, true, ncols);
+      auto wc = random_state(block, false, ncols);
       apply(opr, vr, wr);
       apply(opr, vr, wc);
       apply(opr, vc, wr);
@@ -110,6 +111,104 @@ TEST_CASE("apply complex operator", "[states]") try {
   REQUIRE(!isreal(w));
   REQUIRE(isvalid(w));
 
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}
+
+TEST_CASE("apply multi-column states", "[states]") try {
+  using namespace xdiag;
+
+  auto block = Spinhalf(5, 2);
+  OpSum opr;
+  opr += Op("SdotS", {0, 1});
+  opr += 0.5 * Op("SdotS", {1, 3});
+  opr += Op("Sz", 2);
+  OpSum opc = opr + complex(0.0, 0.7) * Op("SdotS", {2, 4});
+
+  // Reference: the result applied column by column must agree with the
+  // multi-column application, for every real/complex combination of operator,
+  // input, and output state.
+  for (int64_t ncols = 2; ncols < 5; ++ncols) {
+    auto vr = random_state(block, true, ncols, 7, false);
+    auto vc = random_state(block, false, ncols, 11, false);
+
+    // real operator, real input
+    {
+      State w = apply(opr, vr);
+      REQUIRE(isreal(w));
+      REQUIRE(w.ncols() == ncols);
+      for (int64_t c = 0; c < ncols; ++c) {
+        REQUIRE(isapprox(w.col(c), apply(opr, vr.col(c))));
+      }
+
+      // real output preallocated
+      State wr(block, true, ncols);
+      apply(opr, vr, wr);
+      REQUIRE(isreal(wr));
+      REQUIRE(isapprox(wr, w));
+
+      // complex output preallocated is narrowed to real
+      State wc(block, false, ncols);
+      apply(opr, vr, wc);
+      REQUIRE(isreal(wc));
+      REQUIRE(isapprox(wc, w));
+    }
+
+    // real operator, complex input
+    {
+      State w = apply(opr, vc);
+      REQUIRE(!isreal(w));
+      for (int64_t c = 0; c < ncols; ++c) {
+        REQUIRE(isapprox(w.col(c), apply(opr, vc.col(c))));
+      }
+      State wr(block, true, ncols);
+      apply(opr, vc, wr);
+      REQUIRE(!isreal(wr));
+      REQUIRE(isapprox(wr, w));
+      State wc(block, false, ncols);
+      apply(opr, vc, wc);
+      REQUIRE(isapprox(wc, w));
+    }
+
+    // complex operator, real and complex input
+    {
+      State w = apply(opc, vr);
+      REQUIRE(!isreal(w));
+      for (int64_t c = 0; c < ncols; ++c) {
+        REQUIRE(isapprox(w.col(c), apply(opc, vr.col(c))));
+      }
+      State wr(block, true, ncols);
+      apply(opc, vr, wr);
+      REQUIRE(!isreal(wr));
+      REQUIRE(isapprox(wr, w));
+
+      State w2 = apply(opc, vc);
+      for (int64_t c = 0; c < ncols; ++c) {
+        REQUIRE(isapprox(w2.col(c), apply(opc, vc.col(c))));
+      }
+      State wc(block, false, ncols);
+      apply(opc, vc, wc);
+      REQUIRE(isapprox(wc, w2));
+    }
+
+    // the multi-column result equals the dense matrix product
+    {
+      arma::mat H = matrix(opr, block);
+      arma::mat V = vr.matrix();
+      REQUIRE(arma::norm(apply(opr, vr).matrix() - H * V) < 1e-10);
+      arma::cx_mat Hc = matrixC(opc, block);
+      arma::cx_mat Vc = vc.matrixC();
+      REQUIRE(arma::norm(apply(opc, vc).matrixC() - Hc * Vc) < 1e-10);
+    }
+  }
+
+  // mismatched column counts between input and output throw
+  {
+    auto v = random_state(block, true, 2);
+    State w(block, true, 3);
+    REQUIRE_THROWS_AS(apply(opr, v, w), Error);
+  }
 } catch (xdiag::Error const &e) {
   error_trace(e);
   throw;

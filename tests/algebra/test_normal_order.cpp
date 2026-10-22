@@ -125,6 +125,55 @@ TEST_CASE("normal_order", "[operators]") try {
     auto r = normal_order(OpSum(Op("SdotS", {0, 0})), alg);
     REQUIRE(isapprox(r, 0.75 * Op("Id"), alg));
   }
+  {
+    // S-{0}*S-{0} -> 0
+    auto r = normal_order(1.0 * (Op("S-", 0) * Op("S-", 0)), alg);
+    REQUIRE(isapprox(r, OpSum{}, alg));
+  }
+  {
+    // S+{0}*Sz{0} -> -0.5*S+{0},  Sz{0}*S+{0} -> 0.5*S+{0}
+    auto r1 = normal_order(1.0 * (Op("S+", 0) * Op("Sz", 0)), alg);
+    REQUIRE(isapprox(r1, -0.5 * Op("S+", 0), alg));
+    auto r2 = normal_order(1.0 * (Op("Sz", 0) * Op("S+", 0)), alg);
+    REQUIRE(isapprox(r2, 0.5 * Op("S+", 0), alg));
+  }
+  {
+    // S-{0}*Sz{0} -> 0.5*S-{0},  Sz{0}*S-{0} -> -0.5*S-{0}
+    auto r1 = normal_order(1.0 * (Op("S-", 0) * Op("Sz", 0)), alg);
+    REQUIRE(isapprox(r1, 0.5 * Op("S-", 0), alg));
+    auto r2 = normal_order(1.0 * (Op("Sz", 0) * Op("S-", 0)), alg);
+    REQUIRE(isapprox(r2, -0.5 * Op("S-", 0), alg));
+  }
+  {
+    // Sx{0} -> 0.5*S+{0} + 0.5*S-{0},  Sy{0} -> -i/2*S+{0} + i/2*S-{0}
+    auto rx = normal_order(OpSum(Op("Sx", 0)), alg);
+    REQUIRE(isapprox(rx, 0.5 * Op("S+", 0) + 0.5 * Op("S-", 0), alg));
+    complex I(0.0, 1.0);
+    auto ry = normal_order(OpSum(Op("Sy", 0)), alg);
+    REQUIRE(isapprox(ry, (-I * 0.5) * Op("S+", 0) + (I * 0.5) * Op("S-", 0),
+                     alg));
+  }
+  // Every same-site rule must preserve the matrix on a Spinhalf block
+  {
+    alg = spin_algebra(2);
+    auto block = Spinhalf(2);
+    std::vector<OpSum> ops_list = {
+        OpSum(Op("Sx", 0)),
+        OpSum(Op("Sy", 1)),
+        1.0 * (Op("S+", 0) * Op("Sz", 0)),
+        1.0 * (Op("Sz", 0) * Op("S+", 0)),
+        1.0 * (Op("S-", 1) * Op("Sz", 1)),
+        1.0 * (Op("Sz", 1) * Op("S-", 1)),
+        1.0 * (Op("S-", 0) * Op("S-", 0)),
+        1.0 * (Op("S+", 1) * Op("S+", 1)),
+        1.0 * (Op("S+", 1) * Op("S-", 1)),
+        1.0 * (Op("S-", 0) * Op("S+", 0))};
+    for (OpSum const &ops : ops_list) {
+      arma::cx_mat m1 = matrixC(ops, block);
+      arma::cx_mat m2 = matrixC(normal_order(ops, alg), block);
+      REQUIRE(arma::norm(m1 - m2) < 1e-12);
+    }
+  }
 
   // -------------------------------------------------------------------------
   // Spin algebra — sorting (bosonic: no sign change)

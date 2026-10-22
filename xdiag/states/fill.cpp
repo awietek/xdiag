@@ -15,6 +15,7 @@
 
 #ifdef XDIAG_DISTRIBUTED
 #include <mpi.h>
+#include <xdiag/mpi/allreduce.hpp>
 #endif
 
 namespace xdiag {
@@ -107,11 +108,29 @@ void fill(State &state, ProductState const &pstate, int64_t col) try {
   } else if (col >= state.ncols()) {
     XDIAG_THROW("Column index larger than number of columns in State");
   }
+  int64_t nmatch = 0;
   std::function<double(ProductState const &)> coeff =
-      [&pstate](ProductState const &p) -> double {
-    return (p == pstate) ? 1.0 : 0.0;
+      [&pstate, &nmatch](ProductState const &p) -> double {
+    if (p == pstate) {
+      ++nmatch;
+      return 1.0;
+    } else {
+      return 0.0;
+    }
   };
   fill(state, coeff, col);
+
+#ifdef XDIAG_DISTRIBUTED
+  if (isdistributed(state.block())) {
+    int64_t nmatch_local = nmatch;
+    mpi::Allreduce(&nmatch_local, &nmatch, 1, MPI_SUM, MPI_COMM_WORLD);
+  }
+#endif
+  if (nmatch == 0) {
+    XDIAG_THROW("ProductState is not contained in the block of the State. "
+                "Check that it lies in the correct symmetry sector, and for "
+                "symmetric blocks that it is the canonical representative.");
+  }
 }
 XDIAG_CATCH
 

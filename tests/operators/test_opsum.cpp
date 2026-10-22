@@ -5,6 +5,7 @@
 #include <tests/catch.hpp>
 
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include <xdiag/operators/collect.hpp>
 #include <xdiag/operators/opsum.hpp>
@@ -434,6 +435,215 @@ TEST_CASE("OpSum scalar scaling paths", "[operators]") try {
     REQUIRE(resolved.size() == 2);
   }
 
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
+}
+
+TEST_CASE("OpSum free operators", "[operators]") try {
+  using namespace xdiag;
+
+  Op A("A", int64_t(0));
+  Op B("B", int64_t(1));
+  Monomial mAB{A, B};
+  Monomial mBA{B, A};
+  complex z(1.0, -2.0);
+
+  auto single = [](OpSum const &ops, Coeff const &c, Monomial const &m) {
+    return (ops.size() == 1) && (ops.terms()[0].coeff == c) &&
+           (ops.terms()[0].monomial == m);
+  };
+
+  // --- scalar * Op and Op * scalar ---
+  {
+    REQUIRE(single(2.0 * A, Coeff(2.0), Monomial(A)));
+    REQUIRE(single(A * 2.0, Coeff(2.0), Monomial(A)));
+    REQUIRE(single(z * A, Coeff(z), Monomial(A)));
+    REQUIRE(single(A * z, Coeff(z), Monomial(A)));
+    REQUIRE(single(std::string("J") * A, Coeff("J"), Monomial(A)));
+    REQUIRE(single(A * std::string("J"), Coeff("J"), Monomial(A)));
+    REQUIRE(single(Coeff(3.0) * A, Coeff(3.0), Monomial(A)));
+    REQUIRE(single(A * Coeff(3.0), Coeff(3.0), Monomial(A)));
+    REQUIRE(single(Scalar(4.0) * A, Coeff(4.0), Monomial(A)));
+    REQUIRE(single(A * Scalar(4.0), Coeff(4.0), Monomial(A)));
+  }
+
+  // --- scalar * Monomial and Monomial * scalar ---
+  {
+    REQUIRE(single(2.0 * mAB, Coeff(2.0), mAB));
+    REQUIRE(single(mAB * 2.0, Coeff(2.0), mAB));
+    REQUIRE(single(z * mAB, Coeff(z), mAB));
+    REQUIRE(single(mAB * z, Coeff(z), mAB));
+    REQUIRE(single(std::string("J") * mAB, Coeff("J"), mAB));
+    REQUIRE(single(mAB * std::string("J"), Coeff("J"), mAB));
+    REQUIRE(single(Coeff(3.0) * mAB, Coeff(3.0), mAB));
+    REQUIRE(single(mAB * Coeff(3.0), Coeff(3.0), mAB));
+    REQUIRE(single(Scalar(4.0) * mAB, Coeff(4.0), mAB));
+    REQUIRE(single(mAB * Scalar(4.0), Coeff(4.0), mAB));
+  }
+
+  // --- scaling an OpSum from either side, and division ---
+  {
+    OpSum ops = 2.0 * A + 3.0 * B;
+    OpSum expected = 4.0 * A + 6.0 * B;
+    REQUIRE(2.0 * ops == expected);
+    REQUIRE(ops * 2.0 == expected);
+    REQUIRE(Scalar(2.0) * ops == expected);
+    REQUIRE(ops * Scalar(2.0) == expected);
+    REQUIRE(ops / 0.5 == expected);
+    REQUIRE(ops / Scalar(0.5) == expected);
+
+    OpSum expectedz = (2.0 * z) * A + (3.0 * z) * B;
+    REQUIRE(z * ops == expectedz);
+    REQUIRE(ops * z == expectedz);
+    REQUIRE(ops * Scalar(z) == expectedz);
+
+    complex zinv = 1.0 / z;
+    OpSum expected_div = (2.0 * zinv) * A + (3.0 * zinv) * B;
+    REQUIRE(ops / z == expected_div);
+    REQUIRE(ops / Scalar(z) == expected_div);
+    REQUIRE(ops == 2.0 * A + 3.0 * B); // operand untouched
+  }
+
+  // --- additive operators with a Monomial on the left ---
+  {
+    OpSum s = mAB + mBA;
+    REQUIRE(s.size() == 2);
+    REQUIRE(s.terms()[0].monomial == mAB);
+    REQUIRE(s.terms()[1].monomial == mBA);
+    REQUIRE(s.terms()[1].coeff == Coeff(1.0));
+
+    OpSum d = mAB - mBA;
+    REQUIRE(d.size() == 2);
+    REQUIRE(d.terms()[1].coeff == Coeff(-1.0));
+
+    OpSum n = -mAB;
+    REQUIRE(single(n, Coeff(-1.0), mAB));
+
+    OpSum rhs = 2.0 * A;
+    OpSum s2 = mAB + rhs;
+    REQUIRE(s2.size() == 2);
+    REQUIRE(s2.terms()[0].monomial == mAB);
+    REQUIRE(s2.terms()[1].coeff == Coeff(2.0));
+
+    OpSum d2 = mAB - rhs;
+    REQUIRE(d2.size() == 2);
+    REQUIRE(d2.terms()[1].coeff == Coeff(-2.0));
+  }
+
+  // --- algebra products with Op / Monomial on the left ---
+  {
+    OpSum rhs = 2.0 * B + 3.0 * A;
+    OpSum p = A * rhs;
+    REQUIRE(p.size() == 2);
+    REQUIRE(p.terms()[0].monomial == mAB);
+    REQUIRE(p.terms()[0].coeff == Coeff(2.0));
+    REQUIRE(p.terms()[1].monomial == Monomial{A, A});
+    REQUIRE(p.terms()[1].coeff == Coeff(3.0));
+
+    OpSum q = mAB * rhs;
+    REQUIRE(q.size() == 2);
+    REQUIRE(q.terms()[0].monomial == Monomial{A, B, B});
+    REQUIRE(q.terms()[1].monomial == Monomial{A, B, A});
+    REQUIRE(q.terms()[1].coeff == Coeff(3.0));
+
+    // non-commutativity: A * ops != ops * A in general
+    REQUIRE(A * rhs != rhs * A);
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
+}
+
+TEST_CASE("OpSum constructors and assignment", "[operators]") try {
+  using namespace xdiag;
+
+  Op A("A", int64_t(0));
+  Op B("B", int64_t(1));
+  Monomial mAB{A, B};
+  complex z(0.5, 2.0);
+
+  // --- remaining constructor overloads ---
+  {
+    REQUIRE(OpSum(Scalar(2.0), A).terms()[0].coeff == Coeff(2.0));
+    REQUIRE(OpSum(Scalar(z), mAB).terms()[0].coeff == Coeff(z));
+    REQUIRE(OpSum(Coeff("J"), A).terms()[0].coeff == Coeff("J"));
+    REQUIRE(OpSum(std::string("J"), mAB).terms()[0].coeff == Coeff("J"));
+    REQUIRE(OpSum(2.0, mAB).terms()[0].monomial == mAB);
+    REQUIRE(OpSum(z, mAB).terms()[0].coeff == Coeff(z));
+    REQUIRE(OpSum(z, A).terms()[0].coeff == Coeff(z));
+    REQUIRE(!OpSum(z, A).isreal());
+    REQUIRE(OpSum(2.0, A).isreal());
+    REQUIRE(OpSum().empty());
+    REQUIRE(empty(OpSum()));
+    REQUIRE(!empty(OpSum(A)));
+  }
+
+  // --- assignment from Op / Monomial replaces terms and clears params ---
+  {
+    OpSum ops = std::string("J") * A + 2.0 * B;
+    ops["J"] = 1.5;
+    REQUIRE(ops.params().size() == 1);
+
+    ops = B;
+    REQUIRE(ops.size() == 1);
+    REQUIRE(ops.terms()[0].monomial == Monomial(B));
+    REQUIRE(ops.terms()[0].coeff == Coeff(1.0));
+    REQUIRE(ops.params().empty());
+
+    ops = mAB;
+    REQUIRE(ops.size() == 1);
+    REQUIRE(ops.terms()[0].monomial == mAB);
+  }
+
+  // --- const parameter access ---
+  {
+    OpSum ops = std::string("J") * A;
+    ops["J"] = Scalar(2.5);
+    OpSum const &cops = ops;
+    REQUIRE(cops["J"] == Scalar(2.5));
+    REQUIRE_THROWS_AS(cops["missing"], Error);
+  }
+
+  // --- isreal with string coefficients depends on resolved values ---
+  {
+    OpSum ops = std::string("J") * A;
+    ops["J"] = 1.0;
+    REQUIRE(ops.isreal());
+    ops["J"] = z;
+    REQUIRE(!ops.isreal());
+    REQUIRE(!isreal(ops));
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
+}
+
+TEST_CASE("OpSum printing", "[operators]") try {
+  using namespace xdiag;
+
+  Op A("SdotS", {0, 1});
+  Op B("Sz", int64_t(2));
+  Monomial mAB{A, B};
+
+  {
+    OpSum ops = 2.0 * A + complex(0.0, 1.5) * B + std::string("J") * mAB;
+    ops["J"] = Scalar(0.25);
+    std::string s = to_string(ops);
+    REQUIRE(s.find("SdotS") != std::string::npos);
+    REQUIRE(s.find("Sz") != std::string::npos);
+    REQUIRE(s.find("J") != std::string::npos);
+    REQUIRE(s.find("0.25") != std::string::npos);
+
+    std::ostringstream oss;
+    oss << ops;
+    REQUIRE(oss.str() == s);
+  }
+  {
+    // empty and parameter-free OpSums print without throwing
+    REQUIRE_NOTHROW(to_string(OpSum()));
+    REQUIRE_NOTHROW(to_string(OpSum(A)));
+  }
 } catch (xdiag::Error e) {
   error_trace(e);
   throw;

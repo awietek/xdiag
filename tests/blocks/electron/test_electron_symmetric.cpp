@@ -7,6 +7,7 @@
 #include <vector>
 
 #include <tests/blocks/electron/testcases_electron.hpp>
+#include <tests/blocks/spectrum_union.hpp>
 #include <tests/catch.hpp>
 #include <tests/is_approx_hermitian.hpp>
 
@@ -63,36 +64,11 @@ static void test_spectra_np(OpSum const &ops, int64_t nsites,
       if (dim(block) == 0 || dim(block) > 1000) {
         continue;
       }
-      arma::cx_mat H = matrixC(ops, block);
-      REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
-      arma::vec eigs_full;
-      arma::eig_sym(eigs_full, H);
-
-      std::vector<double> eigs_sym;
-      for (int64_t k = 0; k < (int64_t)irreps.size(); ++k) {
-        auto blockk = Electron(nsites, nup, ndn, irreps[k]);
-        if (dim(blockk) == 0) {
-          continue;
-        }
-        arma::cx_mat Hk = matrixC(ops, blockk);
-        REQUIRE(testcases::is_approx_hermitian(Hk, 1e-8));
-        arma::vec ek;
-        arma::eig_sym(ek, Hk);
-
-        if (blockk.isreal() && isreal(ops)) {
-          arma::mat Hk_real = matrix(ops, blockk);
-          arma::vec ek_real;
-          arma::eig_sym(ek_real, Hk_real);
-          REQUIRE(isapprox(ek, ek_real));
-        }
-        for (double e : ek) {
-          for (int64_t m = 0; m < mults[k]; ++m) {
-            eigs_sym.push_back(e);
-          }
-        }
+      std::vector<Block> parts;
+      for (Representation const &irrep : irreps) {
+        parts.push_back(Electron(nsites, nup, ndn, irrep));
       }
-      std::sort(eigs_sym.begin(), eigs_sym.end());
-      REQUIRE(isapprox(eigs_full, arma::vec(eigs_sym)));
+      testcases::spectrum_union(ops, block, parts, mults);
     }
   }
 }
@@ -107,41 +83,18 @@ static void test_spectra_no_np(OpSum const &ops, int64_t nsites,
   if (dim(block_total) == 0 || dim(block_total) > 1000) {
     return;
   }
-  arma::cx_mat H_total = matrixC(ops, block_total);
-  REQUIRE(testcases::is_approx_hermitian(H_total, 1e-8));
-  arma::vec eigs_total;
-  arma::eig_sym(eigs_total, H_total);
-
-  std::vector<double> eigs_all;
+  std::vector<Block> all_np;
   for (auto const &irrep : irreps) {
-    auto block = Electron(nsites, irrep);
-    arma::cx_mat H = matrixC(ops, block);
-    REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
-    arma::vec eigs_no_np;
-    arma::eig_sym(eigs_no_np, H);
-
-    std::vector<double> eigs_np_all;
+    std::vector<Block> np;
     for (int64_t nup = 0; nup <= nsites; ++nup) {
       for (int64_t ndn = 0; ndn <= nsites; ++ndn) {
-        auto block_np = Electron(nsites, nup, ndn, irrep);
-        if (dim(block_np) == 0) {
-          continue;
-        }
-        arma::cx_mat H_np = matrixC(ops, block_np);
-        REQUIRE(testcases::is_approx_hermitian(H_np, 1e-8));
-        arma::vec eigs_np;
-        arma::eig_sym(eigs_np, H_np);
-        for (double e : eigs_np) {
-          eigs_np_all.push_back(e);
-          eigs_all.push_back(e);
-        }
+        np.push_back(Electron(nsites, nup, ndn, irrep));
       }
     }
-    std::sort(eigs_np_all.begin(), eigs_np_all.end());
-    REQUIRE(isapprox(eigs_no_np, arma::vec(eigs_np_all)));
+    testcases::spectrum_union(ops, Electron(nsites, irrep), np);
+    all_np.insert(all_np.end(), np.begin(), np.end());
   }
-  std::sort(eigs_all.begin(), eigs_all.end());
-  REQUIRE(isapprox(eigs_total, arma::vec(eigs_all)));
+  testcases::spectrum_union(ops, block_total, all_np);
 }
 
 // apply() agrees with the explicit matrix-vector / matrix-matrix product, and
@@ -345,6 +298,85 @@ TEST_CASE("electronsymmetricapply", "[electron]") try {
     test_apply(get_linear_chain(nsites, 1.0, 5.0), nsites, irreps);
     Log("electron symmetric apply: Hubbard+Heisenberg chain N = {}", nsites);
     test_apply(get_linear_chain_hb(nsites, 0.4), nsites, irreps);
+  }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}
+
+// Large site counts select the 64-bit bases (40 sites: LinTable<uint64_t>,
+// 43 sites: Combinations<uint64_t>). With one up and one down electron the
+// Hilbert space stays small enough for a dense cross-check. The second bond
+// shell at distance 13 makes bonds cross bit position 32 in every translate.
+TEST_CASE("electron_symmetric_large_nsites", "[electron]") try {
+  for (int64_t nsites : {40, 43}) {
+    Log("electron symmetric large nsites: N = {}", nsites);
+    OpSum ops;
+    for (int64_t i = 0; i < nsites; ++i) {
+      ops += 1.0 * Op("Hop", {i, (i + 1) % nsites});
+      ops += 0.3 * Op("Hop", {i, (i + 13) % nsites});
+    }
+    ops += 4.0 * Op("HubbardU");
+    testcases::translation_spectrum_union(
+        ops, Electron(nsites, 1, 1), nsites, [&](Representation const &irrep) {
+          return Electron(nsites, 1, 1, irrep);
+        });
+  }
+
+  // single free particle on a 36-site ring: momentum sector k holds exactly
+  // the eigenvalue -2 t cos(2 pi k / N), up to the global sign convention
+  {
+    int64_t nsites = 36;
+    double t = 1.3;
+    OpSum ops;
+    for (int64_t i = 0; i < nsites; ++i) {
+      ops += t * Op("Hop", {i, (i + 1) % nsites});
+    }
+    arma::vec ek(nsites);
+    arma::vec expected(nsites);
+    for (int64_t k = 0; k < nsites; ++k) {
+      Block block = Electron(nsites, 1, 0, cyclic_group_irrep(nsites, k));
+      REQUIRE(dim(block) == 1);
+      ek(k) = testcases::dense_spectrum(ops, block)(0);
+      expected(k) = 2.0 * t * std::cos(2.0 * M_PI * (double)k / (double)nsites);
+    }
+    bool minus = arma::norm(ek + expected, "inf") < 1e-10;
+    bool plus = arma::norm(ek - expected, "inf") < 1e-10;
+    REQUIRE((minus || plus));
+  }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}
+
+// The symmetric kernels for density-density and single-density operators are
+// not reached by the hopping/exchange Hamiltonians above.
+TEST_CASE("electron_symmetric_density_operators", "[electron]") try {
+  for (int64_t nsites : {4, 5, 6}) {
+    Log("electron symmetric density operators: N = {}", nsites);
+    OpSum ops;
+    for (int64_t i = 0; i < nsites; ++i) {
+      int64_t j = (i + 1) % nsites;
+      ops += 1.0 * Op("Hop", {i, j});
+      ops += 0.7 * Op("NupNup", {i, j});
+      ops += 0.6 * Op("NdnNdn", {i, j});
+      ops += 0.5 * Op("NupNdn", {i, j});
+      ops += 0.4 * Op("NdnNup", {i, j});
+      ops += 0.3 * Op("NtotNtot", {i, j});
+      ops += 0.2 * Op("Nup", i);
+      ops += 0.1 * Op("Ndn", i);
+      ops += 0.15 * Op("Ntot", i);
+    }
+    ops += 0.25 * Op("Id");
+    for (int64_t nup = 0; nup <= nsites; ++nup) {
+      for (int64_t ndn = 0; ndn <= nsites; ++ndn) {
+        testcases::translation_spectrum_union(
+            ops, Electron(nsites, nup, ndn), nsites,
+            [&](Representation const &irrep) {
+              return Electron(nsites, nup, ndn, irrep);
+            });
+      }
+    }
   }
 } catch (xdiag::Error const &e) {
   error_trace(e);

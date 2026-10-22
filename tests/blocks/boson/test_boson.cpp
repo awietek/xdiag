@@ -5,6 +5,7 @@
 #include "../../catch.hpp"
 
 #include <tests/blocks/random_opsum_matrix.hpp>
+#include <tests/blocks/spectrum_union.hpp>
 
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/boson.hpp>
@@ -311,6 +312,48 @@ TEST_CASE("bosonpromotion", "[boson]") try {
       sum += dim(Boson(nsites, d, number, cyclic_group_irrep(nsites, k)));
     }
     REQUIRE(sum == full.dim());
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
+}
+
+// Symmetric boson bases that are only selected for wide site encodings:
+// more than 42 bits in total (BoundedPartitions instead of the lookup table)
+// and 4 or 8 bits per site. Two particles keep every Hilbert space small.
+TEST_CASE("boson_symmetric_wide_encodings", "[boson]") try {
+  // number conserving, more than 42 bits: 1, 2, 3, 4, 8 bits per site
+  for (auto [nsites, d] : std::vector<std::pair<int64_t, int64_t>>{
+           {50, 2}, {25, 3}, {15, 5}, {12, 10}, {6, 20}}) {
+    Log("Boson symmetric wide encoding: N = {}, d = {}, number = 2", nsites,
+        d);
+    auto ops = bose_hubbard_opsum(nsites, 1.0, 2.0, 0.0);
+    testcases::translation_spectrum_union(
+        ops, Boson(nsites, d, 2), nsites,
+        [&](Representation const &irrep) { return Boson(nsites, d, 2, irrep); });
+  }
+
+  // number conserving with lookup table, 4 and 8 bits per site
+  for (auto [nsites, d, number] :
+       std::vector<std::tuple<int64_t, int64_t, int64_t>>{{4, 10, 3},
+                                                          {3, 20, 2}}) {
+    Log("Boson symmetric wide local dimension: N = {}, d = {}, number = {}",
+        nsites, d, number);
+    auto ops = bose_hubbard_opsum(nsites, 1.0, 2.0, 0.0);
+    testcases::translation_spectrum_union(
+        ops, Boson(nsites, d, number), nsites, [&](Representation const &irrep) {
+          return Boson(nsites, d, number, irrep);
+        });
+  }
+
+  // no number conservation, 4 and 8 bits per site
+  for (auto [nsites, d] :
+       std::vector<std::pair<int64_t, int64_t>>{{3, 10}, {2, 20}}) {
+    Log("Boson symmetric wide local dimension: N = {}, d = {}", nsites, d);
+    auto ops = bose_hubbard_opsum(nsites, 1.0, 2.0, 0.3);
+    testcases::translation_spectrum_union(
+        ops, Boson(nsites, d), nsites,
+        [&](Representation const &irrep) { return Boson(nsites, d, irrep); });
   }
 } catch (xdiag::Error e) {
   error_trace(e);

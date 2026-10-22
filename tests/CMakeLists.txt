@@ -85,6 +85,7 @@ set(XDIAG_TEST_SOURCES
   blocks/fermion/testcases_fermion.cpp
 
   kernels/test_apply_overloads.cpp
+  kernels/test_sparse_matrix.cpp
   kernels/terms/test_non_branching_op.cpp
   kernels/sparse/test_csr_twophase.cpp
   
