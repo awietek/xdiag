@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.19)
 
 project(
   xdiag
-  VERSION 0.5.1
+  VERSION 0.5.2
   LANGUAGES CXX
 )
 
