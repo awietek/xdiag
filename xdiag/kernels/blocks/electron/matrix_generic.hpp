@@ -6,10 +6,7 @@
 
 #include <string>
 
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/valid.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
@@ -29,13 +26,13 @@ template <typename coeff_t, typename basis_t, typename fill_f>
 void matrix_generic(OpSum const &ops, basis_t const &basis_in,
                     basis_t const &basis_out, fill_f fill) try {
 
-  operators::check_valid(ops);
-  auto algebra = algebra::electron_implementation_algebra(basis_in.nsites());
-  auto ops_compiled = normal_order(ops.plain(), algebra);
+  // ops is compiled (see kernels/compile.hpp): normal-ordered with this
+  // block's implementation algebra
+  for (auto const &[c, monomial] : ops) {
 
-  for (auto const &[c, monomial] : ops_compiled) {
-    // Products of elementary operators (e.g. S+ = Cdagup Cdn) are handled by the
-    // Cdag/C string kernel; size-1 named operators dispatch to their kernels.
+    // Products of elementary operators (e.g. S+ = Cdagup Cdn) are handled by
+    // the Cdag/C string kernel; size-1 named operators dispatch to their
+    // kernels.
     if (monomial.size() != 1) {
       term_cdagc_string<coeff_t>(c, monomial, basis_in, basis_out, fill);
       continue;

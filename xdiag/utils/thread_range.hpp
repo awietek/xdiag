@@ -5,6 +5,9 @@
 #pragma once
 
 #include <cstdint>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 namespace xdiag::utils {
 
@@ -21,7 +24,9 @@ template <typename iterator_t> struct ThreadRange {
 // thread takes the remainder), with the global index of its first element. The
 // container must provide size() and a random-access begin()/end(). With
 // num_thread = 0, nthreads = 1 it returns the whole container (the serial case).
-// Use as:
+//
+// To run a loop over the chunks, use for_each_thread_range below. The raw
+// pattern it wraps is:
 //
 //   #pragma omp parallel
 //   {
@@ -41,6 +46,30 @@ inline auto thread_range(container_t const &container, int num_thread,
               ? container.end()
               : container.begin() + (num_thread + 1) * (size / nthreads),
           index};
+}
+
+// Calls body(begin, end, idx) once per thread, on that thread's chunk of
+// container (see thread_range). Without OpenMP the body runs once on the whole
+// container. Usage:
+//
+//   utils::for_each_thread_range(container, [&](auto begin, auto end,
+//                                               int64_t idx) {
+//     for (auto it = begin; it != end; ++it, ++idx) { ... }
+//   });
+template <typename container_t, typename body_f>
+void for_each_thread_range(container_t const &container, body_f body) {
+#ifdef _OPENMP
+#pragma omp parallel
+  {
+    int num_thread = omp_get_thread_num();
+    auto [begin, end, idx] =
+        thread_range(container, num_thread, omp_get_num_threads());
+    body(begin, end, idx);
+  }
+#else
+  auto [begin, end, idx] = thread_range(container, 0, 1);
+  body(begin, end, idx);
+#endif
 }
 
 } // namespace xdiag::utils

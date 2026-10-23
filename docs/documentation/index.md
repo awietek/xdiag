@@ -33,7 +33,8 @@ The documentation is organized following the source tree of XDiag: every subdire
 |:----------------------------------------------|:-----------------------------------------------------|-----------------------------------:|
 | [Op](operators/op.md)                         | A linear operator acting on the Hilbert space        | :simple-cplusplus:  :simple-julia: |
 | [OpSum](operators/opsum.md)                   | Sums and products of couplings times operators       | :simple-cplusplus:  :simple-julia: |
-| [hc](operators/hc.md)                         | Returns the hermitian conjugate of an Op or OpSum    | :simple-cplusplus:  :simple-julia: |
+| [hc](operators/hc.md)                         | Hermitian conjugate of an Op or OpSum                | :simple-cplusplus:  :simple-julia: |
+| [adjoint](operators/hc.md)                    | same as [hc](operators/hc.md), postfix `'` in Julia  | :simple-cplusplus:  :simple-julia: |
 | [Operator types](operators/operator_types.md) | A summary of all the operator types defined in XDiag |                                    |
 
 ## States

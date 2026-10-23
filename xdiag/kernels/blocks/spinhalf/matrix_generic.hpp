@@ -4,10 +4,7 @@
 
 #pragma once
 
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/valid.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
@@ -25,12 +22,10 @@ namespace xdiag::kernels::spinhalf {
 template <typename coeff_t, typename basis_t, typename fill_f>
 void matrix_generic(OpSum const &ops, basis_t const &basis_in,
                     basis_t const &basis_out, fill_f fill) try {
-  // Get OpSum into format that can be processed
-  operators::check_valid(ops);
-  auto algebra = algebra::spinhalf_implementation_algebra(basis_in.nsites());
-  auto ops_compiled = normal_order(ops.plain(), algebra);
 
-  for (auto const &[c, monomial] : ops_compiled) {
+  // ops is compiled (see kernels/compile.hpp): normal-ordered with this
+  // block's implementation algebra
+  for (auto const &[c, monomial] : ops) {
     assert(monomial.size() == 1); // required for properly compiled ops
 
     Op op = monomial[0];

@@ -4,7 +4,11 @@
 
 #include "../../catch.hpp"
 
+#include <tuple>
+#include <vector>
+
 #include <tests/blocks/random_opsum_matrix.hpp>
+#include <tests/blocks/spectrum_union.hpp>
 
 #include <xdiag/blocks/blocks.hpp>
 #include <xdiag/blocks/boson.hpp>
@@ -311,6 +315,42 @@ TEST_CASE("bosonpromotion", "[boson]") try {
       sum += dim(Boson(nsites, d, number, cyclic_group_irrep(nsites, k)));
     }
     REQUIRE(sum == full.dim());
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
+}
+
+// Symmetric boson bases that are only selected for wide site encodings:
+// more than 42 bits in total (BoundedPartitions instead of the lookup table)
+// and 4 or 8 bits per site. Two particles keep every Hilbert space small.
+TEST_CASE("boson_symmetric_wide_encodings", "[boson]") try {
+  // number conserving, more than 42 bits: 1, 2, 3, 4, 8 bits per site
+  // (nsites, d, number); number < 0 means no number conservation
+  std::vector<std::tuple<int64_t, int64_t, int64_t>> cases = {
+      {50, 2, 2},  {25, 3, 2}, {15, 5, 2}, {12, 10, 2}, {6, 20, 2},
+      {4, 10, 3},  {3, 20, 2}, // number conserving with lookup table
+      {3, 10, -1}, {2, 20, -1}};
+  for (auto const &c : cases) {
+    int64_t nsites = std::get<0>(c);
+    int64_t d = std::get<1>(c);
+    int64_t number = std::get<2>(c);
+    Log("Boson symmetric wide encoding: N = {}, d = {}, number = {}", nsites,
+        d, number);
+    if (number >= 0) {
+      auto ops = bose_hubbard_opsum(nsites, 1.0, 2.0, 0.0);
+      testcases::translation_spectrum_union(
+          ops, Boson(nsites, d, number), nsites,
+          [&](Representation const &irrep) {
+            return Boson(nsites, d, number, irrep);
+          });
+    } else {
+      auto ops = bose_hubbard_opsum(nsites, 1.0, 2.0, 0.3);
+      testcases::translation_spectrum_union(
+          ops, Boson(nsites, d), nsites, [&](Representation const &irrep) {
+            return Boson(nsites, d, irrep);
+          });
+    }
   }
 } catch (xdiag::Error e) {
   error_trace(e);

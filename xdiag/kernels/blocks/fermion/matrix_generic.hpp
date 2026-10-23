@@ -4,13 +4,9 @@
 
 #pragma once
 
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/valid.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
-#include <xdiag/utils/xdiag_show.hpp>
 
 #include <xdiag/kernels/blocks/fermion/terms/term_c.hpp>
 #include <xdiag/kernels/blocks/fermion/terms/term_cdag.hpp>
@@ -28,12 +24,9 @@ template <typename coeff_t, typename basis_t, typename fill_f>
 void matrix_generic(OpSum const &ops, basis_t const &basis_in,
                     basis_t const &basis_out, fill_f fill) try {
 
-  // Get OpSum into format that can be processed
-  operators::check_valid(ops);
-  auto algebra = algebra::fermion_implementation_algebra(basis_in.nsites());
-  auto ops_compiled = normal_order(ops.plain(), algebra);
-
-  for (auto const &[c, monomial] : ops_compiled) {
+  // ops is compiled (see kernels/compile.hpp): normal-ordered with this
+  // block's implementation algebra
+  for (auto const &[c, monomial] : ops) {
     if (monomial.size() == 1) {
       Op op = monomial[0];
       std::string type = op.type();

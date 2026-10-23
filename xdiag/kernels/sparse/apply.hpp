@@ -22,10 +22,6 @@
 //
 // When compiled with XDIAG_USE_SPARSE_MKL and idx_t == int64_t the MKL
 // inspector-executor SpMV/SpMM routines are used for the real/complex cases.
-//
-// The four-argument overload (with two block arguments) is for internal use by
-// generic algorithms that pass blocks alongside the vectors; the blocks are
-// ignored and no quantum-number checking is performed.
 
 namespace xdiag {
 
@@ -59,27 +55,28 @@ XDIAG_API void apply(CSRMatrix<idx_t, double> const &spmat,
                      arma::Mat<complex> const &mat_in,
                      arma::Mat<complex> &mat_out);
 
-// Internal: four-argument form used by generic algorithms (blocks ignored).
-template <typename idx_t, typename coeff_t, typename block_t, typename vec_t>
-inline void apply(CSRMatrix<idx_t, coeff_t> const &spmat, block_t const &,
-                  vec_t const &vec_in, block_t const &, vec_t &vec_out) try {
+namespace kernels {
+
+// Internal. Counterparts of kernels::compile and kernels::apply(CompiledOpSum)
+// for a CSRMatrix, so generic algorithms handle either operator type. A sparse
+// matrix needs no compilation, and the row-parallel CSR product writes each
+// output element from exactly one thread, so it is bitwise reproducible as is.
+template <typename idx_t, typename coeff_t>
+inline CSRMatrix<idx_t, coeff_t> const &
+compile(CSRMatrix<idx_t, coeff_t> const &spmat, Block const &, Block const &) {
+  return spmat;
+}
+
+template <typename idx_t, typename coeff_t, typename vec_t>
+inline void apply(CSRMatrix<idx_t, coeff_t> const &spmat, vec_t const &vec_in,
+                  vec_t &vec_out) try {
   if constexpr (isreal<typename vec_t::elem_type>() && !isreal<coeff_t>()) {
     XDIAG_THROW("Cannot apply a complex CSRMatrix to a real vector.");
   } else {
-    return apply(spmat, vec_in, vec_out);
+    xdiag::apply(spmat, vec_in, vec_out);
   }
 }
 XDIAG_CATCH
-
-namespace kernels {
-
-// Internal. Counterpart of kernels::apply_hermitian(OpSum, ...) for a
-// CSRMatrix, so generic algorithms can call apply_hermitian for either
-// operator type. Precondition (spmat Hermitian) is the caller's responsibility.
-template <typename idx_t, typename coeff_t, typename vec_t>
-void apply_hermitian(CSRMatrix<idx_t, coeff_t> const &spmat,
-                     Block const &block_in, vec_t const &vec_in,
-                     Block const &block_out, vec_t &vec_out);
 
 } // namespace kernels
 } // namespace xdiag

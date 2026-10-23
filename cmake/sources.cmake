@@ -30,6 +30,8 @@ set(XDIAG_SOURCES
 
   # Core computational kernels
   kernels/apply.cpp
+  kernels/compile.cpp
+  kernels/elements.cpp
   kernels/matrix.cpp
   kernels/sparse/coo_matrix.cpp
   kernels/sparse/sparse_build.cpp

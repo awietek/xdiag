@@ -11,7 +11,6 @@ namespace xdiag {
 
 // Validates the inputs of a sparse-matrix construction before building:
 //   - the zero index i0 is 0 or 1,
-//   - ops maps block_in into block_out's symmetry sector (blocks_match),
 //   - a real matrix (coeff_t real) is only requested for real ops and blocks,
 //   - the block dimensions fit into the index type idx_t.
 // Throws on any violation. Defined for each (idx_t, coeff_t, block_t) used by

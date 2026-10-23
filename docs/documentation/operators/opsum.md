@@ -17,7 +17,7 @@ Generically, an OpSum can thus have coupling constants defined by either strings
 
 Thus, OpSums can be defined independently of the numerical values of the coupling constants, e.g. in an input file. Upon execution of the code, these constants can then be set. Most operations in XDiag require the OpSum to be convertible to a plain OpSum.
 
-OpSums can be added and subtracted, as well as multiplied with and divided by a scalar value, i.e. a real or complex number. In addition, two OpSums can be **multiplied** with one another, forming the (generally non-commutative) product of the two operators. Together, these operations turn the set of OpSums into an **algebra**. Complemented by the Hermitian conjugation [hc](hc.md), which is an involution satisfying $(\mathcal{A}\mathcal{B})^\dagger = \mathcal{B}^\dagger\mathcal{A}^\dagger$, the OpSums form an **involutive algebra** ($*$-algebra).
+OpSums can be added and subtracted, as well as multiplied with and divided by a scalar value, i.e. a real or complex number. In addition, two OpSums can be **multiplied** with one another, forming the (generally non-commutative) product of the two operators. Together, these operations turn the set of OpSums into an **algebra**. Complemented by the Hermitian conjugation [hc](hc.md) (also available as `adjoint`), which is an involution satisfying $(\mathcal{A}\mathcal{B})^\dagger = \mathcal{B}^\dagger\mathcal{A}^\dagger$, the OpSums form an **involutive algebra** ($*$-algebra).
 
 ## Constructors
 

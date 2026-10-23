@@ -8,14 +8,11 @@
 #include <type_traits>
 #include <utility>
 
-#include <xdiag/algebra/algebra.hpp>
-#include <xdiag/algebra/normal_order.hpp>
 #include <xdiag/bits/get_set.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
-#include <xdiag/operators/valid.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 
@@ -52,22 +49,18 @@ struct is_symmetric_basis<
 // Symmetric tJ matrix kernel: same tJ algebra (projected operators, tJ
 // normal-ordering, no double occupancy) as the non-symmetric block, but the
 // per-term work is delegated to the shared electron SYMMETRIC kernels, which
-// drop any double-occupied output via the basis' index_dns returning -1. Only
-// two pieces are tJ-specific: the tJSzSz diagonal value (electron has SzSz only)
-// and Exchange (routed through the electron Cdag/C string kernel).
+// drop any double-occupied output via the basis' allowed(), checked before
+// symmetrising. Only two pieces are tJ-specific: the tJSzSz diagonal value
+// (electron has SzSz only) and Exchange (routed through the electron Cdag/C
+// string kernel).
 template <typename coeff_t, typename basis_t, typename fill_f>
 void matrix_generic_symmetric(OpSum const &ops, basis_t const &basis_in,
                               basis_t const &basis_out, fill_f fill) try {
   using bit_t = typename basis_t::bit_t;
 
-  operators::check_valid(ops);
-  // No Exchange kernel for the symmetric basis: let it expand to (normal-ordered)
-  // Cdag/C strings handled by the electron string kernel.
-  auto algebra = algebra::tj_implementation_algebra(basis_in.nsites(),
-                                                    /*exchange_as_kernel=*/false);
-  auto ops_compiled = normal_order(ops.plain(), algebra);
-
-  for (auto const &[c, monomial] : ops_compiled) {
+  // ops is compiled (see kernels/compile.hpp): normal-ordered with this
+  // block's implementation algebra
+  for (auto const &[c, monomial] : ops) {
     if (monomial.size() != 1) {
       electron::term_cdagc_string<coeff_t>(c, monomial, basis_in, basis_out,
                                            fill);
@@ -109,8 +102,7 @@ void matrix_generic_symmetric(OpSum const &ops, basis_t const &basis_in,
       // non-symmetric tj::term_szsz for the convention).
       coeff_t J = c.scalar().template as<coeff_t>();
       int64_t i = op[0], j = op[1];
-      coeff_t val_same =
-          (type == "tJSzSz") ? coeff_t(0.0) : J / coeff_t(4.0);
+      coeff_t val_same = (type == "tJSzSz") ? coeff_t(0.0) : J / coeff_t(4.0);
       coeff_t val_diff =
           (type == "tJSzSz") ? -J / coeff_t(2.0) : -J / coeff_t(4.0);
       electron::term_diag<coeff_t>(
@@ -142,47 +134,47 @@ void matrix_generic(OpSum const &ops, basis_t const &basis_in,
     matrix_generic_symmetric<coeff_t>(ops, basis_in, basis_out, fill);
   } else {
 
-  operators::check_valid(ops);
-  auto algebra = algebra::tj_implementation_algebra(basis_in.nsites());
-  auto ops_compiled = normal_order(ops.plain(), algebra);
+    // ops is compiled (see kernels/compile.hpp): normal-ordered with this
+    // block's implementation algebra
+    for (auto const &[c, monomial] : ops) {
+      // Products of elementary operators are handled by the general Cdag/C
+      // string kernel; size-1 named operators dispatch to their dedicated fast
+      // kernels.
+      if (monomial.size() != 1) {
+        term_cdagc_string<coeff_t>(c, monomial, basis_in, basis_out, fill);
+        continue;
+      }
+      Op op = monomial[0];
+      std::string type = op.type();
 
-  for (auto const &[c, monomial] : ops_compiled) {
-    // Products of elementary operators are handled by the general Cdag/C string
-    // kernel; size-1 named operators dispatch to their dedicated fast kernels.
-    if (monomial.size() != 1) {
-      term_cdagc_string<coeff_t>(c, monomial, basis_in, basis_out, fill);
-      continue;
+      if (type == "Id") {
+        kernels::term_identity<coeff_t>(c, basis_in, fill);
+      } else if (type == "Hopup") {
+        term_hopup<coeff_t>(c, op, basis_in, basis_out, fill);
+      } else if (type == "Hopdn") {
+        term_hopdn<coeff_t>(c, op, basis_in, basis_out, fill);
+      } else if (type == "Cup") {
+        term_cup<coeff_t>(c, op, basis_in, basis_out, fill);
+      } else if (type == "Cdagup") {
+        term_cdagup<coeff_t>(c, op, basis_in, basis_out, fill);
+      } else if (type == "Cdn") {
+        term_cdn<coeff_t>(c, op, basis_in, basis_out, fill);
+      } else if (type == "Cdagdn") {
+        term_cdagdn<coeff_t>(c, op, basis_in, basis_out, fill);
+      } else if ((type == "Nup") || (type == "Ndn")) {
+        term_number<coeff_t>(c, op, basis_in, basis_out, fill);
+      } else if ((type == "NupNup") || (type == "NdnNdn") ||
+                 (type == "NupNdn") || (type == "NdnNup") ||
+                 (type == "NtotNtot")) {
+        term_number_number<coeff_t>(c, op, basis_in, basis_out, fill);
+      } else if ((type == "SzSz") || (type == "tJSzSz")) {
+        term_szsz<coeff_t>(c, op, basis_in, basis_out, fill);
+      } else if (type == "Exchange") {
+        term_exchange<coeff_t>(c, op, basis_in, basis_out, fill);
+      } else {
+        XDIAG_THROW(fmt::format("Unknown Op type for tJ basis \"{}\"", type));
+      }
     }
-    Op op = monomial[0];
-    std::string type = op.type();
-
-    if (type == "Id") {
-      kernels::term_identity<coeff_t>(c, basis_in, fill);
-    } else if (type == "Hopup") {
-      term_hopup<coeff_t>(c, op, basis_in, basis_out, fill);
-    } else if (type == "Hopdn") {
-      term_hopdn<coeff_t>(c, op, basis_in, basis_out, fill);
-    } else if (type == "Cup") {
-      term_cup<coeff_t>(c, op, basis_in, basis_out, fill);
-    } else if (type == "Cdagup") {
-      term_cdagup<coeff_t>(c, op, basis_in, basis_out, fill);
-    } else if (type == "Cdn") {
-      term_cdn<coeff_t>(c, op, basis_in, basis_out, fill);
-    } else if (type == "Cdagdn") {
-      term_cdagdn<coeff_t>(c, op, basis_in, basis_out, fill);
-    } else if ((type == "Nup") || (type == "Ndn")) {
-      term_number<coeff_t>(c, op, basis_in, basis_out, fill);
-    } else if ((type == "NupNup") || (type == "NdnNdn") || (type == "NupNdn") ||
-               (type == "NdnNup") || (type == "NtotNtot")) {
-      term_number_number<coeff_t>(c, op, basis_in, basis_out, fill);
-    } else if ((type == "SzSz") || (type == "tJSzSz")) {
-      term_szsz<coeff_t>(c, op, basis_in, basis_out, fill);
-    } else if (type == "Exchange") {
-      term_exchange<coeff_t>(c, op, basis_in, basis_out, fill);
-    } else {
-      XDIAG_THROW(fmt::format("Unknown Op type for tJ basis \"{}\"", type));
-    }
-  }
   }
 }
 XDIAG_CATCH

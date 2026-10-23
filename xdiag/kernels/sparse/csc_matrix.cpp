@@ -4,65 +4,41 @@
 
 #include "csc_matrix.hpp"
 
-#include <algorithm>
 #include <numeric>
-
-#include <xdiag/algebra/ishermitian.hpp>
-#include <xdiag/armadillo.hpp>
-#include <xdiag/blocks/blocks.hpp>
-#include <xdiag/math/complex.hpp>
-#include <xdiag/kernels/sparse/sparse_build.hpp>
-#include <xdiag/kernels/sparse/valid.hpp>
-#include <xdiag/operators/hc.hpp>
-#include <xdiag/utils/error.hpp>
-#include <xdiag/utils/variants.hpp>
 
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
+#include <xdiag/algebra/ishermitian.hpp>
+#include <xdiag/armadillo.hpp>
+#include <xdiag/blocks/blocks.hpp>
+#include <xdiag/kernels/compile.hpp>
+#include <xdiag/kernels/sparse/sparse_build.hpp>
+#include <xdiag/kernels/sparse/valid.hpp>
+#include <xdiag/math/complex.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+
 namespace xdiag {
 
-// Layer 2: block-generic orchestration. The per-basis-type build (dispatch +
-// two-pass fill + sort) lives in the shared build_csr_arrays (sparse_build.cpp),
-// called here with transpose=true for CSC (groups = columns, ndim = ncols); the
-// resulting (ptr,idx) arrays are the CSC colptr/row.
-template <typename idx_t, typename coeff_t, typename block_t>
-static CSCMatrix<idx_t, coeff_t>
-csc_matrix_impl(OpSum const &ops, block_t const &block_in,
-                block_t const &block_out, idx_t i0) try {
-  idx_t nrows = (idx_t)size(block_out);
-  idx_t ncols = (idx_t)size(block_in);
-  arma::Col<idx_t> colptr, row;
-  arma::Col<coeff_t> data;
-  build_csr_arrays<idx_t, coeff_t, block_t>(ops, block_in, block_out, ncols, i0,
-                                            /*transpose=*/true, colptr, row,
-                                            data);
-  bool isherm = ishermitian(ops, block_in);
-  return CSCMatrix<idx_t, coeff_t>{nrows, ncols, colptr, row, data, i0, isherm};
-}
-XDIAG_CATCH
-
-// Layer 1: unwrap Block variant, then call the block-generic Layer 2.
+// csc_matrix compiles ops (see kernels/compile.hpp) and builds the arrays in
+// the two passes of sparse_build.cpp, grouped by column (transpose).
 template <typename idx_t, typename coeff_t>
 CSCMatrix<idx_t, coeff_t> csc_matrix(OpSum const &ops, Block const &block_in,
                                      Block const &block_out, idx_t i0) try {
-  CSCMatrix<idx_t, coeff_t> result;
-  utils::visit_same_type(
-      block_in, block_out,
-      [&](auto const &bin, auto const &bout) {
-        using block_t = std::decay_t<decltype(bin)>;
-        if constexpr (is_distributed_v<block_t>) {
-          XDIAG_THROW("Cannot build a sparse matrix for a distributed block: "
-                      "its Hilbert space is distributed across MPI ranks. Use "
-                      "apply(...) instead.");
-        } else {
-          check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
-          result = csc_matrix_impl<idx_t, coeff_t>(ops, bin, bout, i0);
-        }
-      },
-      "Type mismatch of Block types");
-  return result;
+  check_valid_sparse_matrix<idx_t, coeff_t>(ops, block_in, block_out, i0);
+  auto ops_compiled = kernels::compile(ops, block_in, block_out);
+  auto counts = sparse_counts<coeff_t>(ops_compiled, /*transpose=*/true);
+  int64_t nnz = std::accumulate(counts.begin(), counts.end(), (int64_t)0);
+  idx_t nrows = (idx_t)size(block_out);
+  idx_t ncols = (idx_t)size(block_in);
+  arma::Col<idx_t> colptr(ncols + 1), row(nnz);
+  arma::Col<coeff_t> data(nnz);
+  sparse_fill(ops_compiled, counts, i0, /*transpose=*/true, colptr.memptr(),
+              row.memptr(), data.memptr());
+  bool isherm = ishermitian(ops, block_in);
+  return CSCMatrix<idx_t, coeff_t>{nrows, ncols, colptr, row, data, i0, isherm};
 }
 XDIAG_CATCH
 

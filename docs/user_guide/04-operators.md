@@ -79,3 +79,5 @@ The algebra is complemented by an operation of **hermitian conjugation**, comput
 	```
 
 Hermitian conjugation is an *involution*: applying it twice returns the original operator, $(\mathcal{O}^\dagger)^\dagger = \mathcal{O}$, and it reverses the order of products, $(\mathcal{A}\mathcal{B})^\dagger = \mathcal{B}^\dagger \mathcal{A}^\dagger$. An algebra equipped with such an operation is called an **involutive algebra** (or $*$-algebra). The [OpSum](../documentation/operators/opsum.md) objects of XDiag therefore realize precisely the mathematical structure that operators in quantum mechanics are expected to have, and `hc` is the natural tool for building hermitian Hamiltonians, for instance by symmetrizing a non-hermitian term as `A + hc(A)`.
+
+The same operation is available under the name `adjoint`, which in Julia also provides the postfix `'` operator, so `A'` is `hc(A)`.

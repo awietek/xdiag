@@ -4,6 +4,8 @@
 
 #include <tests/catch.hpp>
 
+#include <sstream>
+
 #include <xdiag/math/matrix.hpp>
 #include <xdiag/utils/logger.hpp>
 
@@ -188,5 +190,175 @@ TEST_CASE("test_matrix", "[complex]") {
     Matrix m(rect);
     REQUIRE(m.n_rows() == 3);
     REQUIRE(m.n_cols() == 5);
+  }
+}
+
+TEST_CASE("test_matrix_extended", "[complex]") {
+  Log("Testing Matrix extended API");
+
+  arma::mat rm = {{1.0, 2.0}, {3.0, 4.0}};
+  arma::cx_mat cm = {{complex(1.0, 1.0), complex(2.0, 0.0)},
+                     {complex(0.0, -1.0), complex(4.0, 2.0)}};
+  arma::cx_mat rmc = arma::conv_to<arma::cx_mat>::from(rm);
+  complex z(0.5, -1.5);
+
+  // --- equality and inequality ---
+  {
+    Matrix a(rm), b(rm), c(cm);
+    arma::mat rm2 = rm * 2.0;
+    Matrix d(rm2);
+    REQUIRE(a == b);
+    REQUIRE(!(a != b));
+    REQUIRE(a != c);
+    REQUIRE(a != d);
+    REQUIRE(c == Matrix(cm));
+  }
+
+  // --- free real / imag / conj / transpose ---
+  {
+    Matrix mc(cm);
+    REQUIRE(arma::approx_equal(real(mc), arma::real(cm), "absdiff", 1e-14));
+    REQUIRE(arma::approx_equal(imag(mc), arma::imag(cm), "absdiff", 1e-14));
+    Matrix mr(rm);
+    REQUIRE(arma::approx_equal(real(mr), rm, "absdiff", 1e-14));
+    REQUIRE(arma::norm(imag(mr), "inf") == Approx(0.0));
+    REQUIRE(isreal(mr));
+    REQUIRE(!isreal(mc));
+
+    arma::cx_mat cmconj = arma::conj(cm);
+    REQUIRE(arma::approx_equal(conj(mc).as<arma::cx_mat>(), cmconj, "absdiff",
+                               1e-14));
+    REQUIRE(arma::approx_equal(mc.conj().as<arma::cx_mat>(), cmconj, "absdiff",
+                               1e-14));
+    REQUIRE(conj(mr).isreal());
+    REQUIRE(arma::approx_equal(conj(mr).as<arma::mat>(), rm, "absdiff", 1e-14));
+
+    arma::cx_mat cmt = cm.st();
+    REQUIRE(arma::approx_equal(transpose(mc).as<arma::cx_mat>(), cmt, "absdiff",
+                               1e-14));
+    REQUIRE(arma::approx_equal(mc.transpose().as<arma::cx_mat>(), cmt,
+                               "absdiff", 1e-14));
+    arma::mat rmt = rm.t();
+    REQUIRE(transpose(mr).isreal());
+    REQUIRE(arma::approx_equal(transpose(mr).as<arma::mat>(), rmt, "absdiff",
+                               1e-14));
+    // transpose differs from hc for complex matrices
+    REQUIRE(transpose(mc) != hc(mc));
+  }
+
+  // --- division by scalar ---
+  {
+    Matrix mr(rm);
+    arma::mat e1 = rm / 2.0;
+    REQUIRE(arma::approx_equal((mr / Scalar(2.0)).as<arma::mat>(), e1,
+                               "absdiff", 1e-14));
+    arma::cx_mat e2 = rmc / z;
+    Matrix q = mr / Scalar(z);
+    REQUIRE(!q.isreal());
+    REQUIRE(arma::approx_equal(q.as<arma::cx_mat>(), e2, "absdiff", 1e-14));
+
+    Matrix mc(cm);
+    arma::cx_mat e3 = cm / 2.0;
+    REQUIRE(arma::approx_equal((mc / Scalar(2.0)).as<arma::cx_mat>(), e3,
+                               "absdiff", 1e-14));
+    arma::cx_mat e4 = cm / z;
+    REQUIRE(arma::approx_equal((mc / Scalar(z)).as<arma::cx_mat>(), e4,
+                               "absdiff", 1e-14));
+
+    Matrix a(rm);
+    a /= Scalar(z);
+    REQUIRE(arma::approx_equal(a.as<arma::cx_mat>(), e2, "absdiff", 1e-14));
+    Matrix b(cm);
+    b /= Scalar(2.0);
+    REQUIRE(arma::approx_equal(b.as<arma::cx_mat>(), e3, "absdiff", 1e-14));
+    b /= Scalar(z);
+    arma::cx_mat e5 = cm / 2.0 / z;
+    REQUIRE(arma::approx_equal(b.as<arma::cx_mat>(), e5, "absdiff", 1e-14));
+  }
+
+  // --- mixed compound assignment widens the left operand ---
+  {
+    Matrix a(rm);
+    a += Matrix(cm);
+    REQUIRE(!a.isreal());
+    arma::cx_mat e1 = rmc + cm;
+    REQUIRE(arma::approx_equal(a.as<arma::cx_mat>(), e1, "absdiff", 1e-14));
+
+    Matrix b(rm);
+    b -= Matrix(cm);
+    arma::cx_mat e2 = rmc - cm;
+    REQUIRE(arma::approx_equal(b.as<arma::cx_mat>(), e2, "absdiff", 1e-14));
+
+    Matrix c(cm);
+    c += Matrix(rm);
+    arma::cx_mat e3 = cm + rmc;
+    REQUIRE(arma::approx_equal(c.as<arma::cx_mat>(), e3, "absdiff", 1e-14));
+
+    Matrix d(cm);
+    d -= Matrix(rm);
+    arma::cx_mat e4 = cm - rmc;
+    REQUIRE(arma::approx_equal(d.as<arma::cx_mat>(), e4, "absdiff", 1e-14));
+
+    Matrix f(cm);
+    f -= Matrix(cm);
+    REQUIRE(arma::norm(f.as<arma::cx_mat>(), "inf") == Approx(0.0));
+
+    Matrix g(cm);
+    g *= Scalar(z);
+    arma::cx_mat e5 = cm * z;
+    REQUIRE(arma::approx_equal(g.as<arma::cx_mat>(), e5, "absdiff", 1e-14));
+  }
+
+  // --- unary minus and mixed binary operators on complex ---
+  {
+    Matrix mc(cm);
+    arma::cx_mat ncm = -cm;
+    REQUIRE(arma::approx_equal((-mc).as<arma::cx_mat>(), ncm, "absdiff",
+                               1e-14));
+    Matrix mr(rm);
+    arma::cx_mat e1 = rmc - cm;
+    REQUIRE(arma::approx_equal((mr - mc).as<arma::cx_mat>(), e1, "absdiff",
+                               1e-14));
+    arma::cx_mat e2 = cm + rmc;
+    REQUIRE(arma::approx_equal((mc + mr).as<arma::cx_mat>(), e2, "absdiff",
+                               1e-14));
+    arma::cx_mat e3 = cm * rmc;
+    REQUIRE(arma::approx_equal((mc * mr).as<arma::cx_mat>(), e3, "absdiff",
+                               1e-14));
+    arma::cx_mat e4 = cm * cm;
+    REQUIRE(arma::approx_equal((mc * mc).as<arma::cx_mat>(), e4, "absdiff",
+                               1e-14));
+  }
+
+  // --- Matrix * Vector with complex vector ---
+  {
+    arma::cx_vec cv = {complex(1.0, 2.0), complex(-1.0, 0.5)};
+    Matrix mr(rm);
+    Matrix mc(cm);
+    Vector vc(cv);
+    arma::cx_vec e1 = rmc * cv;
+    REQUIRE(arma::approx_equal((mr * vc).as<arma::cx_vec>(), e1, "absdiff",
+                               1e-14));
+    arma::cx_vec e2 = cm * cv;
+    REQUIRE(arma::approx_equal((mc * vc).as<arma::cx_vec>(), e2, "absdiff",
+                               1e-14));
+  }
+
+  // --- printing ---
+  {
+    Matrix mr(rm);
+    std::string s = to_string(mr);
+    REQUIRE(!s.empty());
+    std::ostringstream oss;
+    oss << mr;
+    REQUIRE(oss.str() == s);
+    REQUIRE(!to_string(Matrix(cm)).empty());
+  }
+
+  // --- as<arma::mat> and to_real on genuinely complex data throw ---
+  {
+    Matrix mc(cm);
+    REQUIRE_THROWS(mc.as<arma::mat>());
+    REQUIRE_THROWS(mc.to_real());
   }
 }

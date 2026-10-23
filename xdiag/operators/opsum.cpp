@@ -222,7 +222,12 @@ XDIAG_CATCH
 
 Scalar &OpSum::operator[](std::string const &name) { return params_[name]; }
 Scalar const &OpSum::operator[](std::string const &name) const try {
-  return params_.at(name);
+  auto it = params_.find(name);
+  if (it == params_.end()) {
+    XDIAG_THROW(fmt::format(
+        "Parameter \"{}\" has not been defined in this OpSum", name));
+  }
+  return it->second;
 }
 XDIAG_CATCH
 

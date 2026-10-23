@@ -123,10 +123,11 @@ static double norm_estimate(op_t const &ops, block_t const &block,
   }
 
   int iter = 1;
-  auto apply_A = [&iter, &ops, &block](arma::cx_vec const &v) {
+  auto const &ops_compiled = kernels::compile(ops, block, block);
+  auto apply_A = [&iter, &ops_compiled](arma::cx_vec const &v) {
     auto ta = rightnow();
     auto w = arma::cx_vec(v.n_rows, arma::fill::zeros);
-    kernels::apply_hermitian(ops, block, v, block, w);
+    kernels::apply(ops_compiled, v, w);
     timing(ta, rightnow(), "MVM", 2);
     ++iter;
     return w;

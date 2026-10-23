@@ -9,12 +9,11 @@
 #include <cstdint>
 #include <string_view>
 #include <tuple>
+#include <type_traits>
 #include <utility>
 #include <vector>
 
 #include <extern/gsl/span>
-
-#include <type_traits>
 
 #include <xdiag/basis/basis.hpp>
 #include <xdiag/basis/basis_onthefly.hpp>
@@ -49,16 +48,17 @@ template <typename enumeration_tt> class BasistJSymmetricIterator;
 // `ups & dns == 0` couples the allowed dn configurations to the up
 // representative, so there is NO shared front: EVERY up representative (trivial
 // and non-trivial up-stabilizer) materialises its own dn block, filtered by
-// `(ups_rep & dns) == 0`. (That filter is complete: a site permutation g acts on
-// both sectors, so (g.ups) & (g.dns) = g.(ups & dns); the constraint is
+// `(ups_rep & dns) == 0`. (That filter is complete: a site permutation g acts
+// on both sectors, so (g.ups) & (g.dns) = g.(ups & dns); the constraint is
 // permutation-invariant, hence checking it on the representative suffices.)
 //
-// The dn lookups (index_dns, index_dns_fermi) return -1 when the dn is absent
-// from the up-rep block -- which is exactly how a double-occupancy intermediate
-// is dropped. The symmetric matrix kernels are shared with the electron block
-// (templated on the basis type); they only differ from electron in that these
-// lookups can return -1 (electron's never do), and the kernels already guard on
-// idx >= 0.
+// The symmetric matrix kernels are shared with the electron block (templated on
+// the basis type). They drop a double-occupied output via allowed(ups, dns)
+// BEFORE symmetrising it (electron's allowed() is always true), so its
+// permutation and fermi lookup are skipped; checking the unsymmetrised state
+// suffices as g.ups & g.dns = g.(ups & dns). The dn lookups still return -1
+// for a dn absent from the up-rep block; for an allowed dn this only happens
+// on the non-trivial-stabilizer path (zero norm).
 //
 // Fast dn index: although the block is up-rep-specific, the compressed dn (dns
 // packed into the nsites - nup non-up sites) is order-preserving, and so is the
@@ -66,9 +66,10 @@ template <typename enumeration_tt> class BasistJSymmetricIterator;
 // function of the compressed dn. The compression mask `not_ups` is constant
 // across a whole inner dn loop, so it is precompiled once per up rep into a
 // bits::MaskCompressor (branchless O(log wordsize), no BMI2 needed). Then:
-//   - no number conservation (Subsets): the compressed value IS the block index;
-//   - number-conserving (Combinations / LinTable): one O(1) LinTable rank of the
-//     compressed dn over Combinations(nsites - nup, ndn).
+//   - no number conservation (Subsets): the compressed value IS the block
+//     index;
+//   - number-conserving (Combinations / LinTable): one O(1) LinTable rank of
+//     the compressed dn over Combinations(nsites - nup, ndn).
 // This covers the integral-bit cases (uint32/uint64); the large BitsetDynamic
 // case (no feasible table / integer compress) falls back to a binary search of
 // the stored block.
@@ -100,14 +101,19 @@ public:
   iterator_t end() const;
 
   // The up representatives (BasisSymmetric) and dn enumeration (BasisOnTheFly).
-  BasisSymmetric<enumeration_t> const &basis_up() const { return basis_up_; }
-  BasisOnTheFly<enumeration_t> const &basis_dn() const { return basis_dn_; }
+  BasisSymmetric<enumeration_t> const &basis_up() const;
+  BasisOnTheFly<enumeration_t> const &basis_dn() const;
 
-  PermutationGroup const &group() const { return action_.group(); }
-  Vector const &characters() const { return characters_; }
+  PermutationGroup const &group() const;
+  Vector const &characters() const;
 
   bool operator==(BasistJSymmetric<enumeration_t> const &rhs) const;
   bool operator!=(BasistJSymmetric<enumeration_t> const &rhs) const;
+
+  // returns false if double occupancy occurs
+  inline bool allowed(bit_t ups, bit_t dns) const {
+    return bits::iszero(ups & dns);
+  }
 
   // ---- coupled data used by the symmetric matrix kernels ----------------
 
@@ -123,7 +129,8 @@ public:
     return (int64_t)std::llround(n * n);
   }
 
-  // All symmetries mapping `ups` to its representative (the up-stabilizer coset).
+  // All symmetries mapping `ups` to its representative (the up-stabilizer
+  // coset).
   std::vector<int64_t> syms_ups(bit_t ups) const;
 
   inline gsl::span<bit_t const> dns_for_ups_rep(int64_t idx_ups) const {
@@ -141,16 +148,12 @@ public:
     return fermi_dn_.sign(sym, dns);
   }
 
-  // Whether the precompiled-compress dn index applies: the integral-bit cases
-  // (Combinations / LinTable / Subsets over uint*). BitsetDynamic (no feasible
-  // table / integer compress) falls back to a binary search of the stored block.
-  static constexpr bool use_compressed_index_ = std::is_integral_v<bit_t>;
-
   // Block index of `dns` in the dn block of up representative `idx_up`; -1 if
-  // absent (which is how a double-occupied dn output is dropped). For the
-  // integral case this is the precompiled-compress lookup (no number
-  // conservation: the compressed value is the index; number-conserving: its
-  // LinTable rank); otherwise a binary search of the ascending block `dnss`.
+  // absent (a dn on an up site; the kernels drop those beforehand via
+  // allowed()). For the integral case this is the precompiled-compress lookup
+  // (no number conservation: the compressed value is the index;
+  // number-conserving: its LinTable rank); otherwise a binary search of the
+  // ascending block `dnss`.
   inline int64_t index_dns(bit_t dns, int64_t idx_up,
                            gsl::span<bit_t const> dnss) const {
     if constexpr (use_compressed_index_) {
@@ -175,8 +178,8 @@ public:
     }
   }
 
-  // dn index (within up representative `idx_up`'s block) and fermi sign of `dns`
-  // mapped by the single symmetry `sym` (the trivial up-stabilizer path).
+  // dn index (within up representative `idx_up`'s block) and fermi sign of
+  // `dns` mapped by the single symmetry `sym` (the trivial up-stabilizer path).
   // idx == -1 if absent.
   inline std::pair<int64_t, bool>
   index_dns_fermi(bit_t dns, int64_t sym, int64_t idx_up,
@@ -213,9 +216,16 @@ private:
   // Per-up-rep precompiled compressors (mask = that rep's non-up sites). Built
   // and used only when use_compressed_index_; empty otherwise.
   std::vector<bits::MaskCompressor<bit_t>> extractors_;
-  // Compressed-dn rank over Combinations(nsites - nup, ndn). Built and used only
-  // for the number-conserving integral case; default-constructed otherwise.
+  // Compressed-dn rank over Combinations(nsites - nup, ndn). Built and used
+  // only for the number-conserving integral case; default-constructed
+  // otherwise.
   combinatorics::LinTable<bit_t> lintable_dnsc_;
+
+  // Whether the precompiled-compress dn index applies: the integral-bit cases
+  // (Combinations / LinTable / Subsets over uint*). BitsetDynamic (no feasible
+  // table / integer compress) falls back to a binary search of the stored
+  // block.
+  static constexpr bool use_compressed_index_ = std::is_integral_v<bit_t>;
 
   // dn-rep blocks: one bespoke block per up representative (no shared front, as
   // the allowed dns depend on the up rep). The per-rep spans view into the flat

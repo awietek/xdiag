@@ -4,17 +4,13 @@
 
 #pragma once
 
+#include <cassert>
 #include <cstdint>
 #include <utility>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include <vector>
 
 #include <xdiag/basis/basis_electron.hpp>
 #include <xdiag/basis/basis_electron_symmetric.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/utils/thread_range.hpp>
 
 namespace xdiag::kernels::electron {
@@ -40,30 +36,21 @@ void term_ups(basis::BasisElectron<enumeration_t> const &basis_in,
   int64_t size_dn_in = basis_in.basis_dn().size();
   int64_t size_dn_out = basis_out.basis_dn().size();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up_in] =
-        utils::thread_range(basis_up_in, num_thread, omp_get_num_threads());
-#else
-  auto [begin_up, end_up, idx_up_in] = utils::thread_range(basis_up_in, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up_in) {
-      bit_t ups_in = *it_up;
-      if (non_zero_term(ups_in)) {
-        auto [ups_out, coeff] = term_action(ups_in);
-        int64_t idx_up_out = basis_up_out.index(ups_out);
-        int64_t idx_in = idx_up_in * size_dn_in;
-        int64_t idx_out = idx_up_out * size_dn_out;
-        for (int64_t k = 0; k < size_dn_in; ++k) {
-          XDIAG_FILL(idx_in + k, idx_out + k, coeff);
+  utils::for_each_thread_range(
+      basis_up_in, [&](auto begin_up, auto end_up, int64_t idx_up_in) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up_in) {
+          bit_t ups_in = *it_up;
+          if (non_zero_term(ups_in)) {
+            auto [ups_out, coeff] = term_action(ups_in);
+            int64_t idx_up_out = basis_up_out.index(ups_out);
+            int64_t idx_in = idx_up_in * size_dn_in;
+            int64_t idx_out = idx_up_out * size_dn_out;
+            for (int64_t k = 0; k < size_dn_in; ++k) {
+              fill(idx_in + k, idx_out + k, coeff);
+            }
+          }
         }
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+      });
 }
 
 // Symmetric overload. The up sector moves (ups_in -> ups_out) while the dn
@@ -83,75 +70,72 @@ void term_ups(basis_t const &basis_in, basis_t const &basis_out,
   using bit_t = typename basis_t::bit_t;
 
   auto const &basis_up_in = basis_in.basis_up();
+  auto const &basis_up_out = basis_out.basis_up();
 
-  // conjugation necessary for definition of projected states
+  // The projected states use conj(chi); the kernels run transpose(ops), which
+  // gives the same matrix with the characters unconjugated (see compile.hpp)
   arma::Col<coeff_t> characters =
-      arma::conj(basis_out.characters().template as<arma::Col<coeff_t>>());
+      basis_out.characters().template as<arma::Col<coeff_t>>();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up_in] =
-        utils::thread_range(basis_up_in, num_thread, omp_get_num_threads());
-#else
-  auto [begin_up, end_up, idx_up_in] = utils::thread_range(basis_up_in, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up_in) {
-      bit_t ups_in = *it_up;
-      if (!non_zero_term(ups_in)) {
-        continue;
-      }
-      auto [ups_out, coeff] = term_action(ups_in);
-
-      auto [raw, s0, nrm] = basis_out.basis_up().representative_data(ups_out);
-      (void)nrm;
-      int64_t idx_up_out = raw - 1;
-      int64_t off_in = basis_in.ups_offset(idx_up_in);
-      int64_t off_out = basis_out.ups_offset(idx_up_out);
-      auto dnss_in = basis_in.dns_for_ups_rep(idx_up_in);
-      auto norms_in = basis_in.norms_for_ups_rep(idx_up_in);
-
-      if (basis_out.stab_size(idx_up_out) == 1) {
-        // trivial out-stabilizer: single mapping symmetry s0, norm_out == 1
-        coeff_t prefac = coeff * characters(s0);
-        bool fermi_up = basis_out.fermi_bool_ups(s0, ups_out);
-        auto dnss_out = basis_out.dns_for_ups_rep(idx_up_out);
-        int64_t idx_dn = 0;
-        for (bit_t dns : dnss_in) {
-          auto [idx_dns_out, fermi_dn] =
-              basis_out.index_dns_fermi(dns, s0, idx_up_out, dnss_out);
-          if (idx_dns_out >=
-              0) { // -1: tJ double occupancy (never for electron)
-            coeff_t val = prefac / norms_in[idx_dn];
-            XDIAG_FILL(off_in + idx_dn, off_out + idx_dns_out,
-                       (fermi_up ^ fermi_dn) ? -val : val);
+  utils::for_each_thread_range(
+      basis_up_in, [&](auto begin_up, auto end_up, int64_t idx_up_in) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up_in) {
+          bit_t ups_in = *it_up;
+          if (!non_zero_term(ups_in)) {
+            continue;
           }
-          ++idx_dn;
-        }
-      } else {
-        // non-trivial out-stabilizer
-        std::vector<int64_t> syms = basis_out.syms_ups(ups_out);
-        auto dnss_out = basis_out.dns_for_ups_rep(idx_up_out);
-        auto norms_out = basis_out.norms_for_ups_rep(idx_up_out);
-        int64_t idx_dn = 0;
-        for (bit_t dns : dnss_in) {
-          auto [idx_dns_out, fermi_dn, sym] =
-              basis_out.index_dns_fermi_sym(dns, syms, dnss_out);
-          if (idx_dns_out >= 0) {
-            bool fermi_up = basis_out.fermi_bool_ups(sym, ups_out);
-            coeff_t val = coeff * characters(sym) * norms_out[idx_dns_out] /
-                          norms_in[idx_dn];
-            XDIAG_FILL(off_in + idx_dn, off_out + idx_dns_out,
+          auto [ups_out, coeff] = term_action(ups_in);
+
+          auto [raw, s0, nrm] = basis_up_out.representative_data(ups_out);
+          (void)nrm;
+          int64_t idx_up_out = raw - 1;
+          int64_t off_in = basis_in.ups_offset(idx_up_in);
+          int64_t off_out = basis_out.ups_offset(idx_up_out);
+          auto dnss_in = basis_in.dns_for_ups_rep(idx_up_in);
+          auto norms_in = basis_in.norms_for_ups_rep(idx_up_in);
+
+          if (basis_out.stab_size(idx_up_out) == 1) {
+            // trivial out-stabilizer: single mapping symmetry s0, norm_out == 1
+            coeff_t prefac = coeff * characters(s0);
+            bool fermi_up = basis_out.fermi_bool_ups(s0, ups_out);
+            auto dnss_out = basis_out.dns_for_ups_rep(idx_up_out);
+            int64_t idx_dn = 0;
+            for (bit_t dns : dnss_in) {
+              // checks double occupancy (tJ-only, trivial for Hubbard)
+              if (basis_out.allowed(ups_out, dns)) {
+                auto [idx_dns_out, fermi_dn] =
+                    basis_out.index_dns_fermi(dns, s0, idx_up_out, dnss_out);
+                assert(idx_dns_out >= 0); // trivial stabilizer -> norm 1
+                coeff_t val = prefac / norms_in[idx_dn];
+                fill(off_in + idx_dn, off_out + idx_dns_out,
+                     (fermi_up ^ fermi_dn) ? -val : val);
+              }
+              ++idx_dn;
+            }
+          } else {
+            // non-trivial out-stabilizer
+            std::vector<int64_t> syms = basis_out.syms_ups(ups_out);
+            auto dnss_out = basis_out.dns_for_ups_rep(idx_up_out);
+            auto norms_out = basis_out.norms_for_ups_rep(idx_up_out);
+            int64_t idx_dn = 0;
+            for (bit_t dns : dnss_in) {
+              // checks double occupancy (tJ-only, trivial for Hubbard)
+              if (basis_out.allowed(ups_out, dns)) {
+                auto [idx_dns_out, fermi_dn, sym] =
+                    basis_out.index_dns_fermi_sym(dns, syms, dnss_out);
+                if (idx_dns_out >= 0) { // -1: zero-norm dn representative
+                  bool fermi_up = basis_out.fermi_bool_ups(sym, ups_out);
+                  coeff_t val = coeff * characters(sym) *
+                                norms_out[idx_dns_out] / norms_in[idx_dn];
+                  fill(off_in + idx_dn, off_out + idx_dns_out,
                        (fermi_up ^ fermi_dn) ? -val : val);
+                }
+              }
+              ++idx_dn;
+            }
           }
-          ++idx_dn;
         }
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+      });
 }
 
 } // namespace xdiag::kernels::electron

@@ -2,6 +2,20 @@
 title: Releases
 ---
 
+## v0.6.0
+
+**Oct. 26, 2026**
+
+Minor release making all parallel computations bitwise reproducible and speeding up symmetric blocks and Lanczos iterations.
+
+* **Deterministic parallel computations.** Matrix-vector products now gather the contributions to each output element in a fixed order without atomic updates, and inner products are reduced in a fixed order, so every result is identical for any number of OpenMP threads. This fixes the wrong eigenvector returned by [eigs_lanczos](documentation/linalg/eigs_lanczos.md) on symmetric blocks with OpenMP ([discussion #119](https://github.com/awietek/xdiag/discussions/119)), whose second Lanczos pass requires every product to reproduce the first pass exactly.
+
+* **Operators are compiled once per algorithm.** The symmetry-sector check, hermitian conjugation and normal ordering of an [OpSum](documentation/operators/opsum.md) are performed once before an iterative algorithm starts, instead of on every matrix-vector product. For symmetric blocks with named couplings this reduces the time per matrix-vector product by more than an order of magnitude compared to v0.5.1.
+
+* **Faster symmetries and Lanczos iterations.** The site permutations underlying symmetric blocks have a new implementation, and the $t$-$J$ block uses a table of allowed configurations. The eigenvalues of the tridiagonal Lanczos matrix are computed with the dedicated LAPACK routines `sterf`, `stebz` and `stedc` instead of a dense eigensolver, which makes the convergence check an order of magnitude cheaper for long runs.
+
+* **Adjoint of operators.** The hermitian conjugation [hc](documentation/operators/hc.md) of an [Op](documentation/operators/op.md) or [OpSum](documentation/operators/opsum.md) is also exposed as `adjoint`, which in Julia provides the postfix `'` operator, so `ops'` is `hc(ops)`.
+
 ## v0.5.1
 
 **Jul. 14, 2026**

@@ -8,86 +8,31 @@
 
 #include <xdiag/armadillo.hpp>
 #include <xdiag/blocks/blocks.hpp>
-#include <xdiag/blocks/boson.hpp>
-#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/kernels/compile.hpp>
+#include <xdiag/kernels/elements.hpp>
 #include <xdiag/math/complex.hpp>
-#include <xdiag/kernels/blocks/dispatch_bases.hpp>
-#include <xdiag/kernels/kernels.hpp>
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
 #include <xdiag/utils/error.hpp>
-#include <xdiag/utils/variants.hpp>
-
-// Dispatch overview
-// -----------------
-// The matrix function routes through two layers before reaching the numerical
-// kernel, mirroring apply.cpp:
-//
-// Layer 1 — Block type (variant dispatch via visit_same_type):
-//   matrix(op_t, Block)  →  matrix(op_t, Block, Block)
-//     The output Block is first determined from the operator quantum numbers,
-//     then visit_same_type unwraps both Block variants to their concrete type
-//     and calls matrix_impl(OpSum, ConcreteBlock, ConcreteBlock, coeff_t*).
-//     Op/Monomial are promoted to OpSum here. The output arma matrix is
-//     allocated and zeroed at this layer; a raw pointer is passed down so the
-//     kernel can fill it without owning the storage.
-//
-// Layer 2 — matrix_impl<block_t>: one body for every block type. The block's
-//     dispatch_basis overload (kernels/blocks/<block>/dispatch_basis.hpp)
-//     resolves the shared_ptr<Basis> to a concrete BasisOnTheFly<...> via a
-//     type-id table. The numerical kernel is selected by block_t in
-//     kernels.cpp. A block type with no dispatch_basis overload is a compile
-//     error here, never a silent fallback.
-//
-// Kernel — kernels::matrix<block_t, coeff_t>(ops, basis_in, basis_out, mat)
-//     Defined in kernels.cpp; only declared here. Each (block_t, basis_t)
-//     specialisation is compiled in its own translation unit (instantiation
-//     groups), keeping this file free of heavy template instantiation.
 
 namespace xdiag {
 
-// Layer 2: block-generic dense fill. One body for all block types via the
-// dispatch_basis overload set.
-template <typename block_t, typename coeff_t>
-static void matrix_impl(OpSum const &ops, block_t const &block_in,
-                        block_t const &block_out, coeff_t *mat) try {
-  if constexpr (is_distributed_v<block_t>) {
-    (void)ops;
-    (void)block_in;
-    (void)block_out;
-    (void)mat;
-    XDIAG_THROW("Cannot build a dense matrix for a distributed block: its "
-                "Hilbert space is distributed across MPI ranks. Use apply(...) "
-                "instead.");
-  } else {
-    kernels::dispatch_basis(
-        block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-          // Kernel: definition is in kernels.cpp, instantiated per basis type.
-          kernels::matrix<block_t>(ops, basis_in, basis_out, mat);
-        });
-  }
-}
-XDIAG_CATCH
-
-// Developer overload used by the Julia wrapper: fills a caller-allocated,
-// column-major buffer of size size(block_out) x dim(block_in). The Block
-// variant is unwrapped to its concrete type (op already an OpSum) and forwarded
-// to the block-generic matrix_impl, mirroring the arma-returning overloads. The
-// buffer is zeroed here because the kernel accumulates with +=; the pointer is
-// not retained past the call. Distributed blocks throw inside matrix_impl.
+// Fills a caller-allocated, column-major buffer of size size(block_out) x
+// dim(block_in): the developer overload, also used by the Julia wrapper and by
+// the arma-returning overloads below. The pointer is not retained. Every row is
+// written by one thread, so no synchronisation is needed.
 template <typename coeff_t>
 void matrix(OpSum const &ops, Block const &block_in, Block const &block_out,
             coeff_t *mat) try {
-  check_blocks_match(ops, block_in, block_out);
-
+  auto ops_compiled = kernels::compile(ops, block_in, block_out);
   int64_t m = size(block_out);
   int64_t n = dim(block_in);
   std::fill_n(mat, m * n, coeff_t(0));
-  utils::visit_same_type(
-      block_in, block_out,
-      [&](auto const &bin, auto const &bout) { matrix_impl(ops, bin, bout, mat); },
-      "Type mismatch of Block types");
+  kernels::elements<coeff_t>(ops_compiled,
+                             [&](int64_t row, int64_t col, coeff_t val) {
+                               mat[row + col * m] += val;
+                             });
 }
 XDIAG_CATCH
 
@@ -120,20 +65,8 @@ arma::mat matrix(op_t const &op, Block const &block_in,
     XDIAG_THROW("Cannot create a real matrix when the output block is complex. "
                 "Consider using matrixC instead.");
   }
-
-  check_blocks_match(OpSum(op), block_in, block_out);
-
-  int64_t m = size(block_out);
-  int64_t n = dim(block_in);
-  arma::mat mat(m, n, arma::fill::zeros); // zeroed here; kernel uses +=
-  // Layer 1: unwrap the Block variant (op_t is promoted to OpSum inside) and
-  // forward to the block-generic matrix_impl.
-  utils::visit_same_type(
-      block_in, block_out,
-      [&](auto const &bin, auto const &bout) {
-        matrix_impl(OpSum(op), bin, bout, mat.memptr());
-      },
-      "Type mismatch of Block types");
+  arma::mat mat(size(block_out), dim(block_in));
+  matrix(OpSum(op), block_in, block_out, mat.memptr());
   return mat;
 }
 XDIAG_CATCH
@@ -141,19 +74,8 @@ XDIAG_CATCH
 template <typename op_t>
 arma::cx_mat matrixC(op_t const &op, Block const &block_in,
                      Block const &block_out) try {
-  check_blocks_match(OpSum(op), block_in, block_out);
-
-  int64_t m = size(block_out);
-  int64_t n = dim(block_in);
-  arma::cx_mat mat(m, n, arma::fill::zeros); // zeroed here; kernel uses +=
-  // Layer 1: unwrap the Block variant (op_t is promoted to OpSum inside) and
-  // forward to the block-generic matrix_impl.
-  utils::visit_same_type(
-      block_in, block_out,
-      [&](auto const &bin, auto const &bout) {
-        matrix_impl(OpSum(op), bin, bout, mat.memptr());
-      },
-      "Type mismatch of Block types");
+  arma::cx_mat mat(size(block_out), dim(block_in));
+  matrix(OpSum(op), block_in, block_out, mat.memptr());
   return mat;
 }
 XDIAG_CATCH
@@ -170,9 +92,8 @@ INSTANTIATE_XDIAG_MATRIX(OpSum);
 
 #undef INSTANTIATE_XDIAG_MATRIX
 
-// Exported developer overload (Julia wrapper). One Block overload per coeff
-// type; all concrete blocks are handled inside via visit_same_type, so no
-// per-block instantiation is needed.
+// Exported developer overload (Julia wrapper), one per coeff type; the blocks
+// are handled inside kernels::elements.
 template void matrix(OpSum const &, Block const &, Block const &, double *);
 template void matrix(OpSum const &, Block const &, Block const &, complex *);
 

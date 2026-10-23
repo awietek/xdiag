@@ -6,6 +6,7 @@
 #include <tests/is_approx_hermitian.hpp>
 
 #include <tests/blocks/random_opsum_matrix.hpp>
+#include <tests/blocks/spectrum_union.hpp>
 
 #include "test_spinhalf_strategies.hpp"
 #include "testcases_spinhalf.hpp"
@@ -724,6 +725,72 @@ TEST_CASE("spinhalfrandomopsum", "[spinhalf]") try {
     Log("Spinhalf random OpSum matrix test: N = {}", nsites);
     for (uint32_t seed = 0; seed < 5; ++seed) {
       testcases::test_random_opsum_matrix(Spinhalf(nsites), seed);
+    }
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
+}
+
+// 36 sites with Sz conservation select the symmetric LinTable<uint64_t> basis;
+// one or two up spins keep the Hilbert space small. The bond shell at distance
+// 11 crosses bit position 32 in every translate.
+TEST_CASE("spinhalf_symmetric_large_nsites", "[spinhalf]") try {
+  int64_t nsites = 36;
+  Log("spinhalf symmetric large nsites: N = {}", nsites);
+  OpSum ops;
+  for (int64_t i = 0; i < nsites; ++i) {
+    ops += 1.0 * Op("SdotS", {i, (i + 1) % nsites});
+    ops += 0.3 * Op("SdotS", {i, (i + 11) % nsites});
+  }
+  for (int64_t nup : {1, 2}) {
+    testcases::translation_spectrum_union(
+        ops, Spinhalf(nsites, nup), nsites, [&](Representation const &irrep) {
+          return Spinhalf(nsites, nup, irrep);
+        });
+  }
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
+}
+
+// A diagonal operator carrying momentum q, S_q = sum_i exp(2 pi i q i / N) Sz_i,
+// maps the momentum sector k onto k +/- q, so the diagonal kernel runs with
+// different input and output bases. Completeness gives
+//   sum_q S_q^dagger S_q = N sum_i Sz_i^2 = N^2 / 4
+// as an identity on every sector.
+TEST_CASE("spinhalf_symmetric_diagonal_between_irreps", "[spinhalf]") try {
+  for (int64_t nsites : {4, 5, 6}) {
+    Log("spinhalf symmetric diagonal operator between irreps: N = {}", nsites);
+    int64_t nup = nsites / 2;
+    std::vector<Spinhalf> sectors;
+    for (int64_t k = 0; k < nsites; ++k) {
+      sectors.push_back(Spinhalf(nsites, nup, cyclic_group_irrep(nsites, k)));
+    }
+    for (int64_t k = 0; k < nsites; ++k) {
+      int64_t D = sectors[k].size();
+      if (D == 0) {
+        continue;
+      }
+      arma::cx_mat sum(D, D, arma::fill::zeros);
+      for (int64_t q = 0; q < nsites; ++q) {
+        OpSum sq;
+        for (int64_t i = 0; i < nsites; ++i) {
+          double phase = 2.0 * M_PI * (double)(q * i) / (double)nsites;
+          sq += std::exp(complex(0.0, phase)) * Op("Sz", i);
+        }
+        int64_t kp = (k + q) % nsites;
+        int64_t km = ((k - q) % nsites + nsites) % nsites;
+        int64_t kout = blocks_match(sq, sectors[k], sectors[kp]) ? kp : km;
+        REQUIRE(blocks_match(sq, sectors[k], sectors[kout]));
+        arma::cx_mat m = matrixC(sq, sectors[k], sectors[kout]);
+        REQUIRE(m.n_rows == sectors[kout].size());
+        REQUIRE(m.n_cols == D);
+        sum += m.t() * m;
+      }
+      double n2over4 = (double)(nsites * nsites) / 4.0;
+      arma::cx_mat expected = n2over4 * arma::eye<arma::cx_mat>(D, D);
+      REQUIRE(arma::norm(sum - expected) < 1e-10);
     }
   }
 } catch (xdiag::Error e) {

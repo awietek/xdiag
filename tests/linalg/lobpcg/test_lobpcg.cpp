@@ -297,3 +297,43 @@ TEST_CASE("lobpcg_csr", "[linalg]") {
     }
   }
 }
+
+// Argument validation of the low-level core and the default tolerance.
+TEST_CASE("lobpcg_argument_checks", "[linalg]") {
+  Log.set_verbosity(0);
+  arma::arma_rng::set_seed(3);
+  int64_t n = 40;
+  arma::mat B(n, n, arma::fill::randn);
+  arma::mat A = B + B.t();
+  auto mult = [&A](arma::mat const &X, arma::mat &Y) { Y = A * X; };
+  auto dot = [](arma::mat const &V, arma::mat const &W) {
+    return arma::mat(V.t() * W);
+  };
+
+  // empty initial block
+  {
+    arma::mat X;
+    REQUIRE_THROWS_AS(linalg::lobpcg(mult, dot, X, 1), Error);
+  }
+  // neigs must be at least one and at most the block size
+  {
+    arma::mat X(n, 3, arma::fill::randn);
+    REQUIRE_THROWS_AS(linalg::lobpcg(mult, dot, X, 0), Error);
+    REQUIRE_THROWS_AS(linalg::lobpcg(mult, dot, X, 4), Error);
+  }
+  // linearly dependent initial block
+  {
+    arma::mat X(n, 3, arma::fill::randn);
+    X.col(2) = X.col(0);
+    REQUIRE_THROWS_AS(linalg::lobpcg(mult, dot, X, 2), Error);
+  }
+  // tol <= 0 selects the default tolerance
+  {
+    arma::mat X(n, 4, arma::fill::randn);
+    linalg::lobpcg_result_t r = linalg::lobpcg(mult, dot, X, 2, 0.0, 2000);
+    REQUIRE(r.criterion == "converged");
+    arma::vec e = arma::eig_sym(A);
+    REQUIRE(std::abs(r.eigenvalues(0) - e(0)) < 1e-6);
+    REQUIRE(std::abs(r.eigenvalues(1) - e(1)) < 1e-6);
+  }
+}

@@ -6,124 +6,54 @@
 
 #include <numeric>
 
-#include <xdiag/algebra/ishermitian.hpp>
-#include <xdiag/blocks/blocks.hpp>
-#include <xdiag/armadillo.hpp>
-#include <xdiag/math/complex.hpp>
-#include <xdiag/kernels/blocks/dispatch_bases.hpp>
-#include <xdiag/kernels/kernels.hpp>
-#include <xdiag/kernels/sparse/valid.hpp>
-#include <xdiag/operators/hc.hpp>
-#include <xdiag/utils/error.hpp>
-#include <xdiag/utils/variants.hpp>
-
-// Dispatch overview
-// -----------------
-// coo_matrix routes through the same two-layer dispatch as matrix():
-//
-// Layer 1 — Block type (variant dispatch via visit_same_type):
-//   coo_matrix(OpSum, Block, Block, idx_t)
-//     visit_same_type unwraps both Block variants to their concrete type
-//     and calls coo_matrix_impl(OpSum, ConcreteBlock, ConcreteBlock, idx_t).
-//
-// Layer 2 — coo_matrix_impl<block_t>: one body for every block type. The
-//     block's dispatch_basis overload (kernels/blocks/<block>/dispatch_basis
-//     .hpp) resolves the shared_ptr<Basis> to a concrete BasisOnTheFly<...>
-//     via a type-id table. The numerical kernel is selected by block_t in
-//     kernels.cpp. A block type with no dispatch_basis overload is a compile
-//     error here, never a silent fallback. The basis-level two-pass build lives
-//     in coo_build:
-//       Pass 1: coo_matrix_nnz  — counts NNZ (per thread with OMP)
-//       Alloc:  allocates row/col/data arrays from the NNZ count
-//       Pass 2: coo_matrix_fill — fills the pre-allocated arrays
-//
-// Kernels — kernels::coo_matrix_nnz / coo_matrix_fill<block_t> (kernels.cpp),
-//     instantiated per (block_t, basis type) via the instantiation-group
-//     mechanism. The two-pass split keeps the memory allocation at the block
-//     level so it is not repeated when new block types are added.
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
 
+#include <xdiag/algebra/ishermitian.hpp>
+#include <xdiag/armadillo.hpp>
+#include <xdiag/blocks/blocks.hpp>
+#include <xdiag/kernels/compile.hpp>
+#include <xdiag/kernels/elements.hpp>
+#include <xdiag/kernels/sparse/sparse_build.hpp>
+#include <xdiag/kernels/sparse/valid.hpp>
+#include <xdiag/math/complex.hpp>
+#include <xdiag/utils/error.hpp>
+#include <xdiag/utils/format.hpp>
+
 namespace xdiag {
 
-// Basis-level two-pass COO build, generic over the block type and
-// concrete BasisOnTheFly type. Shared by the block-generic Layer-2 below.
-template <typename idx_t, typename coeff_t, typename block_t, typename basis_t>
-static void coo_build(OpSum const &ops, basis_t const &basis_in,
-                      basis_t const &basis_out, idx_t i0,
-                      arma::Col<idx_t> &rows, arma::Col<idx_t> &cols,
-                      arma::Col<coeff_t> &data) {
-#ifdef _OPENMP
-  // Pass 1: count NNZ per thread.
-  auto nnz_thread =
-      kernels::coo_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
-  int64_t nnz =
-      std::accumulate(nnz_thread.begin(), nnz_thread.end(), (int64_t)0);
-  rows.resize(nnz);
-  cols.resize(nnz);
-  data.resize(nnz);
-  // Pass 2: fill using per-thread offsets.
-  kernels::coo_matrix_fill<block_t, coeff_t>(ops, basis_in, basis_out,
-                                               nnz_thread, rows.memptr(),
-                                               cols.memptr(), data.memptr(), i0);
-#else
-  // Pass 1: count total NNZ.
-  int64_t nnz =
-      kernels::coo_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
-  rows.resize(nnz);
-  cols.resize(nnz);
-  data.resize(nnz);
-  // Pass 2: fill sequentially.
-  kernels::coo_matrix_fill<block_t, coeff_t>(
-      ops, basis_in, basis_out, rows.memptr(), cols.memptr(), data.memptr(),
-      i0);
-#endif
+// COO entries grouped by row, like CSR: the per-row counts of sparse_build.cpp
+// give every row its slots, and each row is filled by one thread in a fixed
+// order. The result is row-major and does not depend on the thread count.
+template <typename idx_t, typename coeff_t>
+static void coo_fill(kernels::CompiledOpSum const &ops,
+                     std::vector<int64_t> const &counts, idx_t i0, idx_t *row,
+                     idx_t *col, coeff_t *data) {
+  std::vector<int64_t> offset(counts.size() + 1, 0);
+  std::partial_sum(counts.begin(), counts.end(), offset.begin() + 1);
+  kernels::elements<coeff_t>(ops, [&](int64_t r, int64_t c, coeff_t val) {
+    int64_t k = offset[r]++;
+    row[k] = (idx_t)(r + i0);
+    col[k] = (idx_t)(c + i0);
+    data[k] = val;
+  });
 }
 
-// Layer 2: block-generic orchestration. The dispatch_basis overload supplies
-// the basis dispatch; a block with no overload is a compile error here, never a
-// silent fallback to the Block overload.
-template <typename idx_t, typename coeff_t, typename block_t>
-static COOMatrix<idx_t, coeff_t>
-coo_matrix_impl(OpSum const &ops, block_t const &block_in,
-                block_t const &block_out, idx_t i0) try {
-  idx_t nrows = (idx_t)size(block_out);
-  idx_t ncols = (idx_t)size(block_in);
-  arma::Col<idx_t> rows, cols;
-  arma::Col<coeff_t> data;
-  kernels::dispatch_basis(
-      block_in, block_out, [&](auto const &basis_in, auto const &basis_out) {
-        coo_build<idx_t, coeff_t, block_t>(ops, basis_in, basis_out, i0, rows,
-                                           cols, data);
-      });
-  bool isherm = ishermitian(ops, block_in);
-  return COOMatrix<idx_t, coeff_t>{nrows, ncols, rows, cols, data, i0, isherm};
-}
-XDIAG_CATCH
-
-// Layer 1: unwrap Block variant; validate with concrete types, then call the
-// block-generic Layer 2.
 template <typename idx_t, typename coeff_t>
 COOMatrix<idx_t, coeff_t> coo_matrix(OpSum const &ops, Block const &block_in,
                                      Block const &block_out, idx_t i0) try {
-  COOMatrix<idx_t, coeff_t> result;
-  utils::visit_same_type(
-      block_in, block_out,
-      [&](auto const &bin, auto const &bout) {
-        using block_t = std::decay_t<decltype(bin)>;
-        if constexpr (is_distributed_v<block_t>) {
-          XDIAG_THROW("Cannot build a sparse matrix for a distributed block: "
-                      "its Hilbert space is distributed across MPI ranks. Use "
-                      "apply(...) instead.");
-        } else {
-          check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
-          result = coo_matrix_impl<idx_t, coeff_t>(ops, bin, bout, i0);
-        }
-      },
-      "Type mismatch of Block types");
-  return result;
+  check_valid_sparse_matrix<idx_t, coeff_t>(ops, block_in, block_out, i0);
+  auto ops_compiled = kernels::compile(ops, block_in, block_out);
+  auto counts = sparse_counts<coeff_t>(ops_compiled, /*transpose=*/false);
+  int64_t nnz = std::accumulate(counts.begin(), counts.end(), (int64_t)0);
+  arma::Col<idx_t> row(nnz), col(nnz);
+  arma::Col<coeff_t> data(nnz);
+  coo_fill(ops_compiled, counts, i0, row.memptr(), col.memptr(), data.memptr());
+  idx_t nrows = (idx_t)size(block_out);
+  idx_t ncols = (idx_t)size(block_in);
+  bool isherm = ishermitian(ops, block_in);
+  return COOMatrix<idx_t, coeff_t>{nrows, ncols, row, col, data, i0, isherm};
 }
 XDIAG_CATCH
 
@@ -216,69 +146,13 @@ COOMatrix<int32_t, complex> coo_matrixC_32(OpSum const &ops,
 XDIAG_CATCH
 
 // Two-phase build into caller-owned storage (Julia wrapper). Phase 1 returns
-// the total nnz; phase 2 fills the caller's row/col/data (recomputing the
-// per-thread counts, guarded against a shrunk capacity). Distributed blocks
-// have no local sparse representation.
-template <typename coeff_t, typename block_t, typename basis_t>
-static int64_t coo_nnz_basis(OpSum const &ops, basis_t const &basis_in,
-                             basis_t const &basis_out) {
-#ifdef _OPENMP
-  auto nnz_thread =
-      kernels::coo_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
-  return std::accumulate(nnz_thread.begin(), nnz_thread.end(), (int64_t)0);
-#else
-  return kernels::coo_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
-#endif
-}
-
-template <typename idx_t, typename coeff_t, typename block_t, typename basis_t>
-static void coo_fill_basis(OpSum const &ops, basis_t const &basis_in,
-                           basis_t const &basis_out, int64_t nnz_capacity,
-                           idx_t *row, idx_t *col, coeff_t *data, idx_t i0) {
-#ifdef _OPENMP
-  auto nnz_thread =
-      kernels::coo_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
-  int64_t nnz =
-      std::accumulate(nnz_thread.begin(), nnz_thread.end(), (int64_t)0);
-  if (nnz > nnz_capacity) {
-    XDIAG_THROW("coo_matrix_fill: recomputed nnz exceeds the allocated capacity "
-                "(did the OpenMP thread count change between the nnz and fill "
-                "calls?)");
-  }
-  kernels::coo_matrix_fill<block_t, coeff_t>(ops, basis_in, basis_out,
-                                             nnz_thread, row, col, data, i0);
-#else
-  int64_t nnz =
-      kernels::coo_matrix_nnz<block_t, coeff_t>(ops, basis_in, basis_out);
-  if (nnz > nnz_capacity) {
-    XDIAG_THROW("coo_matrix_fill: recomputed nnz exceeds the allocated capacity");
-  }
-  kernels::coo_matrix_fill<block_t, coeff_t>(ops, basis_in, basis_out, row, col,
-                                             data, i0);
-#endif
-}
-
+// the total nnz, phase 2 fills the caller's row/col/data.
 template <typename coeff_t>
 int64_t coo_matrix_nnz(OpSum const &ops, Block const &block_in,
                        Block const &block_out) try {
-  int64_t nnz = 0;
-  utils::visit_same_type(
-      block_in, block_out,
-      [&](auto const &bin, auto const &bout) {
-        using block_t = std::decay_t<decltype(bin)>;
-        if constexpr (is_distributed_v<block_t>) {
-          XDIAG_THROW("Cannot build a sparse matrix for a distributed block: "
-                      "its Hilbert space is distributed across MPI ranks. Use "
-                      "apply(...) instead.");
-        } else {
-          kernels::dispatch_basis(
-              bin, bout, [&](auto const &basis_in, auto const &basis_out) {
-                nnz = coo_nnz_basis<coeff_t, block_t>(ops, basis_in, basis_out);
-              });
-        }
-      },
-      "Type mismatch of Block types");
-  return nnz;
+  auto counts = sparse_counts<coeff_t>(
+      kernels::compile(ops, block_in, block_out), /*transpose=*/false);
+  return std::accumulate(counts.begin(), counts.end(), (int64_t)0);
 }
 XDIAG_CATCH
 
@@ -286,24 +160,15 @@ template <typename idx_t, typename coeff_t>
 void coo_matrix_fill(OpSum const &ops, Block const &block_in,
                      Block const &block_out, int64_t nnz_capacity, idx_t *row,
                      idx_t *col, coeff_t *data, idx_t i0) try {
-  utils::visit_same_type(
-      block_in, block_out,
-      [&](auto const &bin, auto const &bout) {
-        using block_t = std::decay_t<decltype(bin)>;
-        if constexpr (is_distributed_v<block_t>) {
-          XDIAG_THROW("Cannot build a sparse matrix for a distributed block: "
-                      "its Hilbert space is distributed across MPI ranks. Use "
-                      "apply(...) instead.");
-        } else {
-          check_valid_sparse_matrix<idx_t, coeff_t>(ops, bin, bout, i0);
-          kernels::dispatch_basis(
-              bin, bout, [&](auto const &basis_in, auto const &basis_out) {
-                coo_fill_basis<idx_t, coeff_t, block_t>(
-                    ops, basis_in, basis_out, nnz_capacity, row, col, data, i0);
-              });
-        }
-      },
-      "Type mismatch of Block types");
+  check_valid_sparse_matrix<idx_t, coeff_t>(ops, block_in, block_out, i0);
+  auto ops_compiled = kernels::compile(ops, block_in, block_out);
+  auto counts = sparse_counts<coeff_t>(ops_compiled, /*transpose=*/false);
+  int64_t nnz = std::accumulate(counts.begin(), counts.end(), (int64_t)0);
+  if (nnz > nnz_capacity) {
+    XDIAG_THROW("coo_matrix_fill: the number of nonzeros exceeds the "
+                "allocated capacity");
+  }
+  coo_fill(ops_compiled, counts, i0, row, col, data);
 }
 XDIAG_CATCH
 

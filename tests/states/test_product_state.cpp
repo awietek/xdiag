@@ -4,13 +4,26 @@
 
 #include <tests/catch.hpp>
 
+#include <set>
 #include <sstream>
+#include <vector>
 
 #include <xdiag/algebra/algebra.hpp>
 #include <xdiag/algebra/isapprox.hpp>
+#include <xdiag/blocks/boson.hpp>
+#include <xdiag/blocks/electron.hpp>
+#include <xdiag/blocks/spinhalf.hpp>
+#include <xdiag/blocks/tj.hpp>
+#include <xdiag/config.hpp>
+#include <xdiag/io/file_toml.hpp>
+#include <xdiag/io/read.hpp>
+#include <xdiag/states/create_state.hpp>
+#include <xdiag/states/dot.hpp>
 #include <xdiag/states/fill.hpp>
 #include <xdiag/states/product_state.hpp>
 #include <xdiag/states/inner.hpp>
+#include <xdiag/states/state.hpp>
+#include <xdiag/utils/error.hpp>
 
 using namespace xdiag;
 
@@ -272,6 +285,118 @@ TEST_CASE("product_state_api", "[states]") try {
     REQUIRE(to_string(empty).empty());
   }
 
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}
+
+// Product states on a sublattice-coded symmetric block go through the
+// BasisSublattice product-state lookup; they must agree with the default
+// backend, and a configuration that is not the representative of its orbit is
+// not contained in either block.
+TEST_CASE("product_state_sublattice_backend", "[states]") try {
+  std::string lfile = XDIAG_DIRECTORY
+      "/misc/data/triangular.9.Jz1Jz2Jx1Jx2D1.sublattices.tsl.toml";
+  auto fl = FileToml(lfile);
+  int64_t nsites = 9;
+
+  for (std::string name : {"Gamma.D6.A1", "K.D3.E", "Y.D1.B"}) {
+    auto irrep = read_representation(fl, name);
+    for (int64_t nup : {3, 4}) {
+      auto block_auto = Spinhalf(nsites, nup, irrep, "auto");
+      auto block_sl = Spinhalf(nsites, nup, irrep, "3sublattice");
+      REQUIRE(block_auto.size() == block_sl.size());
+
+      std::set<std::vector<int64_t>> representatives;
+      int64_t checked = 0;
+      for (ProductState const &rep : block_auto) {
+        std::vector<int64_t> local(rep.begin(), rep.end());
+        representatives.insert(local);
+        if (checked < 5) {
+          REQUIRE(index(block_sl, rep) == index(block_auto, rep));
+          State a = product_state(block_auto, local);
+          State b = product_state(block_sl, local);
+          REQUIRE(isapprox(a, b));
+          REQUIRE(std::abs(dotC(b, b) - complex(1.0)) < 1e-12);
+          ++checked;
+        }
+      }
+
+      // first configuration of the plain block that is not a representative
+      for (ProductState const &p : Spinhalf(nsites, nup)) {
+        std::vector<int64_t> local(p.begin(), p.end());
+        if (representatives.count(local) == 0) {
+          REQUIRE_THROWS_AS(product_state(block_sl, local), Error);
+          REQUIRE_THROWS_AS(product_state(block_auto, local), Error);
+          break;
+        }
+      }
+    }
+  }
+} catch (xdiag::Error const &e) {
+  error_trace(e);
+  throw;
+}
+
+TEST_CASE("product_state_overloads", "[states]") try {
+  using namespace xdiag;
+
+  // --- Spinhalf: all overloads build the same basis state ---
+  {
+    auto block = Spinhalf(4, 2);
+    State a = product_state(block, {1, 0, 1, 0});
+    State b = product_state(block, std::vector<int64_t>{1, 0, 1, 0});
+    State c = product_state(block, std::vector<int32_t>{1, 0, 1, 0});
+    State d = product_state(block, arma::Col<int64_t>{1, 0, 1, 0});
+    REQUIRE(isreal(a));
+    REQUIRE(isapprox(a, b));
+    REQUIRE(isapprox(a, c));
+    REQUIRE(isapprox(a, d));
+    REQUIRE(std::abs(dot(a, a) - 1.0) < 1e-12);
+    REQUIRE(std::abs(inner(Op("Sz", 0), a) - 0.5) < 1e-12);
+    REQUIRE(std::abs(inner(Op("Sz", 1), a) + 0.5) < 1e-12);
+
+    // a different product state is orthogonal
+    State e = product_state(block, {0, 1, 0, 1});
+    REQUIRE(std::abs(dot(a, e)) < 1e-12);
+
+    // complex storage requested
+    State ac = product_state(block, {1, 0, 1, 0}, false);
+    REQUIRE(!isreal(ac));
+    REQUIRE(std::abs(dotC(ac, ac) - complex(1.0)) < 1e-12);
+  }
+
+  // --- Boson ---
+  {
+    auto block = Boson(3, 2, 2);
+    State a = product_state(block, {1, 1, 0});
+    State b = product_state(block, arma::Col<int64_t>{1, 1, 0});
+    REQUIRE(isapprox(a, b));
+    REQUIRE(std::abs(dot(a, a) - 1.0) < 1e-12);
+    REQUIRE(std::abs(inner(Op("N", 0), a) - 1.0) < 1e-12);
+    REQUIRE(std::abs(inner(Op("N", 2), a)) < 1e-12);
+  }
+
+  // --- Electron and tJ ---
+  {
+    auto block = Electron(3, 1, 1);
+    State a = product_state(block, {1, 2, 0});
+    REQUIRE(std::abs(inner(Op("Nup", 0), a) - 1.0) < 1e-12);
+    REQUIRE(std::abs(inner(Op("Ndn", 1), a) - 1.0) < 1e-12);
+    REQUIRE(std::abs(inner(Op("Ntot", 2), a)) < 1e-12);
+
+    auto tjblock = tJ(3, 1, 1);
+    State t = product_state(tjblock, std::vector<int32_t>{1, 2, 0});
+    REQUIRE(std::abs(inner(Op("Ntot", 2), t)) < 1e-12);
+    REQUIRE(std::abs(inner(Op("Sz", 0), t) - 0.5) < 1e-12);
+  }
+
+  // --- wrong length or a state outside the block's sector throws ---
+  {
+    auto block = Spinhalf(4, 2);
+    REQUIRE_THROWS_AS(product_state(block, {1, 0, 1}), Error);
+    REQUIRE_THROWS_AS(product_state(block, {1, 1, 1, 0}), Error);
+  }
 } catch (xdiag::Error const &e) {
   error_trace(e);
   throw;

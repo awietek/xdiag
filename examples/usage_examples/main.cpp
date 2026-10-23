@@ -379,6 +379,13 @@ auto hop = (1.0 + 1.0i) * Op("Hop", {0, 1});
 XDIAG_SHOW(cdagup == hc(cdagup));
 XDIAG_SHOW(sdots == hc(sdots));
 XDIAG_SHOW(hop == hc(hop));
+
+// adjoint is hc
+auto sp = 1.0 * Op("S+", 0);
+XDIAG_SHOW(adjoint(sp));
+XDIAG_SHOW(adjoint(sp) == hc(sp));
+XDIAG_SHOW(adjoint(adjoint(sp)) == sp);
+XDIAG_SHOW(adjoint(hop));                  // coupling complex conjugated
 // --8<-- [end:hc]
 }
 

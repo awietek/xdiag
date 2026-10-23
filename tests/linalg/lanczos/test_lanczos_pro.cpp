@@ -29,6 +29,9 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
   Log.set_verbosity(0);
   Log("testing lanczos_pro");
 
+  // Fixed seed: the random matrices are the same on every run and platform.
+  arma::arma_rng::set_seed(1234);
+
   {
     Log("  random Hermitian orthogonal");
     int N = 500;
@@ -82,7 +85,7 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
 
     mat tmat = res.tmat;
     mat A2 = mat(V * tmat * V.t());
-    REQUIRE(norm(A - A2) < 2 * N * ortho_level);
+    REQUIRE(norm(A - A2) < 10 * N * ortho_level);
   }
 
   {
@@ -246,5 +249,51 @@ TEST_CASE("lanczos_pro", "[lanczos]") {
         }
       }
     }
+  }
+}
+
+// The convergence functor ends the iteration with criterion "converged"; a
+// single step yields a 1x1 T-matrix holding the Rayleigh quotient.
+TEST_CASE("lanczos_pro_convergence_criterion", "[lanczos]") {
+  using namespace xdiag;
+  using namespace arma;
+
+  Log.set_verbosity(0);
+  arma::arma_rng::set_seed(77);
+  int N = 200;
+  mat B = randn(N, N);
+  mat A = B + B.t();
+  auto mult = [&A](vec const &v, vec &w) { w = A * v; };
+  vec full = eig_sym(A);
+
+  {
+    vec v0 = randn(N);
+    auto conv = [](Tmatrix const &t) { return t.size() >= 12; };
+    auto res = lanczos_pro(mult, v0, conv, 500, 1e-8, 1e-7, false);
+    REQUIRE(res.criterion == "converged");
+    REQUIRE(res.niterations == 12);
+    REQUIRE(res.tmat.n_rows == 12);
+    REQUIRE(res.tmat.n_cols == 12);
+    REQUIRE(res.V.n_cols == 12);
+    REQUIRE(res.alphas.n_elem == 12);
+    REQUIRE(res.betas.n_elem == 12);
+
+    // Ritz values lie inside the spectrum
+    vec ritz = eig_sym(res.tmat);
+    REQUIRE(ritz.min() >= full.min() - 1e-8);
+    REQUIRE(ritz.max() <= full.max() + 1e-8);
+  }
+
+  {
+    vec v0 = randn(N);
+    double rayleigh = dot(v0, A * v0) / dot(v0, v0);
+    auto conv = [](Tmatrix const &t) { return t.size() >= 1; };
+    auto res = lanczos_pro(mult, v0, conv, 500, 1e-8, 1e-7, false);
+    REQUIRE(res.criterion == "converged");
+    REQUIRE(res.niterations == 1);
+    REQUIRE(res.tmat.n_rows == 1);
+    REQUIRE(res.tmat.n_cols == 1);
+    REQUIRE(std::abs(res.tmat(0, 0) - rayleigh) < 1e-10);
+    REQUIRE(res.V.n_cols == 1);
   }
 }

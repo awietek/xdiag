@@ -153,13 +153,7 @@ Permutation PermutationGroup::operator[](int64_t sym) const try {
 }
 XDIAG_CATCH
 
-int64_t const *PermutationGroup::ptr(int64_t sym) const try {
-  if ((sym < 0) || (sym >= size())) {
-    XDIAG_THROW("Invalid symmetry index");
-  }
-  return permutations_.colptr(sym);
-}
-XDIAG_CATCH
+
 
 int64_t PermutationGroup::inv(int64_t sym) const try {
   if ((sym < 0) || (sym >= size())) {

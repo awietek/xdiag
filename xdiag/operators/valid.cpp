@@ -10,6 +10,7 @@
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/format.hpp>
 #include <xdiag/utils/logger.hpp>
+#include <xdiag/utils/xdiag_offset.hpp>
 
 namespace xdiag::operators {
 
@@ -30,6 +31,13 @@ void check_valid(Op const &op) try {
   }
 
   if (op.hassites()) {
+    for (int64_t s : op.sites()) {
+      if (s < 0) {
+        XDIAG_THROW(fmt::format(
+            "Op of type \"{}\" has site {}, but sites must be >= {}. Got Op:\n{}",
+            type, s + XDIAG_OFFSET, XDIAG_OFFSET, to_string(op)));
+      }
+    }
     if (info.nsites != undefined && (int64_t)op.sites().size() != info.nsites) {
       XDIAG_THROW(fmt::format(
           "Op of type \"{}\" must have exactly {} site(s), got {}. Op:\n{}",

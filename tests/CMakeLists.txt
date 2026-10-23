@@ -28,6 +28,7 @@ set(XDIAG_TEST_SOURCES
   basis/test_basis_tj.cpp
   
   operators/test_coeff.cpp
+  operators/test_hc.cpp
   operators/test_monomial.cpp
   operators/test_op.cpp
   operators/test_opsum.cpp
@@ -84,6 +85,7 @@ set(XDIAG_TEST_SOURCES
   blocks/fermion/testcases_fermion.cpp
 
   kernels/test_apply_overloads.cpp
+  kernels/test_sparse_matrix.cpp
   kernels/terms/test_non_branching_op.cpp
   kernels/sparse/test_csr_twophase.cpp
   

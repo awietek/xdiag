@@ -6,9 +6,6 @@
 
 #include <algorithm>
 #include <cstdint>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include <xdiag/basis/basis_tj.hpp>
 #include <xdiag/bits/bitmask.hpp>
@@ -16,7 +13,6 @@
 #include <xdiag/bits/popcount.hpp>
 #include <xdiag/bits/zero_one.hpp>
 #include <xdiag/kernels/blocks/tj/terms/recompress.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/operators/coeff.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/utils/error.hpp>
@@ -58,55 +54,48 @@ void term_hopup(Coeff const &c, Op const &op,
 
   auto const &basis_up = basis_in.basis_up();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up] =
-        utils::thread_range(basis_up, num_thread, omp_get_num_threads());
-#else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
-      bit_t ups = *it_up;
-      bool up1 = bits::get(ups, s1);
-      bool up2 = bits::get(ups, s2);
-      if (up1 == up2) {
-        continue; // need exactly one up among {s1,s2} to hop
-      }
+  utils::for_each_thread_range(
+      basis_up, [&](auto begin_up, auto end_up, int64_t idx_up) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
+          bit_t ups = *it_up;
+          bool up1 = bits::get(ups, s1);
+          bool up2 = bits::get(ups, s2);
+          if (up1 == up2) {
+            continue; // need exactly one up among {s1,s2} to hop
+          }
 
-      // --- per-ups setup (hoisted) ---
-      int64_t source = up1 ? s1 : s2; // the site that has the up
-      int64_t dest = up1 ? s2 : s1;   // the site the up moves to
-      bit_t ups_out = ups ^ flipmask;
-      bit_t notups_in = (~ups) & sitesmask;
-      bit_t notups_out = (~ups_out) & sitesmask;
-      // destination rank in the IN complement, source rank in the OUT complement
-      int64_t rd_in =
-          bits::popcount(notups_in & bits::bitmask<bit_t>(nsites, dest));
-      int64_t rs_out =
-          bits::popcount(notups_out & bits::bitmask<bit_t>(nsites, source));
-      bool fermi = bits::popcount(ups & fermimask) & 1;
-      coeff_t coeff = fermi ? t : -t;
-      int64_t base_in = basis_in.ups_offset(idx_up);
-      int64_t base_out = basis_out.ups_offset(basis_out.index_up(ups_out));
+          // --- per-ups setup (hoisted) ---
+          int64_t source = up1 ? s1 : s2; // the site that has the up
+          int64_t dest = up1 ? s2 : s1;   // the site the up moves to
+          bit_t ups_out = ups ^ flipmask;
+          bit_t notups_in = (~ups) & sitesmask;
+          bit_t notups_out = (~ups_out) & sitesmask;
+          // destination rank in the IN complement, source rank in the OUT
+          // complement
+          int64_t rd_in =
+              bits::popcount(notups_in & bits::bitmask<bit_t>(nsites, dest));
+          int64_t rs_out =
+              bits::popcount(notups_out & bits::bitmask<bit_t>(nsites, source));
+          bool fermi = bits::popcount(ups & fermimask) & 1;
+          coeff_t coeff = fermi ? t : -t;
+          int64_t base_in = basis_in.ups_offset(idx_up);
+          int64_t base_out = basis_out.ups_offset(basis_out.index_up(ups_out));
 
-      // --- inner loop: dn is a spectator, but must be dn-empty at dest and
-      //     re-mapped between the two compressed spaces ---
-      int64_t idx_dnc = 0;
-      for (bit_t dnc : basis_in.basis_dncs(ups)) {
-        if (!bits::get(dnc, rd_in)) { // destination free of a dn
-          bit_t dnc_out =
-              insert_zero_slot(remove_slot(dnc, rd_in, nsites), rs_out, nsites);
-          int64_t idx_out = base_out + basis_out.index_dncs(ups_out, dnc_out);
-          XDIAG_FILL(base_in + idx_dnc, idx_out, coeff);
+          // --- inner loop: dn is a spectator, but must be dn-empty at dest and
+          //     re-mapped between the two compressed spaces ---
+          int64_t idx_dnc = 0;
+          for (bit_t dnc : basis_in.basis_dncs(ups)) {
+            if (!bits::get(dnc, rd_in)) { // destination free of a dn
+              bit_t dnc_out = insert_zero_slot(remove_slot(dnc, rd_in, nsites),
+                                               rs_out, nsites);
+              int64_t idx_out =
+                  base_out + basis_out.index_dncs(ups_out, dnc_out);
+              fill(base_in + idx_dnc, idx_out, coeff);
+            }
+            ++idx_dnc;
+          }
         }
-        ++idx_dnc;
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+      });
 }
 XDIAG_CATCH
 

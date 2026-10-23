@@ -5,13 +5,9 @@
 #pragma once
 
 #include <type_traits>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
 
 #include <xdiag/basis/basis_onthefly.hpp>
 #include <xdiag/basis/basis_symmetric.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/kernels/terms/term_offdiag.hpp>
 #include <xdiag/utils/likely.hpp>
 #include <xdiag/utils/thread_range.hpp>
@@ -45,35 +41,27 @@ void term_offdiag_fermionic(
   using coeff_t =
       typename std::invoke_result_t<decltype(term_action), bit_t>::second_type;
 
-  // conjugation necessary for definition of projected states
+  // The projected states use conj(chi); the kernels run transpose(ops), which
+  // gives the same matrix with the characters unconjugated (see compile.hpp)
   arma::Col<coeff_t> characters =
-      arma::conj(basis_out.characters().template as<arma::Col<coeff_t>>());
+      basis_out.characters().template as<arma::Col<coeff_t>>();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin, end, idx_in] =
-        utils::thread_range(basis_in, num_thread, omp_get_num_threads());
-#else
-  auto [begin, end, idx_in] = utils::thread_range(basis_in, 0, 1);
-#endif
-    for (auto it = begin; it != end; ++it, ++idx_in) {
-      bit_t spins_in = *it;
-      if (non_zero_term(spins_in)) {
-        auto [spins_out, coeff] = term_action(spins_in);
-        auto [raw_idx_out, sym, norm_out, fermi] =
-            basis_out.representative_data_fermi(spins_out);
-        if (XDIAG_LIKELY(raw_idx_out)) {
-          double inv_norm_in = basis_in.inv_norm(idx_in);
-          coeff_t val = coeff * characters(sym) * norm_out * inv_norm_in;
-          XDIAG_FILL(idx_in, raw_idx_out - 1, fermi ? -val : val);
+  utils::for_each_thread_range(
+      basis_in, [&](auto begin, auto end, int64_t idx_in) {
+        for (auto it = begin; it != end; ++it, ++idx_in) {
+          bit_t spins_in = *it;
+          if (non_zero_term(spins_in)) {
+            auto [spins_out, coeff] = term_action(spins_in);
+            auto [raw_idx_out, sym, norm_out, fermi] =
+                basis_out.representative_data_fermi(spins_out);
+            if (XDIAG_LIKELY(raw_idx_out)) {
+              double inv_norm_in = basis_in.inv_norm(idx_in);
+              coeff_t val = coeff * characters(sym) * norm_out * inv_norm_in;
+              fill(idx_in, raw_idx_out - 1, fermi ? -val : val);
+            }
+          }
         }
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+      });
 }
 
 } // namespace xdiag::kernels

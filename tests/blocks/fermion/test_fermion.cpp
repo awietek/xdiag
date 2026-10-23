@@ -7,6 +7,7 @@
 
 #include <tests/blocks/fermion/testcases_fermion.hpp>
 #include <tests/blocks/random_opsum_matrix.hpp>
+#include <tests/blocks/spectrum_union.hpp>
 #include <tests/catch.hpp>
 #include <tests/is_approx_hermitian.hpp>
 
@@ -327,31 +328,11 @@ TEST_CASE("fermionsymmetryspectrum", "[fermion]") try {
 
     for (auto const &ops : hamiltonians) {
       for (int number = 0; number <= nsites; ++number) {
-        auto block = Fermion(nsites, number);
-        arma::cx_mat H = matrixC(ops, block);
-        REQUIRE(testcases::is_approx_hermitian(H, 1e-8));
-        arma::vec eigs_full;
-        arma::eig_sym(eigs_full, H);
-
-        std::vector<double> eigs_sym;
-        int64_t dimsum = 0;
-        for (int k = 0; k < nsites; ++k) {
-          auto blockk = Fermion(nsites, number, cyclic_group_irrep(nsites, k));
-          int64_t d = dim(blockk);
-          dimsum += d;
-          if (d > 0) {
-            arma::cx_mat Hk = matrixC(ops, blockk);
-            REQUIRE(testcases::is_approx_hermitian(Hk, 1e-8));
-            arma::vec ek;
-            arma::eig_sym(ek, Hk);
-            for (double e : ek) {
-              eigs_sym.push_back(e);
-            }
-          }
-        }
-        REQUIRE(dimsum == (int64_t)dim(block));
-        std::sort(eigs_sym.begin(), eigs_sym.end());
-        REQUIRE(isapprox(eigs_full, arma::vec(eigs_sym)));
+        testcases::translation_spectrum_union(
+            ops, Fermion(nsites, number), nsites,
+            [&](Representation const &irrep) {
+              return Fermion(nsites, number, irrep);
+            });
       }
     }
   }

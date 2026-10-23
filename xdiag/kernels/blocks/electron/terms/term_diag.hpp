@@ -5,17 +5,12 @@
 #pragma once
 
 #include <cstdint>
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-
 #include <tuple>
 #include <utility>
 
 #include <xdiag/basis/basis_electron.hpp>
 #include <xdiag/basis/basis_electron_symmetric.hpp>
 #include <xdiag/kernels/blocks/electron/terms/term_offdiag.hpp>
-#include <xdiag/kernels/fill_functions.hpp>
 #include <xdiag/utils/thread_range.hpp>
 
 namespace xdiag::kernels::electron {
@@ -43,27 +38,18 @@ void term_diag(basis::BasisElectron<enumeration_t> const &basis_in,
   auto const &basis_dn = basis_in.basis_dn();
   int64_t size_dn = basis_dn.size();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_up] =
-        utils::thread_range(basis_up, num_thread, omp_get_num_threads());
-#else
-    auto [begin_up, end_up, idx_up] = utils::thread_range(basis_up, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
-      bit_t ups = *it_up;
-      int64_t idx = idx_up * size_dn;
-      for (bit_t dns : basis_dn) {
-        coeff_t c = apply(ups, dns);
-        XDIAG_FILL(idx, idx, c);
-        ++idx;
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+  utils::for_each_thread_range(
+      basis_up, [&](auto begin_up, auto end_up, int64_t idx_up) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_up) {
+          bit_t ups = *it_up;
+          int64_t idx = idx_up * size_dn;
+          for (bit_t dns : basis_dn) {
+            coeff_t c = apply(ups, dns);
+            fill(idx, idx, c);
+            ++idx;
+          }
+        }
+      });
 }
 
 // Symmetric overload. When basis_in == basis_out the operator is genuinely
@@ -97,27 +83,18 @@ void term_diag(basis_t const &basis_in, basis_t const &basis_out, apply_f apply,
   }
   auto const &basis_up = basis_in.basis_up();
 
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    int num_thread = omp_get_thread_num();
-    auto [begin_up, end_up, idx_ups] =
-        utils::thread_range(basis_up, num_thread, omp_get_num_threads());
-#else
-    auto [begin_up, end_up, idx_ups] = utils::thread_range(basis_up, 0, 1);
-#endif
-    for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_ups) {
-      bit_t ups = *it_up;
-      int64_t idx = basis_in.ups_offset(idx_ups);
-      for (bit_t dns : basis_in.dns_for_ups_rep(idx_ups)) {
-        coeff_t c = apply(ups, dns);
-        XDIAG_FILL(idx, idx, c);
-        ++idx;
-      }
-    }
-#ifdef _OPENMP
-  }
-#endif
+  utils::for_each_thread_range(
+      basis_up, [&](auto begin_up, auto end_up, int64_t idx_ups) {
+        for (auto it_up = begin_up; it_up != end_up; ++it_up, ++idx_ups) {
+          bit_t ups = *it_up;
+          int64_t idx = basis_in.ups_offset(idx_ups);
+          for (bit_t dns : basis_in.dns_for_ups_rep(idx_ups)) {
+            coeff_t c = apply(ups, dns);
+            fill(idx, idx, c);
+            ++idx;
+          }
+        }
+      });
 }
 
 } // namespace xdiag::kernels::electron

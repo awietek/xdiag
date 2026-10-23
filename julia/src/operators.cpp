@@ -231,5 +231,12 @@ void define_operators(jlcxx::Module &mod) {
              [](Monomial const &mono) { JULIA_XDIAG_CALL_RETURN(hc(mono)) });
   mod.method("fun_hc",
              [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(hc(ops)) });
+  mod.method("fun_adjoint",
+             [](Op const &op) { JULIA_XDIAG_CALL_RETURN(adjoint(op)) });
+  mod.method("fun_adjoint", [](Monomial const &mono) {
+    JULIA_XDIAG_CALL_RETURN(adjoint(mono))
+  });
+  mod.method("fun_adjoint",
+             [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(adjoint(ops)) });
 }
 } // namespace xdiag::julia
