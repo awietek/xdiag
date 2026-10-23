@@ -238,18 +238,5 @@ void define_operators(jlcxx::Module &mod) {
   });
   mod.method("fun_adjoint",
              [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(adjoint(ops)) });
-  mod.method("fun_transpose",
-             [](Op const &op) { JULIA_XDIAG_CALL_RETURN(transpose(op)) });
-  mod.method("fun_transpose", [](Monomial const &mono) {
-    JULIA_XDIAG_CALL_RETURN(transpose(mono))
-  });
-  mod.method("fun_transpose",
-             [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(transpose(ops)) });
-  mod.method("fun_conj",
-             [](Op const &op) { JULIA_XDIAG_CALL_RETURN(conj(op)) });
-  mod.method("fun_conj",
-             [](Monomial const &mono) { JULIA_XDIAG_CALL_RETURN(conj(mono)) });
-  mod.method("fun_conj",
-             [](OpSum const &ops) { JULIA_XDIAG_CALL_RETURN(conj(ops)) });
 }
 } // namespace xdiag::julia

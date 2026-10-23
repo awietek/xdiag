@@ -1020,39 +1020,3 @@ kind = "function"
 name = "adjoint"
 returns = "OpSum"
 args = ["OpSum const& ops"]
-
-[[entries]]
-kind = "function"
-name = "transpose"
-returns = "OpSum"
-args = ["Op const& op"]
-
-[[entries]]
-kind = "function"
-name = "transpose"
-returns = "OpSum"
-args = ["Monomial const& mono"]
-
-[[entries]]
-kind = "function"
-name = "transpose"
-returns = "OpSum"
-args = ["OpSum const& ops"]
-
-[[entries]]
-kind = "function"
-name = "conj"
-returns = "OpSum"
-args = ["Op const& op"]
-
-[[entries]]
-kind = "function"
-name = "conj"
-returns = "OpSum"
-args = ["Monomial const& mono"]
-
-[[entries]]
-kind = "function"
-name = "conj"
-returns = "OpSum"
-args = ["OpSum const& ops"]

@@ -20,8 +20,8 @@ BINARY_OPS = {"operator+": "+", "operator-": "-", "operator*": "*",
 OP_ABI = {"+": "add", "-": "sub", "*": "mul", "/": "div", "==": "eq"}
 OP_JULIA = {"+": "Base.:+", "-": "Base.:-", "*": "Base.:*", "/": "Base.:/",
             "==": "Base.:(==)"}
-BASE = {"size", "length", "isreal", "show", "real", "imag", "conj", "abs",
-        "adjoint", "transpose", "isapprox", "inv", "zero", "hash", "isvalid"}
+BASE = {"size", "length", "isreal", "show", "real", "imag", "abs",
+        "adjoint", "isapprox", "inv", "zero", "hash", "isvalid"}
 LINALG = {"norm", "dot"}
 
 

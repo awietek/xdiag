@@ -14,6 +14,8 @@
 #include <xdiag/operators/monomial.hpp>
 #include <xdiag/operators/op.hpp>
 #include <xdiag/operators/opsum.hpp>
+#include <xdiag/symmetries/cyclic_group.hpp>
+#include <xdiag/symmetries/representation.hpp>
 #include <xdiag/utils/error.hpp>
 #include <xdiag/utils/logger.hpp>
 
@@ -195,6 +197,76 @@ TEST_CASE("transpose, conj and hc for fermion, electron and tJ blocks",
   Monomial m{Op("Cdagup", 0), Op("Cdagdn", 2)};
   REQUIRE(transpose(m) == OpSum(Monomial{Op("Cdn", 2), Op("Cup", 0)}));
 
+} catch (xdiag::Error e) {
+  error_trace(e);
+  throw;
+}
+
+// In a symmetry-adapted basis with characters chi the block matrix is
+// M_chi = U^dag M U, with U complex for complex characters. The adjoint
+// commutes with the change of basis, so hc holds within every sector. The
+// transpose and the complex conjugate do not: since conj(U_chi) = U_{conj chi},
+//   matrix(transpose(ops), chi) = transpose(matrix(ops, conj chi))
+//   matrix(conj(ops), chi)      = conj(matrix(ops, conj chi))
+// i.e. they relate momentum k to -k, and only for real characters (k = 0 and
+// k = N/2) do they act within the sector.
+template <class make_block_f>
+void check_transpose_conj_hc_sectors(int64_t nsites, make_block_f make_block,
+                                     xdiag::OpSum const &ops) {
+  using namespace xdiag;
+  for (int64_t k = 0; k < nsites; ++k) {
+    int64_t mk = (nsites - k) % nsites;
+    auto block_k = make_block(cyclic_group_irrep(nsites, k));
+    auto block_mk = make_block(cyclic_group_irrep(nsites, mk));
+    if (dim(block_k) == 0) {
+      continue;
+    }
+    arma::cx_mat M_k = matrixC(ops, block_k);
+    arma::cx_mat M_mk = matrixC(ops, block_mk);
+
+    REQUIRE(arma::approx_equal(matrixC(hc(ops), block_k), M_k.t(), "absdiff",
+                               1e-10));
+    REQUIRE(arma::approx_equal(matrixC(transpose(ops), block_k), M_mk.st(),
+                               "absdiff", 1e-10));
+    REQUIRE(arma::approx_equal(matrixC(conj(ops), block_k), arma::conj(M_mk),
+                               "absdiff", 1e-10));
+    if (k == mk) { // real characters: the sector is its own conjugate
+      REQUIRE(arma::approx_equal(matrixC(transpose(ops), block_k), M_k.st(),
+                                 "absdiff", 1e-10));
+    }
+  }
+}
+
+TEST_CASE("transpose, conj and hc on symmetric blocks", "[operators]") try {
+  using namespace xdiag;
+  int64_t nsites = 6;
+  complex c(0.5, 0.3);
+
+  // translation invariant, but neither symmetric nor real
+  OpSum ops_spin;
+  OpSum ops_tj;
+  OpSum ops_el;
+  for (int64_t i = 0; i < nsites; ++i) {
+    int64_t j = (i + 1) % nsites;
+    ops_spin += c * (Op("S+", i) * Op("S-", j));
+    ops_spin += 1.0 * Op("SdotS", {i, j});
+    ops_tj += c * Op("HopAsym", {i, j});
+    ops_tj += 0.3 * Op("tJSdotS", {i, j});
+    ops_el += c * (Op("Cdagup", i) * Op("Cup", j));
+    ops_el += 0.4 * Op("Hopdn", {i, j});
+  }
+  ops_el += 2.0 * Op("HubbardU");
+
+  check_transpose_conj_hc_sectors(
+      nsites, [&](Representation const &irrep) { return Spinhalf(nsites, 3, irrep); },
+      ops_spin);
+  check_transpose_conj_hc_sectors(
+      nsites, [&](Representation const &irrep) { return tJ(nsites, 2, 2, irrep); },
+      ops_tj);
+  check_transpose_conj_hc_sectors(
+      nsites,
+      [&](Representation const &irrep) { return Electron(nsites, 2, 2, irrep); },
+      ops_el);
 } catch (xdiag::Error e) {
   error_trace(e);
   throw;

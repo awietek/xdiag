@@ -49,13 +49,20 @@ void say_hello() {
   // auto c4 = fg(fmt::color::magenta);
   // auto c5 = fg(fmt::color::green);
 
-  // spring
-  auto c1 = fg(fmt::rgb(0xAFDDD5));
-  auto c2 = fg(fmt::rgb(0xFFA700));
-  auto c3 = fg(fmt::rgb(0xFFCCCD));
-  auto c4 = fg(fmt::rgb(0xF56093));
-  auto c5 = fg(fmt::rgb(0x64864A));
-  
+  // // spring (0.5)
+  // auto c1 = fg(fmt::rgb(0xAFDDD5));
+  // auto c2 = fg(fmt::rgb(0xFFA700));
+  // auto c3 = fg(fmt::rgb(0xFFCCCD));
+  // auto c4 = fg(fmt::rgb(0xF56093));
+  // auto c5 = fg(fmt::rgb(0x64864A));
+
+  // icy neon (0.6)
+  auto c1 = fg(fmt::rgb(0x00F0FF)); // neon cyan
+  auto c2 = fg(fmt::rgb(0xFF4FD8)); // neon pink
+  auto c3 = fg(fmt::rgb(0xC8F8FF)); // icy white
+  auto c4 = fg(fmt::rgb(0xA55BFF)); // neon violet
+  auto c5 = fg(fmt::rgb(0x39FF14)); // neon green
+
   std::vector<std::string> lines(9);
 
   lines[0] = std::string(" _____     __   ______     ") +

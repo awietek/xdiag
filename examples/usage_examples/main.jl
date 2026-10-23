@@ -470,6 +470,13 @@ hop = (1.0 + 1.0im) * Op("Hop", [1, 2])
 @show cdagup == hc(cdagup)
 @show sdots == hc(sdots)
 @show hop == hc(hop)
+
+# the postfix ' is the adjoint, i.e. hc
+sp = 1.0 * Op("S+", 1)
+@show sp'
+@show sp' == hc(sp)
+@show (sp')' == sp
+@show hop'                          # coupling complex conjugated
 # --8<-- [end:hc]
 
 
