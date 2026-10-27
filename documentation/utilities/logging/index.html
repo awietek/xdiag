@@ -899,13 +899,13 @@
 </code></pre></div>
 <h2 id="log-mechanism-c-only">Log mechanism (C++ only)</h2>
 <p>Producing nicely formatted output is unfortunately a bit cumbersome in standard C++. For this, the <code>Log</code> mechanism in XDiag can help. To simply write out a line of information you can call,</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">Log</span><span class="p">(</span><span class="s">&quot;hello from the logger&quot;</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">Log</span><span class="p">(</span><span class="s">"hello from the logger"</span><span class="p">);</span>
 </code></pre></div>
 <p>By default, a new line is added. It is also possible to set verbosity by handing the level as the first argument,</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">Log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;hello from the logger only if global verbosity is set to &gt;= 2&quot;</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">Log</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="s">"hello from the logger only if global verbosity is set to &gt;= 2"</span><span class="p">);</span>
 </code></pre></div>
 <p>This message will only appear if the global verbosity level is set to a value <span class="arithmatex">\(\geq 2\)</span>. Finally, XDiag also supports formatted output by using the <a href="https://github.com/fmtlib/fmt">fmtlib</a> library. For example, numbers can be formated this way</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">Log</span><span class="p">(</span><span class="s">&quot;pi is around {:.4f} and the answer is {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="mf">3.141592</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">Log</span><span class="p">(</span><span class="s">"pi is around {:.4f} and the answer is {}"</span><span class="p">,</span><span class="w"> </span><span class="mf">3.141592</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
 </code></pre></div>
 
 
